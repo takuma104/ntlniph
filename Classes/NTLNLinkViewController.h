@@ -50,10 +50,21 @@
 
 @interface NTLNLinkCell : UITableViewCell
 {
-	UILabel *label;
+	NTLNURLPair *pair;
+	BOOL isEven;
 }
 
 - (void)createCell:(NTLNURLPair*)pair isEven:(BOOL)isEven;
+
+@end
+
+@interface NTLNSelectedLinkCellBackground : UIView
+{
+	NTLNURLPair *pair;
+	BOOL isEven;
+}
+
+@property (readwrite, retain) NTLNURLPair *pair;
 
 @end
 

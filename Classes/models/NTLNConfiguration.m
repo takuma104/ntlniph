@@ -11,10 +11,13 @@
 #define NTLN_PREFERENCE_DARK_COLOR_THEME @"darkColorTheme"
 #define NTLN_PREFERENCE_SCROLL_LOCK @"scrollLock"
 #define NTLN_PREFERENCE_SHOW_MORE_TWEETS_MODE	@"showMoreTweetMode"
+#define NTLN_PREFERENCE_FETCH_COUNT	@"fetchCount"
+#define NTLN_PREFERENCE_SHAKE_TO_FULLSCREEN	@"shakeToFullscreen"
 
 @implementation NTLNConfiguration
 
-@synthesize refreshIntervalSeconds, usePost, useSafari, darkColorTheme, scrollLock, showMoreTweetMode;
+@synthesize refreshIntervalSeconds, usePost, useSafari, darkColorTheme, 
+			scrollLock, showMoreTweetMode, fetchCount, shakeToFullscreen;
 
 static id _instance = nil;
 
@@ -34,6 +37,13 @@ static id _instance = nil;
 	darkColorTheme = [[NSUserDefaults standardUserDefaults] boolForKey:NTLN_PREFERENCE_DARK_COLOR_THEME];
 	scrollLock = [[NSUserDefaults standardUserDefaults] boolForKey:NTLN_PREFERENCE_SCROLL_LOCK];
 	showMoreTweetMode = [[NSUserDefaults standardUserDefaults] boolForKey:NTLN_PREFERENCE_SHOW_MORE_TWEETS_MODE];
+	fetchCount = [[NSUserDefaults standardUserDefaults] integerForKey:NTLN_PREFERENCE_FETCH_COUNT];
+	shakeToFullscreen = [[NSUserDefaults standardUserDefaults] boolForKey:NTLN_PREFERENCE_SHAKE_TO_FULLSCREEN];
+	
+	if (fetchCount < 20) {
+		fetchCount = 20;
+	}
+	
 	return self;
 }
 
@@ -76,5 +86,18 @@ static id _instance = nil;
 	[[NSUserDefaults standardUserDefaults] setBool:use forKey:NTLN_PREFERENCE_SHOW_MORE_TWEETS_MODE];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
+
+- (void) setFetchCount:(int)count {
+	fetchCount = count;
+	[[NSUserDefaults standardUserDefaults] setInteger:count forKey:NTLN_PREFERENCE_FETCH_COUNT];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void) setShakeToFullscreen:(BOOL)use {
+	shakeToFullscreen = use;
+	[[NSUserDefaults standardUserDefaults] setBool:use forKey:NTLN_PREFERENCE_SHAKE_TO_FULLSCREEN];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 
 @end

@@ -1,15 +1,21 @@
 #import "NTLNReplysViewController.h"
 #import "NTLNAccount.h"
 #import "NTLNConfiguration.h"
+#import "NTLNCache.h"
+#import "NTLNTwitterXMLReader.h"
+#import "NTLNTwitterClient.h"
 
 @implementation NTLNReplysViewController
 
 - (void)setupNavigationBar {
 	[super setupNavigationBar];
 	[super setupPostButton];
+	[self.navigationItem setTitle:@"Replies"];
 }
 
 - (void)dealloc {
+	[repliesXMLPath release];
+	[directMessageXMLPath release];
 	[super dealloc];
 }
 
@@ -19,17 +25,31 @@
 	badge_enable = YES;
 }
 
+- (void)saveCache:(NTLNTwitterClient*)sender {
+	if (sender.requestForDirectMessage) {
+		[super saveCache:sender filename:directMessageXMLPath];
+	} else {
+		[super saveCache:sender filename:repliesXMLPath];
+	}
+}
+
 - (void)initialCacheLoading {
-	[super initialCacheLoading:@"replies.xml"];
+	repliesXMLPath = [[[NTLNCache createXMLCacheDirectory] stringByAppendingString:@"replies.xml"] retain];
+	directMessageXMLPath = [[[NTLNCache createXMLCacheDirectory] stringByAppendingString:@"dm.xml"] retain];
+	[super loadCacheWithFilename:repliesXMLPath];
+	[super loadCacheWithFilename:directMessageXMLPath];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
 }
 
-- (void)getTimelineImplWithPage:(int)page {
+- (void)getTimelineImplWithPage:(int)page since_id:(NSString*)since_id {
 	NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
 	[tc getRepliesTimelineWithPage:page];
+
+	NTLNTwitterClient *tcd = [[NTLNTwitterClient alloc] initWithDelegate:self];
+	[tcd getDirectMessagesWithPage:page];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

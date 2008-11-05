@@ -1,17 +1,29 @@
 #import <UIKit/UIKit.h>
 
+#import "NTLNCacheCleaner.h"
+
 @class NTLNTweetPostViewController;
 @class NTLNBrowserViewController;
 @class NTLNFriendsViewController;
 @class NTLNReplysViewController;
+@class NTLNSentsViewController;
+@class NTLNUnreadsViewController;
+@class NTLNConfigViewController;
 
-@interface NTLNAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate> {
+@interface NTLNAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, NTLNCacheCleanerDelegate> {
 	IBOutlet UIWindow *window;
 	IBOutlet UITabBarController *tabBarController;
-	IBOutlet NTLNTweetPostViewController *tweetPostViewController;
-	IBOutlet NTLNBrowserViewController *browserViewController;
-	IBOutlet NTLNFriendsViewController *friendsViewController;
-	IBOutlet NTLNReplysViewController *replysViewController;
+	
+	NTLNFriendsViewController *friendsViewController;
+	NTLNReplysViewController *replysViewController;
+	NTLNSentsViewController *sentsViewController;
+	NTLNUnreadsViewController *unreadsViewController;
+
+	NTLNTweetPostViewController *tweetPostViewController;
+	NTLNBrowserViewController *browserViewController;
+	
+	NTLNConfigViewController *configViewController;
+	
 	BOOL applicationActive;
 }
 

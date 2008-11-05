@@ -4,6 +4,8 @@
 
 @implementation NTLNUnreadsViewController
 
+@synthesize friendsViewController, replysViewController;
+
 - (void)dealloc {
 	[super dealloc];
 }
@@ -16,6 +18,7 @@
 					target:self action:@selector(clearButton:)];
 	[b autorelease];
 	[[self navigationItem] setRightBarButtonItem:b];
+	[self.navigationItem setTitle:@"Unreads"];
 	[super setupPostButton];
 }
 

@@ -3,13 +3,16 @@
 #import "NTLNMessage.h"
 
 @interface NTLNTwitterXMLReader : NSObject {
-	NSXMLParser *parser;
 	NSMutableString *currentStringValue;
 	
 	NTLNMessage *currentMessage;
 	NSString *currentIconURL;	
+	NSString *currentInReplyToUserId;
 	
-	BOOL userTag;
+	BOOL statusTagChild;
+	BOOL userTagChild;
+	BOOL readText;
+	BOOL currentMsgDirectMessage;
 	
 	NSMutableArray *messages;
 }

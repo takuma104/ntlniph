@@ -6,6 +6,7 @@
 #import "NTLNConfiguration.h"
 #import "NTLNCellBackgroundView.h"
 #import "NTLNImages.h"
+#import "NTLNSelectedCellBackgroundView.h"
 
 @implementation NTLNStatusCell
 
@@ -31,6 +32,51 @@
 	return h;
 }
 
++ (void)drawTexts:(NTLNStatus*)status selected:(BOOL)selected{
+	CGContextRef context = UIGraphicsGetCurrentContext();
+	CGFloat metaTextY = status.cellHeight - 16;
+	
+	CGContextSetTextDrawingMode(context, kCGTextFill);
+	if (selected) {
+		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textSelected].CGColor);
+	} else {
+		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textForground].CGColor);
+	}
+
+	[status.message.text drawInRect:CGRectMake(48.0, 4.0, 250.0, status.textHeight) 
+	 withFont:[NTLNStatusCell textFont]
+	 lineBreakMode:UILineBreakModeWordWrap];
+	
+	if (selected) {
+		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textSelected].CGColor);
+	} else {
+		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textAnnotateForground].CGColor);
+	}
+	
+	NSString *name;
+	if ([status.message.screenName isEqualToString:status.message.name]) {
+		name = status.message.screenName;
+	} else {
+		name = [status.message.screenName stringByAppendingString:@" / "];
+		name = [name stringByAppendingString:status.message.name];
+	}
+	
+	[name drawInRect:CGRectMake(48.0, metaTextY, 200.0, 12.0) 
+			withFont:[NTLNStatusCell metaFont]
+	   lineBreakMode:UILineBreakModeTailTruncation];
+	
+	char tmp[80];
+	time_t tt = [status.message.timestamp timeIntervalSince1970];
+	struct tm *t = localtime(&tt);
+	strftime(tmp, sizeof(tmp), "%H:%M:%S", t);
+	
+	NSString *timestamp = [NSString stringWithUTF8String:tmp];
+	
+	[timestamp drawInRect:CGRectMake(250.0, metaTextY, 100.0, 12.0) 
+				 withFont:[NTLNStatusCell metaFont]
+			lineBreakMode:UILineBreakModeTailTruncation];
+}
+
 - (UIColor*)colorForBackground {
 	UIColor *color = nil;
 	if (status) {
@@ -40,6 +86,10 @@
 				break;
 			case NTLN_MESSAGE_REPLY_TYPE_REPLY_PROBABLE:
 				color =  [[NTLNColors instance] probableReplyBackground];
+				break;
+			case NTLN_MESSAGE_REPLY_TYPE_DIRECT:
+				color =  [[NTLNColors instance] directMessageBackground];
+				break;
 		}	
 	}
 	
@@ -54,36 +104,6 @@
 }
 
 - (void)createCell {
-	UIColor *bgcolor = [self colorForBackground];
-
-	value = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
-	value.font = [NTLNStatusCell textFont];
-	value.textColor = [[NTLNColors instance] textForground];
-	value.lineBreakMode = UILineBreakModeWordWrap;
-	value.numberOfLines = 0;
-	value.backgroundColor = bgcolor;
-	[self.contentView addSubview:value];	
-
-	name = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
-	name.font = [NTLNStatusCell metaFont];
-	name.textColor = [[NTLNColors instance] textAnnotateForground];
-	name.lineBreakMode = UILineBreakModeTailTruncation;
-	name.numberOfLines = 1;
-	name.backgroundColor = bgcolor;
-//	name.shadowColor = [[NTLNColors instance] textShadow];
-//	name.shadowOffset = CGSizeMake(0, 1);
-	[self.contentView addSubview:name];	
-
-	timestamp = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
-	timestamp.font = [NTLNStatusCell metaFont];
-	timestamp.textColor = [[NTLNColors instance] textAnnotateForground];
-	timestamp.lineBreakMode = UILineBreakModeClip;
-	timestamp.numberOfLines = 1;
-	timestamp.backgroundColor = bgcolor;
-//	timestamp.shadowColor = [[NTLNColors instance] textShadow];
-//	timestamp.shadowOffset = CGSizeMake(0, 1);
-	[self.contentView addSubview:timestamp];	
-
 	iconView = [[[NTLNRoundedIconView alloc] 
 				 initWithFrame:CGRectMake(4.0, 6.0, 40.0, 40.0) 
 				 image:[NTLNIconRepository defaultIcon]
@@ -95,12 +115,11 @@
 	unreadView.hidden = YES;
 	[self.contentView addSubview:unreadView];
 
-	
 	self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	self.selectionStyle = UITableViewCellSelectionStyleGray;
-	NTLNCellBackgroundView *v = [[[NTLNCellBackgroundView alloc] initWithFrame:CGRectZero] autorelease];
-	v.backgroundColor = bgcolor;
-	self.backgroundView = v;
+	
+	NTLNSelectedCellBackgroundView *v = [[[NTLNSelectedCellBackgroundView alloc] initWithFrame:CGRectZero] autorelease];
+	v.status = status;
+	self.selectedBackgroundView = v;
 }
 
 - (id)initWithIsEven:(BOOL)iseven {
@@ -115,13 +134,9 @@
 	[super dealloc];
 }
 
-
 - (void)updateBackgroundColor {
 	UIColor *color = [self colorForBackground];
 	((NTLNCellBackgroundView*)self.backgroundView).backgroundColor = color;
-	value.backgroundColor = color;
-	name.backgroundColor = color;
-	timestamp.backgroundColor = color;
 	iconView.backgroundColor = color;
 	
 	if (status.message.status == NTLN_MESSAGE_STATUS_NORMAL) {
@@ -135,7 +150,12 @@
 	NSLog(@"reply to @%@", status.message.screenName);
 
 	NTLNAppDelegate* appDelegate = (NTLNAppDelegate*)[UIApplication sharedApplication].delegate;
-	[appDelegate.tweetPostViewController createReplyPost:[@"@" stringByAppendingString:status.message.screenName]];
+	
+	if (status.message.replyType == NTLN_MESSAGE_REPLY_TYPE_DIRECT) {
+		[appDelegate.tweetPostViewController createDMPost:status.message.screenName];
+	} else {
+		[appDelegate.tweetPostViewController createReplyPost:[@"@" stringByAppendingString:status.message.screenName]];
+	}
 }
 
 - (void)updateCell:(NTLNStatus*)aStatus isEven:(BOOL)iseven {
@@ -168,26 +188,7 @@
 	} else {
 		unreadView.image = [[NTLNImages sharedInstance] unreadLight];
 	}
-	
-	value.frame = CGRectMake(48.0, 4.0, 250.0, status.textHeight);
-	value.text = status.message.text;
-	
-	name.frame = CGRectMake(48.0, metaTextY, 200.0, 12.0);
-	if ([status.message.screenName isEqualToString:status.message.name]) {
-		name.text = status.message.screenName;
-	} else {
-		name.text = [status.message.screenName stringByAppendingString:@" / "];
-		name.text = [name.text stringByAppendingString:status.message.name];
-	}
 
-	char tmp[80];
-	time_t tt = [status.message.timestamp timeIntervalSince1970];
-	struct tm *t = localtime(&tt);
-	strftime(tmp, sizeof(tmp), "%H:%M:%S", t);
-	
-	timestamp.frame = CGRectMake(250.0, metaTextY, 100.0, 12.0);
-	timestamp.text = [NSString stringWithUTF8String:tmp];
-	
 	UIImage *icon = status.message.icon;
 	if (icon == nil) {
 		icon = [NTLNIconRepository defaultIcon];
@@ -198,26 +199,20 @@
 				 action:@selector(iconButtonPushed:)
 	   forControlEvents:UIControlEventTouchUpInside];
 	
-
 	[self updateBackgroundColor];
+	[self setNeedsDisplay];
+	
+	((NTLNSelectedCellBackgroundView*)self.selectedBackgroundView).status = status;
 }
 
 - (void)updateIcon {
 	[iconView setImage:status.message.icon];
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-	[super setSelected:selected animated:animated];
-
-	if (selected) {
-		value.textColor		= [UIColor blackColor];
-		name.textColor		= [UIColor blackColor];
-		timestamp.textColor = [UIColor blackColor];
-	} else {
-		value.textColor		= [[NTLNColors instance] textForground];
-		name.textColor		= [[NTLNColors instance] textAnnotateForground];
-		timestamp.textColor = [[NTLNColors instance] textAnnotateForground];
-	}
+- (void)drawRect:(CGRect)rect {
+	[NTLNCellBackgroundView drawBackground:rect backgroundColor:[self colorForBackground]];
+	[NTLNStatusCell drawTexts:status selected:NO];
 }
+
 
 @end

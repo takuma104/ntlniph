@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
-#import "NTLNStatusViewController.h"
+#import "NTLNTimelineViewController.h"
 
-@interface NTLNSentsViewController : NTLNStatusViewController {
+@interface NTLNSentsViewController : NTLNTimelineViewController {
 
 }
 

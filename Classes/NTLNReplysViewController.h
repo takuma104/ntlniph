@@ -1,8 +1,9 @@
 #import <UIKit/UIKit.h>
-#import "NTLNStatusViewController.h"
+#import "NTLNTimelineViewController.h"
 
-@interface NTLNReplysViewController : NTLNStatusViewController {
-
+@interface NTLNReplysViewController : NTLNTimelineViewController {
+	NSString *repliesXMLPath;
+	NSString *directMessageXMLPath;
 }
 
 - (NSMutableArray*)unreadStatuses;

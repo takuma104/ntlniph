@@ -37,15 +37,15 @@
 	[super viewDidAppear:animated];
 }
 
-- (void)getTimelineImplWithPage:(int)page {
+- (void)getTimelineImplWithPage:(int)page since_id:(NSString*)since_id {
 	if (screenNames) {
 		for (NSString *n in screenNames) {
 			NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
-			[tc getUserTimelineWithScreenName:n page:page];
+			[tc getUserTimelineWithScreenName:n page:page since_id:since_id];
 		}
 	} else {
 		NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
-		[tc getUserTimelineWithScreenName:screenName page:page];
+		[tc getUserTimelineWithScreenName:screenName page:page since_id:since_id];
 	}
 }
 

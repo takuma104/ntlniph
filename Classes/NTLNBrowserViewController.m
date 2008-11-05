@@ -1,5 +1,16 @@
 #import "NTLNBrowserViewController.h"
 #import "NTLNAlert.h"
+#import "NTLNAccelerometerSensor.h"
+
+@interface NTLNBrowserViewController(Private)
+- (void)setReloadButton:(BOOL)reloadBtn;
+- (void)stopProgressIndicator;
+- (void)reloadButton:(id)sender;
+
+- (void)fullScreenBrowser;
+- (void)normalScreenBrowser;
+- (void)toggleFullScreenTimeline;
+@end
 
 @implementation NTLNBrowserViewController
 
@@ -99,6 +110,7 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+	[NTLNAccelerometerSensor sharedInstance].delegate = nil;
 	shown = NO;
 	[myWebView loadHTMLString:nil baseURL:nil];
 }
@@ -107,6 +119,7 @@
 	shown = YES;
 	urlLabel.text = url;
 	[myWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+	[NTLNAccelerometerSensor sharedInstance].delegate = self;
 }
 
 - (void)reloadButton:(id)sender {
@@ -116,5 +129,38 @@
 		[myWebView reload];
 	}
 }
+
+- (void)fullScreenBrowser {
+	if (browserViewSuperView == nil) {
+		browserViewSuperView = myWebView.superview;
+		[myWebView removeFromSuperview];
+		[[self tabBarController].view addSubview:myWebView];
+		CGSize s = [self tabBarController].view.frame.size;
+		browserViewOriginalFrame = myWebView.frame;
+		myWebView.frame = CGRectMake(0, 0, s.width, s.height);
+	}
+}
+
+- (void)normalScreenBrowser {
+	if (browserViewSuperView) {
+		[myWebView removeFromSuperview];
+		myWebView.frame = browserViewOriginalFrame;
+		[browserViewSuperView addSubview:myWebView];
+		browserViewSuperView = nil;
+	}
+}
+
+- (void)toggleFullScreenTimeline {
+	if (browserViewSuperView) {
+		[self normalScreenBrowser];
+	} else {
+		[self fullScreenBrowser];
+	}
+}
+
+- (void)accelerometerSensorDetected {
+	[self toggleFullScreenTimeline];
+}
+
 
 @end

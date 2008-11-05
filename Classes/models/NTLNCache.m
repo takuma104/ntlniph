@@ -49,4 +49,10 @@
 	return ret;
 }
 
++ (void)removeAllCachedData {
+	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createIconCacheDirectory] error:nil];
+	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createXMLCacheDirectory] error:nil];
+	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createTextCacheDirectory] error:nil];
+}
+
 @end

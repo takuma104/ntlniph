@@ -4,10 +4,13 @@
     NSURLConnection *connection;
     NSMutableData *recievedData;
 	int statusCode;	
+	BOOL contentTypeIsXml;
 }
 
 - (void)requestGET:(NSString*)url;
-- (void)requestPOST:(NSString*)url body:(NSString*)body;
+- (void)requestGET:(NSString*)url username:(NSString*)username password:(NSString*)password;
+//- (void)requestPOST:(NSString*)url body:(NSString*)body;
+- (void)requestPOST:(NSString*)url body:(NSString*)body username:(NSString*)username password:(NSString*)password;
 - (void)cancel;
 
 - (void)requestSucceeded;

@@ -1,6 +1,7 @@
 #import "NTLNTwitterXMLReader.h"
 #import "NTLNXMLHTTPEncoder.h"
 #import "NTLNIconRepository.h"
+#import "NTLNAccount.h"
 
 @implementation NTLNTwitterXMLReader
 
@@ -20,20 +21,23 @@
 }
 
 - (void)parseXMLData:(NSData *)data {
-	[parser release];
-	parser = [[NSXMLParser alloc] initWithData:data];
+	NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
     [parser setDelegate:self];
 	[parser parse];
+	[parser release];
 }
 
 - (void)didParseMessage:(NTLNMessage*)message iconURL:(NSString*)iconURL {
 	[message setIconForURL:iconURL];
-	[message finishedToSetProperties];
+	if ([currentInReplyToUserId isEqualToString:[[NTLNAccount instance] userId]]) {
+		message.replyType = NTLN_MESSAGE_REPLY_TYPE_REPLY;
+	} else {
+		[message finishedToSetProperties:currentMsgDirectMessage];
+	}
 	[messages addObject:message];
 }
 
 - (void)dealloc {
-	[parser release];
 	[currentMessage release];
 	[currentIconURL release];
 	[currentStringValue release];
@@ -42,40 +46,64 @@
 }
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict {
-	if ( [elementName isEqualToString:@"status"]) {
+
+	readText = NO;
+	
+	[currentStringValue release];
+	currentStringValue = nil;
+	
+	BOOL d = [elementName isEqualToString:@"direct_message"];
+	
+	if ([elementName isEqualToString:@"status"] || d) {
 		[currentMessage release];
-		currentMessage = [[NTLNMessage alloc] init];
+		currentMessage = [[[NTLNMessage alloc] init] autorelease];
 		[currentIconURL release];
 		currentIconURL = nil;
-		userTag = false;
-	} else if ( currentMessage && [elementName isEqualToString:@"user"]) {
-		userTag = true;
+		[currentInReplyToUserId release];
+		currentInReplyToUserId = nil;
+		statusTagChild = YES;
+		userTagChild = NO;
+		currentMsgDirectMessage = d;
+	} else if (currentMessage && ([elementName isEqualToString:@"user"] || [elementName isEqualToString:@"sender"])) {
+		statusTagChild = NO;
+		userTagChild = YES;
+	} else if ([elementName isEqualToString:@"id"] ||
+				[elementName isEqualToString:@"text"] ||
+				[elementName isEqualToString:@"created_at"] ||
+				[elementName isEqualToString:@"favorited"] ||
+				[elementName isEqualToString:@"name"] ||
+				[elementName isEqualToString:@"screen_name"] ||
+				[elementName isEqualToString:@"in_reply_to_user_id"] ||
+			   [elementName isEqualToString:@"profile_image_url"]) {
+		readText = YES;
+		currentStringValue = [[NSMutableString alloc] initWithCapacity:50];
 	}
-
-	[currentStringValue release];
-	currentStringValue = [[NSMutableString alloc] initWithCapacity:50];
-
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
-	[currentStringValue appendString:string];
+	if (readText) {
+		[currentStringValue appendString:string];
+	}
 }
 
-- (void)parser:(NSXMLParser *)parser foundIgnorableWhitespace:(NSString *)whitespaceString {
-}
+//- (void)parser:(NSXMLParser *)parser foundIgnorableWhitespace:(NSString *)whitespaceString {
+//}
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
 	if (currentMessage) {
-		if ( [elementName isEqualToString:@"status"]) {
+		if ([elementName isEqualToString:@"status"] || [elementName isEqualToString:@"direct_message"]) {
 			[self didParseMessage:currentMessage iconURL:currentIconURL];
 			currentMessage = nil;
 			[currentIconURL release];
 			currentIconURL = nil;
-		} else if ( currentMessage && [elementName isEqualToString:@"user"]) {
-			userTag = false;
+			[currentInReplyToUserId release];
+			currentInReplyToUserId = nil;
+			currentMsgDirectMessage = NO;
+		} else if (currentMessage && ([elementName isEqualToString:@"user"] || [elementName isEqualToString:@"sender"])) {
+			userTagChild = NO;
 		}
 		
-		if (!userTag) {
+		if (statusTagChild) {
 			if ([elementName isEqualToString:@"id"]) {
 				[currentMessage setStatusId:currentStringValue];
 			} else if ([elementName isEqualToString:@"text"]) {
@@ -91,8 +119,12 @@
 				if ([currentStringValue isEqualToString:@"true"]) {
 					currentMessage.favorited = TRUE;
 				}
+			} else if ([elementName isEqualToString:@"in_reply_to_user_id"]) {
+				currentInReplyToUserId = [currentStringValue copy];
 			}
-		} else {
+		}
+
+		if (userTagChild) {
 			if ([elementName isEqualToString:@"name"]) {
 				[currentMessage setName:currentStringValue];
 			} else if ([elementName isEqualToString:@"screen_name"]) {

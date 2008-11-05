@@ -1,13 +1,16 @@
 #import <UIKit/UIKit.h>
-#import "NTLNStatusViewController.h"
+#import "NTLNTimelineViewController.h"
 
 @class NTLNFriendsViewController;
 @class NTLNReplysViewController;
 
-@interface NTLNUnreadsViewController : NTLNStatusViewController {
-	IBOutlet NTLNFriendsViewController *friendsViewController;
-	IBOutlet NTLNReplysViewController *replysViewController;
+@interface NTLNUnreadsViewController : NTLNTimelineViewController {
+	NTLNFriendsViewController *friendsViewController;
+	NTLNReplysViewController *replysViewController;
 }
+
+@property (readwrite, assign) NTLNFriendsViewController *friendsViewController;
+@property (readwrite, assign) NTLNReplysViewController *replysViewController;
 
 - (void)clearButton:(id)sender;
 

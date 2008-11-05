@@ -203,8 +203,14 @@
 
 - (void)replyButtonAction:(id)sender {
 	[[self navigationController].view addSubview:tweetPostViewController.view];
-	[tweetPostViewController createReplyPost:[@"@" stringByAppendingString:message.screenName]];
-	[tweetPostViewController forcus];
+	
+	if (message.replyType == NTLN_MESSAGE_REPLY_TYPE_DIRECT) {
+		[tweetPostViewController createDMPost:message.screenName];
+	} else {
+		[tweetPostViewController createReplyPost:[@"@" stringByAppendingString:message.screenName]];
+	}
+	
+	[tweetPostViewController showWindow];
 }
 
 - (CGFloat)getTextboxHeight:(NSString *)str
@@ -356,40 +362,67 @@
 
 @implementation NTLNLinkCell
 
-- (void)createCell:(NTLNURLPair*)pair isEven:(BOOL)isEven {
++ (void)drawText:(NSString*)text selected:(BOOL)selected{
+	CGContextRef context = UIGraphicsGetCurrentContext();
+	
+	CGContextSetTextDrawingMode(context, kCGTextFill);
+	if (selected) {
+		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textSelected].CGColor);
+	} else {
+		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textForground].CGColor);
+	}
+	
+	[text drawInRect:CGRectMake(10, 10, 280, 24)
+						withFont:[UIFont boldSystemFontOfSize:18]
+					lineBreakMode:UILineBreakModeTailTruncation];
+}	
+
+- (void)createCell:(NTLNURLPair*)aPair isEven:(BOOL)_isEven {
+	self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
+	[pair release];
+	pair = [aPair retain];
+	isEven = _isEven;
+	
+	NTLNSelectedLinkCellBackground *v = [[[NTLNSelectedLinkCellBackground alloc] 
+										  initWithFrame:CGRectZero] autorelease];
+	v.pair = pair;
+	self.selectedBackgroundView = v;
+}
+
+- (void)dealloc {
+	[pair release];
+	[super dealloc];
+}
+
+- (void)drawRect:(CGRect)rect {
+	
 	UIColor *bgcolor;
 	if (isEven) {
 		bgcolor = [[NTLNColors instance] evenBackground];
 	} else {
 		bgcolor = [[NTLNColors instance] oddBackground];
 	}
-
-	self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	self.selectionStyle = UITableViewCellSelectionStyleGray;
 	
-	label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10, 280, 24)] autorelease];
-	label.font = [UIFont boldSystemFontOfSize:18];
-	label.textColor = [[NTLNColors instance] textForground];
-	label.lineBreakMode = UILineBreakModeTailTruncation;
-	label.numberOfLines = 1;
-	label.backgroundColor = bgcolor;
-	label.text = pair.text;
-	label.shadowColor = [[NTLNColors instance] textShadow];
-	label.shadowOffset = CGSizeMake(0, 1);
-	[self addSubview:label];	
-	
-	self.backgroundView = [[[NTLNCellBackgroundView alloc] initWithFrame:CGRectZero] autorelease];
-	self.backgroundView.backgroundColor = bgcolor;
+	[NTLNCellBackgroundView drawBackground:rect backgroundColor:bgcolor];
+	[NTLNLinkCell drawText:pair.text selected:NO];
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-	[super setSelected:selected animated:animated];
-	//	NSLog(@"selected:%d", selected);
-	if (selected) {
-		label.textColor		= [UIColor blackColor];
-	} else {
-		label.textColor		= [[NTLNColors instance] textForground];
-	}
+@end
+
+
+@implementation NTLNSelectedLinkCellBackground
+
+@synthesize pair;
+
+- (void)dealloc {
+	[pair release];
+	[super dealloc];
+}
+
+- (void)drawRect:(CGRect)rect {
+	[NTLNCellBackgroundView drawBackground:rect backgroundColor:[[NTLNColors instance] selectedBackground]];
+	[NTLNLinkCell drawText:pair.text selected:YES];
 }
 
 @end

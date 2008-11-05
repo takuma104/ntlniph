@@ -7,6 +7,7 @@
 - (void)setupNavigationBar {
 	[super setupNavigationBar];
 	[super setupPostButton];
+	[self.navigationItem setTitle:@"Sents"];
 }
 
 - (void)dealloc {
@@ -26,9 +27,9 @@
 	[super viewDidAppear:animated];
 }
 
-- (void)getTimelineImplWithPage:(int)page {
+- (void)getTimelineImplWithPage:(int)page since_id:(NSString*)since_id {
 	NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
-	[tc getSentsTimelineWithPage:page];
+	[tc getSentsTimelineWithPage:page since_id:since_id];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

@@ -7,7 +7,8 @@
 	BOOL scrollLock;
     int refreshIntervalSeconds;
 	BOOL showMoreTweetMode;
-//    NSString *version;
+	int fetchCount;
+	BOOL shakeToFullscreen;
 }
 
 @property (readonly) BOOL usePost;
@@ -16,6 +17,8 @@
 @property (readonly) BOOL scrollLock;
 @property (readonly) BOOL showMoreTweetMode;
 @property (readonly) int refreshIntervalSeconds;
+@property (readonly) int fetchCount;
+@property (readonly) BOOL shakeToFullscreen;
 
 + (id) instance;
 
@@ -25,5 +28,7 @@
 - (void) setDarkColorTheme:(BOOL)use;
 - (void) setScrollLock:(BOOL)use;
 - (void) setShowMoreTweetMode:(BOOL)use;
+- (void) setFetchCount:(int)count;
+- (void) setShakeToFullscreen:(BOOL)use;
 
 @end

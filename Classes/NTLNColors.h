@@ -5,22 +5,27 @@
     UIColor *textAnnotateForground;
 	UIColor *textShadow;
 	
+	UIColor *textSelected;
+	
     UIColor *oddBackground;
     UIColor *evenBackground;
 
     UIColor *replyBackground;
 	UIColor *probableReplyBackground;
+	UIColor *directMessageBackground;
 	
 	UIColor *scrollViewBackground;
+	
+	UIColor *selectedBackground;
 }
 
 + (id) instance;
 
 - (void) setupColors;
 
-@property (readonly) UIColor *textForground, *textAnnotateForground, *textShadow;
-@property (readonly) UIColor *oddBackground, *evenBackground, *replyBackground;
+@property (readonly) UIColor *textForground, *textAnnotateForground, *textShadow, *textSelected;
+@property (readonly) UIColor *oddBackground, *evenBackground, *replyBackground, *directMessageBackground;
 @property (readonly) UIColor *probableReplyBackground;
-@property (readonly) UIColor *scrollViewBackground;
+@property (readonly) UIColor *scrollViewBackground, *selectedBackground;
 
 @end

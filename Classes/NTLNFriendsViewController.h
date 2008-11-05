@@ -1,10 +1,10 @@
 #import <UIKit/UIKit.h>
 
-#import "NTLNStatusViewController.h"
+#import "NTLNTimelineViewController.h"
 
 @class NTLNLinkViewController;
 
-@interface NTLNFriendsViewController : NTLNStatusViewController <UIActionSheetDelegate>
+@interface NTLNFriendsViewController : NTLNTimelineViewController <UIActionSheetDelegate>
 {		
 	UITextField *tweetTextField;
 }

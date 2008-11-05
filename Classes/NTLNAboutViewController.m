@@ -81,16 +81,16 @@
 			switch (indexPath.row) {
 				case 0:
 					cell.image = [UIImage imageNamed:@"icon.png"];
-					cell.text = @"NatsuLiphone";
+					cell.text = @"NatsuLion for iPhone";
 					cell.selectionStyle = UITableViewCellSelectionStyleNone;
 					break;
 				case 1:
-					cell.text = [NSString stringWithFormat:@"Version 1.00 (%@)", ntlniph_version];
+					cell.text = [NSString stringWithFormat:@"Version 1.05 (%@)", ntlniph_version];
 					cell.selectionStyle = UITableViewCellSelectionStyleNone;
 					break;
 				case 2:
 					cell.text = @"http://iphone.natsulion.org/";
-					cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+					cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 					break;
 			}
 			break;

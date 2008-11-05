@@ -20,5 +20,6 @@
 + (void)saveWithFilename:(NSString*)filename data:(NSData*)data;
 + (NSData*)loadWithFilename:(NSString*)filename;
 
++ (void)removeAllCachedData;
 
 @end

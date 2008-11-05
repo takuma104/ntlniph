@@ -45,7 +45,7 @@ enum NTLNMessageStatus {
 @property BOOL favorited;
 
 - (BOOL) isEqual:(id)anObject;
-- (void) finishedToSetProperties;
+- (void) finishedToSetProperties:(BOOL)forDirectMessage;
 - (void) hilightUserReplyWithScreenName:(NSString*)screenName;
 - (void) setIconForURL:(NSString*)url;
 - (void) setIconUpdateDelegate:(NSObject<NTLNMessageIconUpdate>*)iconUpdateDelegate;

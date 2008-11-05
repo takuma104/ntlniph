@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
-#import "NTLNStatusViewController.h"
+#import "NTLNTimelineViewController.h"
 
-@interface NTLNUserTimelineViewController : NTLNStatusViewController {
+@interface NTLNUserTimelineViewController : NTLNTimelineViewController {
 	NSString *screenName;
 	NSArray *screenNames;
 }

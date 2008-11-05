@@ -15,15 +15,19 @@ static NTLNAlert *_instance;
 
 - (void)alert:(NSString*)title withMessage:(NSString*)message
 {
-	UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:title
-												message:message
-												delegate:self
-												cancelButtonTitle:@"OK"
-												otherButtonTitles: nil] autorelease];
-    [alert show];	
+	if (!shown) {
+		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:title
+													message:message
+													delegate:self
+													cancelButtonTitle:@"OK"
+													otherButtonTitles: nil] autorelease];
+		shown = YES;
+		[alert show];
+	}
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+	shown = NO;
 }
 
 @end

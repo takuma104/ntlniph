@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 
 @interface NTLNAlert : NSObject <UIAlertViewDelegate> {
-
+	BOOL shown;
 }
 
 + (id)instance;

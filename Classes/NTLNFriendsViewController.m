@@ -12,12 +12,14 @@
 #define kTweenMargin			10.0
 #define kTextFieldHeight		30.0
 
+#define TITLE_NAME @"NatsuLion for iPhone"
+
 @implementation NTLNFriendsViewController
 
 - (void)setupNavigationBar {
 	[super setupNavigationBar];
 	[super setupPostButton];
-	[self.navigationItem setTitle:@"NatsuLiphone"];
+	[self.navigationItem setTitle:TITLE_NAME];
 }
 
 - (void)initialCacheLoading {
@@ -38,7 +40,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-	[self.navigationItem setTitle:@"NatsuLiphone"];
+	[self.navigationItem setTitle:TITLE_NAME];
 	[super viewWillAppear:animated];
 }
 
@@ -55,13 +57,13 @@
 /////////////////// timer
 
 - (void) timerExpired {
-	[self getTimelineImplWithPage:0];
+	[self getTimelineWithPage:0 autoload:YES];
 }
 
-- (void)getTimelineImplWithPage:(int)page {
-    if (tweetPostViewController.view.hidden && appDelegate.applicationActive) {
+- (void)getTimelineImplWithPage:(int)page since_id:(NSString*)since_id {
+    if (!tweetPostViewController.active && appDelegate.applicationActive) {
 		NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
-		[tc getFriendsTimelineWithPage:page];
+		[tc getFriendsTimelineWithPage:page since_id:since_id];
 	}
 }
 

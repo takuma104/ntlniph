@@ -4,4 +4,6 @@
 
 }
 
++ (void)drawBackground:(CGRect)rect backgroundColor:(UIColor*)backgroundColor;
+
 @end

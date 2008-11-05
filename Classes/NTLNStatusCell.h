@@ -7,7 +7,6 @@
 @interface NTLNStatusCell : UITableViewCell
 {
 	NTLNRoundedIconView *iconView;
-	UILabel *value, *name, *timestamp;
 	UIImageView *unreadView, *starView;
 	NTLNStatus *status;
 	BOOL isEven;
@@ -18,7 +17,8 @@
 + (UIFont*)textFont;
 + (UIFont*)metaFont;
 + (CGFloat)getTextboxHeight:(NSString *)str;
-
++ (void)drawTexts:(NTLNStatus*)status selected:(BOOL)selected;
+	
 - (id)initWithIsEven:(BOOL)iseven;
 - (void)updateCell:(NTLNStatus*)status isEven:(BOOL)isEven;
 - (void)updateIcon;

@@ -8,6 +8,7 @@
 	IBOutlet UITableViewController *refleshIntervalConfigViewController;
 	IBOutlet UITableViewController *aboutViewController;
 	IBOutlet NTLNFriendsViewController *friendsViewController;
+	IBOutlet UITableViewController *fetchCountConfigViewController;
 	
 	UITextField *usernameField;
 	UITextField *passwordField;
@@ -16,6 +17,9 @@
 	UISwitch *darkColorThemeSwitch;
 	UISwitch *scrollLockSwitch;
 	UISwitch *showMoreTweetsModeSwitch;
+	UISwitch *shakeToFullscreenSwitch;
+	
+	BOOL usernameEdited;
 }
 
 + (UITextField*)textInputFieldForCellWithValue:(NSString*)value secure:(BOOL)secure;

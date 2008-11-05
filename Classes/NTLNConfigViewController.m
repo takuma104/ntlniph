@@ -3,12 +3,14 @@
 #import "NTLNConfiguration.h"
 #import "NTLNFriendsViewController.h"
 #import "NTLNColors.h"
+#import "NTLNAccelerometerSensor.h"
 
 @implementation NTLNConfigViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
 		// Initialization code
+		[self.navigationItem setTitle:@"Settings"];
 	}
 	return self;
 }
@@ -32,6 +34,7 @@
 	[darkColorThemeSwitch release];
 	[scrollLockSwitch release];
 	[showMoreTweetsModeSwitch release];
+	[shakeToFullscreenSwitch release];
 	[super dealloc];
 }
 
@@ -58,6 +61,7 @@
 	darkColorThemeSwitch = [[NTLNConfigViewController switchForCell] retain];
 	scrollLockSwitch = [[NTLNConfigViewController switchForCell] retain];
 	showMoreTweetsModeSwitch = [[NTLNConfigViewController switchForCell] retain];
+	shakeToFullscreenSwitch = [[NTLNConfigViewController switchForCell] retain];
 	
 	if (usernameField.text.length == 0 && passwordField.text.length == 0) {
 		[usernameField becomeFirstResponder];
@@ -76,6 +80,7 @@
 	darkColorThemeSwitch.on = [[NTLNConfiguration instance] darkColorTheme];
 	scrollLockSwitch.on = [[NTLNConfiguration instance] scrollLock];
 	showMoreTweetsModeSwitch.on = [[NTLNConfiguration instance] showMoreTweetMode];
+	shakeToFullscreenSwitch.on = [[NTLNConfiguration instance] shakeToFullscreen];
 	[tableView reloadData];
 }
 
@@ -90,7 +95,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 3;
+	return 4;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -102,6 +107,8 @@
 		case 1:
 			return @"Settings";
 		case 2:
+			return @"Advanced Settings";
+		case 3:
 			return @"About";
 	}
 	
@@ -115,8 +122,10 @@
 		case 0:
 			return 2;
 		case 1:
-			return 6;
+			return 4;
 		case 2:
+			return 4;
+		case 3:
 			return 1;
 	}
 	
@@ -156,19 +165,31 @@
 						return [self textCellWithTitle:title];
 					}
 				case 1:
-					return [self containerCellWithTitle:@"Autopagerize" view:showMoreTweetsModeSwitch];
-				case 2:
 					return [self containerCellWithTitle:@"Use Safari" view:useSafariSwitch];
-				case 3:
-					return [self containerCellWithTitle:@"No auto scroll" view:scrollLockSwitch];
-				case 4:
+				case 2:
 					return [self containerCellWithTitle:@"Dark color theme" view:darkColorThemeSwitch];
-				case 5:
-					return [self containerCellWithTitle:@"Use POST Method" view:usePostSwitch];
+				case 3:
+					return [self containerCellWithTitle:@"Shake to fullsceen" view:shakeToFullscreenSwitch];
 			}
 			break;
 		case 2:
-			return [self textCellWithTitle:@"About NatsuLiphone"];
+			switch (indexPath.row) {
+				case 0:
+					{
+						int fetchCount = [[NTLNConfiguration instance] fetchCount];
+						return [self textCellWithTitle:
+									[NSString stringWithFormat:@"Fetching count: %d posts", fetchCount]];
+					}
+				case 1:
+					return [self containerCellWithTitle:@"Autopagerize" view:showMoreTweetsModeSwitch];
+				case 2:
+					return [self containerCellWithTitle:@"No auto scroll" view:scrollLockSwitch];
+				case 3:
+					return [self containerCellWithTitle:@"Use POST Method" view:usePostSwitch];
+			}
+			break;
+		case 3:
+			return [self textCellWithTitle:@"About NatsuLion for iPhone"];
 	}
 
 	return nil;
@@ -178,6 +199,8 @@
 	if (indexPath.section == 1 && indexPath.row == 0) {
 		[[self navigationController] pushViewController:refleshIntervalConfigViewController animated:YES];
 	} else if  (indexPath.section == 2 && indexPath.row == 0) {
+		[[self navigationController] pushViewController:fetchCountConfigViewController animated:YES];
+	} else if  (indexPath.section == 3 && indexPath.row == 0) {
 		[[self navigationController] pushViewController:aboutViewController animated:YES];
 	}
 }
@@ -196,6 +219,7 @@
 	NSString *t = [textField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 	if (textField == usernameField) {
 		[[NTLNAccount instance] setUsername:t];
+		usernameEdited = YES;
 	} else if (textField == passwordField) {
 		[[NTLNAccount instance] setPassword:t];
 	}
@@ -212,12 +236,19 @@
 	[usernameField resignFirstResponder];
 	[passwordField resignFirstResponder];
 	
+	if (usernameField) {
+		[[NTLNAccount instance] getUserId];
+	}
+	
 	[[NTLNConfiguration instance] setUsePost:usePostSwitch.on];
 	[[NTLNConfiguration instance] setUseSafari:useSafariSwitch.on];
 	[[NTLNConfiguration	instance] setDarkColorTheme:darkColorThemeSwitch.on];
 	[[NTLNConfiguration instance] setScrollLock:scrollLockSwitch.on];
 	[[NTLNConfiguration	instance] setShowMoreTweetMode:showMoreTweetsModeSwitch.on];
+	[[NTLNConfiguration	instance] setShakeToFullscreen:shakeToFullscreenSwitch.on];
+
 	[[NTLNColors instance] setupColors];
+	[[NTLNAccelerometerSensor sharedInstance] updateByConfiguration];
 }
 
 + (UITextField*)textInputFieldForCellWithValue:(NSString*)value secure:(BOOL)secure {
@@ -255,7 +286,7 @@
 		cell = [[[NTLNContainerCell alloc] initWithFrame:CGRectZero reuseIdentifier:MyIdentifier] autorelease];
 	}
 	cell.text = title;
-	cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	return cell;
 }
 
