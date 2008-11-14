@@ -14,7 +14,7 @@
 #pragma mark Private
 
 - (UIView*)showMoreTweetView {
-	UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
+	UIView *v = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)] autorelease];
 	v.backgroundColor = [UIColor blackColor];
 	
 	
@@ -66,7 +66,7 @@
 
 - (void)setupTableView {
 	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-	footerShowMoreTweetView = [self showMoreTweetView];
+	footerShowMoreTweetView = [[self showMoreTweetView] retain];
 }
 
 - (void)setupNavigationBar {

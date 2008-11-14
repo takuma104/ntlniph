@@ -85,7 +85,7 @@
 					cell.selectionStyle = UITableViewCellSelectionStyleNone;
 					break;
 				case 1:
-					cell.text = [NSString stringWithFormat:@"Version 1.05 (%@)", ntlniph_version];
+					cell.text = [NSString stringWithFormat:@"Version 1.06 (%@)", ntlniph_version];
 					cell.selectionStyle = UITableViewCellSelectionStyleNone;
 					break;
 				case 2:

@@ -14,7 +14,7 @@ static int compareStatus(NTLNStatus *a, NTLNStatus *b, void *ptr)
 	enum NTLNReplyType ra = msg_a.replyType;
 	enum NTLNReplyType rb = msg_b.replyType;
 	
-	int c = [msg_a.statusId compare:msg_b.statusId];
+	int c = [msg_a.statusId compare:msg_b.statusId options:NSNumericSearch];
 	if (c == 0) return 0;
 	
 	if ((ra == NTLN_MESSAGE_REPLY_TYPE_DIRECT && rb != NTLN_MESSAGE_REPLY_TYPE_DIRECT) ||
