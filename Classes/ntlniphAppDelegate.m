@@ -64,7 +64,7 @@
 	friendsViewController.tabBarItem = nfri.tabBarItem; // is it need (to show badge)?
 	
 	[nrep.navigationBar setBarStyle:UIBarStyleBlackOpaque];
-	[nrep.tabBarItem setTitle:@"Replies"];
+	[nrep.tabBarItem setTitle:@"Mentions"];
 	[nrep.tabBarItem setImage:[UIImage imageNamed:@"replies.png"]];
 	replysViewController.tabBarItem  = nrep.tabBarItem; // is it need (to show badge)?
 

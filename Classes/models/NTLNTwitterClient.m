@@ -179,12 +179,20 @@
 			 forceGet:NO];
 }
 
-- (void)post:(NSString*)tweet {
+- (void)post:(NSString*)tweet reply_id:(NSString*)reply_id {
 	NSString* url = [NSString stringWithFormat:@"%@statuses/update.xml", 
 						[NTLNTwitterClient URLForTwitterWithAccount]];
-    NSString *postString = [NSString stringWithFormat:@"status=%@&source=NatsuLiphone", 
-							[NTLNXMLHTTPEncoder encodeHTTP:tweet]];
-
+    NSString *postString;
+	
+	if (reply_id == nil) {
+		postString = [NSString stringWithFormat:@"status=%@&source=NatsuLiphone", 
+								[NTLNXMLHTTPEncoder encodeHTTP:tweet]];
+	} else {
+		postString = [NSString stringWithFormat:@"status=%@&in_reply_to_status_id=%@&source=NatsuLiphone", 
+					  [NTLNXMLHTTPEncoder encodeHTTP:tweet],
+					  reply_id];
+	}
+	
 	NSString *username = [[NTLNAccount instance] username];
 	NSString *password = [[NTLNAccount instance] password];
 

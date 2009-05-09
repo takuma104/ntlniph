@@ -29,7 +29,7 @@
 - (void)getSentDirectMessagesWithPage:(int)page;
 - (void)createFavoriteWithID:(NSString*)messageId;
 - (void)destroyFavoriteWithID:(NSString*)messageId;
-- (void)post:(NSString*)tweet;
+- (void)post:(NSString*)tweet reply_id:(NSString*)reply_id;
 
 @property (readonly) int requestPage;
 @property (readonly) BOOL requestForDirectMessage;

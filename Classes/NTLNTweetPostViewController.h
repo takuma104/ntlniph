@@ -12,6 +12,8 @@
 	BOOL active;
 	
 	NSString *tmpTextForInitial;
+	
+	NSString *reply_id;
 }
 
 @property (readonly) BOOL active;
@@ -22,7 +24,7 @@
 - (IBAction)sendButtonPushed:(id)sender;
 - (IBAction)clearButtonPushed:(id)sender;
 
-- (void)createReplyPost:(NSString*)text;
+- (void)createReplyPost:(NSString*)text reply_id:(NSString*)reply_id;
 - (void)createDMPost:(NSString*)reply_to;
 
 - (void)showWindow;

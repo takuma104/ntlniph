@@ -207,7 +207,7 @@
 	if (message.replyType == NTLN_MESSAGE_REPLY_TYPE_DIRECT) {
 		[tweetPostViewController createDMPost:message.screenName];
 	} else {
-		[tweetPostViewController createReplyPost:[@"@" stringByAppendingString:message.screenName]];
+		[tweetPostViewController createReplyPost:[@"@" stringByAppendingString:message.screenName] reply_id:message.statusId];
 	}
 	
 	[tweetPostViewController showWindow];

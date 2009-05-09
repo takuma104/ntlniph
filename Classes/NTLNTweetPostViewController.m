@@ -106,6 +106,7 @@
 - (void)dealloc {
 	[tweetTextView release];
 	[textLengthView release];
+	[reply_id release];
 	
 	[backupFilename release];
 	[tmpTextForInitial release];
@@ -137,7 +138,7 @@
 	NSLog(@"TweetPostView#twitterClientEnd");
 }
 
-- (void)createReplyPost:(NSString*)text {
+- (void)createReplyPost:(NSString*)text reply_id:(NSString*)aReply_id {
 	NSString *tt = [text stringByAppendingString:@" "];
 	NSString *t = [tweetTextView text];
 	if (t == nil) {
@@ -154,6 +155,9 @@
 	} else {
 		[tweetTextView setText:t];
 	}
+	
+	[reply_id release];
+	reply_id = [aReply_id retain];
 }
 
 - (void)createDMPost:(NSString*)reply_to {
@@ -201,12 +205,14 @@
 
 - (IBAction)clearButtonPushed:(id)sender {
 	[tweetTextView setText:@""];
+	[reply_id release];
+	reply_id = nil;
 	[self savePost];
 }
 
 - (IBAction)sendButtonPushed:(id)sender {
 	NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
-	[tc post:tweetTextView.text];
+	[tc post:tweetTextView.text reply_id:reply_id];
 	
 	[tweetTextView resignFirstResponder];
 	[self.view removeFromSuperview];

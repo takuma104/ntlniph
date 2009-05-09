@@ -1,7 +1,7 @@
 #import "NTLNAboutViewController.h"
 #import	"version.h"
 
-#define CREDIT_TEXT @"© 2008 natsulion.org all rights reserved.\n\nProgramming by @takuma104\nBased on NatsuLion for Mac OSX by @akr\nIcon design by YUKI, @epytwen\nMany thanks to beta tester users and the twitter community."
+#define CREDIT_TEXT @"© 2008, 2009 natsulion.org all rights reserved.\n\nProgramming by @takuma104\nBased on NatsuLion for Mac OSX by @akr\nIcon design by YUKI, @epytwen\nMany thanks to beta tester users and the twitter community."
 
 @implementation NTLNAboutViewController
 
@@ -85,7 +85,7 @@
 					cell.selectionStyle = UITableViewCellSelectionStyleNone;
 					break;
 				case 1:
-					cell.text = [NSString stringWithFormat:@"Version 1.06 (%@)", ntlniph_version];
+					cell.text = [NSString stringWithFormat:@"Version 1.07 (%@)", ntlniph_version];
 					cell.selectionStyle = UITableViewCellSelectionStyleNone;
 					break;
 				case 2:
