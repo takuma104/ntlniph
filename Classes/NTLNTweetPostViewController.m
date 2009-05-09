@@ -1,33 +1,75 @@
 #import "NTLNTweetPostViewController.h"
-#import "ntlniphAppDelegate.h"
+#import "NTLNAppDelegate.h"
 #import "NTLNAccount.h"
 #import "NTLNCache.h"
 #import "NTLNConfiguration.h"
+#import "NTLNTwitterPost.h"
+
+@interface NTLNTweetPostViewController(Private)
+- (IBAction)closeButtonPushed:(id)sender;
+- (IBAction)sendButtonPushed:(id)sender;
+- (IBAction)clearButtonPushed:(id)sender;
+
+@end
+
+static NTLNTweetPostViewController *_tweetViewController;
 
 @implementation NTLNTweetPostViewController
 
-@synthesize active;
++ (BOOL)active {
+	return _tweetViewController ? YES : NO;
+}
 
-- (void)setViewColors {
-	UIColor *textColor, *backgroundColor;
++ (void)dismiss {
+	[_tweetViewController dismissModalViewControllerAnimated:NO];
+	[_tweetViewController release];
+	_tweetViewController = nil;
+}
+
++ (void)present:(UIViewController*)parentViewController {
+	[NTLNTweetPostViewController dismiss];
+	NTLNTweetPostViewController *vc = [[[NTLNTweetPostViewController alloc] init] autorelease];
+	[parentViewController presentModalViewController:vc animated:NO];
+	_tweetViewController = [vc retain];
+}
+
+- (void)updateViewColors {
+	UIColor *textColor, *backgroundColor, *backgroundColorBottom;
 	if ([[NTLNConfiguration instance] darkColorTheme]) {
 		textColor = [UIColor whiteColor];
-		backgroundColor = [UIColor colorWithWhite:0.3f alpha:1.0f];
+		if ([[NTLNTwitterPost shardInstance] isDirectMessage]) {
+			backgroundColor = [UIColor colorWithRed:0.2f green:0.2f blue:0.5f alpha:1.f];
+		} else {
+			backgroundColor = [UIColor colorWithWhite:61.f/255.f alpha:1.0f];
+		}
+		backgroundColorBottom = [UIColor colorWithWhite:24.f/255.f alpha:1.0f];
 	} else {
 		textColor = [UIColor blackColor];
-		backgroundColor = [UIColor colorWithWhite:0.8f alpha:1.0f];
+		if ([[NTLNTwitterPost shardInstance] isDirectMessage]) {
+			backgroundColor = [UIColor colorWithRed:0.8f green:0.8f blue:1.f alpha:1.f];
+		} else {
+			backgroundColor = [UIColor colorWithWhite:252.f/255.f alpha:1.0f];
+		}
+		backgroundColorBottom = [UIColor colorWithWhite:200.f/255.f alpha:1.0f];
 	}
 	
-	self.view.backgroundColor = backgroundColor;
-	tweetTextView.textColor = textColor;
-	tweetTextView.backgroundColor = backgroundColor;
+	self.view.backgroundColor = backgroundColorBottom;//[UIColor blackColor];
+	
+	tweetPostView.textView.textColor = textColor;
+	tweetPostView.textView.backgroundColor = backgroundColor;
+	
+	if ([[NTLNTwitterPost shardInstance] replyMessage]) {
+		tweetPostView.backgroundColor = backgroundColorBottom;
+	} else {
+		tweetPostView.backgroundColor = backgroundColor;
+	}
 	
 	if ([[NTLNConfiguration instance] darkColorTheme]) {
 		// to use black keyboard appearance
-		tweetTextView.keyboardAppearance = UIKeyboardAppearanceAlert;
+		tweetPostView.textView.keyboardAppearance = UIKeyboardAppearanceAlert;
 	} else {
 		// to use default keyboard appearance
-		tweetTextView.keyboardAppearance = UIKeyboardAppearanceDefault;
+		tweetPostView.textView.keyboardAppearance = UIKeyboardAppearanceDefault;
 	}
 }
 
@@ -68,48 +110,46 @@
 	
 	[toolbar setItems:[NSArray arrayWithObjects:closeButton, clearButton, expand, sendButton, nil]];
 	
-	tweetTextView = [[UITextView alloc] initWithFrame:CGRectMake(0, 44, 320, 200)];
-	tweetTextView.font = [UIFont systemFontOfSize:16];
-	tweetTextView.delegate = self;
+	
+	tweetPostView = [[NTLNTweetPostView alloc] initWithFrame:CGRectMake(0, 44, 320, 200)];
+	tweetPostView.textViewDelegate = self;
 		
 	[self.view addSubview:toolbar];
-	[self.view addSubview:tweetTextView];
-	[self setViewColors];
+	[self.view addSubview:tweetPostView];
+	[self updateViewColors];
 }
 
-- (void)viewDidLoad {
-	[self setupViews];
-	
-	backupFilename = [[[NTLNCache createTextCacheDirectory] 
-						stringByAppendingString:@"postbackup.txt"] retain];
-	
-	NSData *d = [NTLNCache loadWithFilename:backupFilename];
-	if (d) {
-		tweetTextView.text = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+- (void)setMaxTextLength {
+	maxTextLength = 140;
+	NSString *footer = [[NTLNAccount instance] footer];
+	if (footer && [footer length] > 0 && 
+		! [[NTLNTwitterPost shardInstance] isDirectMessage]) {
+		maxTextLength -= [footer length] + 1;
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	// Return YES for supported orientations
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
+- (void)updateTextLengthView {
+	[self setMaxTextLength];
+	int len = [tweetPostView.textView.text length];
+	[textLengthView setText:[NSString stringWithFormat:@"%d", (maxTextLength-len)]];
+	if (len >= maxTextLength) {
+		textLengthView.textColor = [UIColor redColor];
+	} else {
+		textLengthView.textColor = [UIColor whiteColor];
+	}	
 }
 
-- (void)didReceiveMemoryWarning {
-	[super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
-	// Release anything that's not essential, such as cached data
-}
-
-- (void)setSuperView:(UIView*)view {
-	superView = view;
+- (void)viewDidLoad {
+	[self setMaxTextLength];
+	[self setupViews];
+	[self updateTextLengthView];
+	[super viewDidLoad];
 }
 
 - (void)dealloc {
-	[tweetTextView release];
+	LOG(@"NTLNTweetPostViewController dealloc");
+	[tweetPostView release];
 	[textLengthView release];
-	[reply_id release];
-	
-	[backupFilename release];
-	[tmpTextForInitial release];
 	[super dealloc];
 }
 
@@ -117,106 +157,38 @@
 	return YES;
 }
 
-- (void)savePost {
-	[NTLNCache saveWithFilename:backupFilename 
-						   data:[tweetTextView.text dataUsingEncoding:NSUTF8StringEncoding]];
+- (void)viewDidAppear:(BOOL)animated {
+	[self updateViewColors];
+	tweetPostView.textView.text = [[NTLNTwitterPost shardInstance] text];
+	[tweetPostView.textView becomeFirstResponder];
 }
 
-- (void)twitterClientSucceeded:(NTLNTwitterClient*)sender messages:(NSArray*)statuses {	
-	[tweetTextView setText:@""];
-	[self savePost];
-}
-
-- (void)twitterClientFailed:(NTLNTwitterClient*)sender {
-}
-
-- (void)twitterClientBegin:(NTLNTwitterClient*)sender {
-	NSLog(@"TweetPostView#twitterClientBegin");
-}
-
-- (void)twitterClientEnd:(NTLNTwitterClient*)sender {
-	NSLog(@"TweetPostView#twitterClientEnd");
-}
-
-- (void)createReplyPost:(NSString*)text reply_id:(NSString*)aReply_id {
-	NSString *tt = [text stringByAppendingString:@" "];
-	NSString *t = [tweetTextView text];
-	if (t == nil) {
-		t = tmpTextForInitial;
-	}
-	if (t && [t length] > 0) {
-		t = [t stringByAppendingString:tt];
-	} else {
-		t = tt;
-	}
-
-	if (tweetTextView == nil) {
-		tmpTextForInitial = [t retain];
-	} else {
-		[tweetTextView setText:t];
-	}
-	
-	[reply_id release];
-	reply_id = [aReply_id retain];
-}
-
-- (void)createDMPost:(NSString*)reply_to {
-	NSString *t = [NSString stringWithFormat:@"d %@ ", reply_to];
-	if (tweetTextView == nil) {
-		tmpTextForInitial = [t retain];
-	} else {
-		[tweetTextView setText:t];
-	}
-}
-
-- (void)showWindow {
-	active = YES;
-	[superView addSubview:self.view];
-	[self setViewColors];
-	if (tmpTextForInitial) {
-		[tweetTextView setText:tmpTextForInitial];
-		[tmpTextForInitial release];
-		tmpTextForInitial = nil;
-	}
-	[tweetTextView becomeFirstResponder];
-}
-
-- (void)closeWindow {
-	[self closeButtonPushed:self];
+- (void)viewWillDisappear:(BOOL)animated {
+	[tweetPostView.textView resignFirstResponder];
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
-	int len = [textView.text length];
-	[textLengthView setText:[NSString stringWithFormat:@"%d", (140-len)]];
-	if (len >= 140) {
-		textLengthView.textColor = [UIColor redColor];
-	} else {
-		textLengthView.textColor = [UIColor whiteColor];
-	}
-	
-	[self savePost];
+	[[NTLNTwitterPost shardInstance] updateText:tweetPostView.textView.text];
+	[self updateTextLengthView];
+	[self updateViewColors];
+	[tweetPostView updateQuoteView];
 }
 
 - (IBAction)closeButtonPushed:(id)sender {
-	[tweetTextView resignFirstResponder];
-	[self.view removeFromSuperview];
-	active = NO;
+	[tweetPostView.textView resignFirstResponder];
+	[NTLNTweetPostViewController dismiss];
 }
 
 - (IBAction)clearButtonPushed:(id)sender {
-	[tweetTextView setText:@""];
-	[reply_id release];
-	reply_id = nil;
-	[self savePost];
+	tweetPostView.textView.text = @""; // this will invoke textViewDidChange
 }
 
 - (IBAction)sendButtonPushed:(id)sender {
-	NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
-	[tc post:tweetTextView.text reply_id:reply_id];
+	[[NTLNTwitterPost shardInstance] updateText:tweetPostView.textView.text];
+	[[NTLNTwitterPost shardInstance] post];
 	
-	[tweetTextView resignFirstResponder];
-	[self.view removeFromSuperview];
-	active = NO;
+	[tweetPostView.textView resignFirstResponder];
+	[NTLNTweetPostViewController dismiss];
 }
 
 @end

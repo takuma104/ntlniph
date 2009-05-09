@@ -1,12 +1,12 @@
 #import <UIKit/UIKit.h>
 #import "NTLNTimelineViewController.h"
 
+@class NTLNFriendsViewController;
+
 @interface NTLNReplysViewController : NTLNTimelineViewController {
-	NSString *repliesXMLPath;
-	NSString *directMessageXMLPath;
+	NTLNFriendsViewController *friendsViewController;
 }
 
-- (NSMutableArray*)unreadStatuses;
-- (void)allRead;
+@property (readwrite, assign) NTLNFriendsViewController *friendsViewController;
 
 @end

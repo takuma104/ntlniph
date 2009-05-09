@@ -1,9 +1,11 @@
 #import "NTLNTimelineViewController.h"
 #import "NTLNConfiguration.h"
 #import "NTLNColors.h"
+#import "NTLNAppDelegate.h"
 
 @interface NTLNTimelineViewController(Private)
-- (UIView*)showMoreTweetView;
+- (UIView*)moreTweetView;
+- (UIView*)autopagerizeTweetView;
 - (UIView*)nowloadingView;
 
 @end
@@ -13,69 +15,59 @@
 
 #pragma mark Private
 
-- (UIView*)showMoreTweetView {
-	UIView *v = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)] autorelease];
-	v.backgroundColor = [UIColor blackColor];
+- (UIView*)nowloadingView {
 	
-	
-	UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 40)] autorelease];
-	label.text = @"Autopagerizing...";
-	label.font = [UIFont boldSystemFontOfSize:16];
-	label.textColor = [UIColor whiteColor];
-	label.textAlignment = UITextAlignmentCenter;
-	label.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-	label.backgroundColor =  [UIColor blackColor];
-	[v addSubview:label];
-	
-	UIActivityIndicatorView *ai = [[[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(60, 8, 24, 24)] autorelease];
-	ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
-	ai.hidesWhenStopped = YES;
-	autoloadActivityView = ai;
-	//	[ai startAnimating];
-	[v addSubview:ai];
-	
-	return v;
+	UIActivityIndicatorView *ai = [[[UIActivityIndicatorView alloc] 
+									initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge] 
+									autorelease];
+	[ai startAnimating];
+
+	CGSize s = ai.frame.size;
+	ai.frame = CGRectMake((320-s.width)/2, (368-s.height)/2, s.width, s.height); // !!
+	return ai;
 }
 
-- (UIView*)nowloadingView {
-	UIView *v = [[[UIView alloc] initWithFrame:CGRectMake(0, 160, 320, 40)] autorelease];
-	v.backgroundColor = [[NTLNColors instance] scrollViewBackground];
-	
-	UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 40)] autorelease];
-	label.text = @"Loading...";
-	label.font = [UIFont boldSystemFontOfSize:14];
-	label.textColor = [[NTLNColors instance] textForground];
-	label.textAlignment = UITextAlignmentCenter;
-	label.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
-	label.backgroundColor = [[NTLNColors instance] scrollViewBackground];
-	label.shadowColor = [[NTLNColors instance] textShadow];
-	label.shadowOffset = CGSizeMake(0, 1);	
-	[v addSubview:label];
-	
-	UIActivityIndicatorView *ai = [[[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(100, 8, 24, 24)] autorelease];
+- (void)setReloadButtonNormal:(BOOL)normal {
 	if ([[NTLNConfiguration instance] darkColorTheme]) {
-		ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+		if (normal) {
+			[headReloadButton setBackgroundImage:[UIImage imageNamed:@"reload_button_normal_b.png"] forState:UIControlStateNormal];
+			[headReloadButton setBackgroundImage:[UIImage imageNamed:@"reload_button_normal_b.png"] forState:UIControlStateHighlighted];
+		} else {
+			[headReloadButton setBackgroundImage:[UIImage imageNamed:@"reload_button_loading_b.png"] forState:UIControlStateNormal];
+			[headReloadButton setBackgroundImage:[UIImage imageNamed:@"reload_button_loading_b.png"] forState:UIControlStateHighlighted];
+		}
 	} else {
-		ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+		if (normal) {
+			[headReloadButton setBackgroundImage:[UIImage imageNamed:@"reload_button_normal.png"] forState:UIControlStateNormal];
+			[headReloadButton setBackgroundImage:[UIImage imageNamed:@"reload_button_pushed.png"] forState:UIControlStateHighlighted];
+		} else {
+			[headReloadButton setBackgroundImage:[UIImage imageNamed:@"reload_button_loading.png"] forState:UIControlStateNormal];
+			[headReloadButton setBackgroundImage:[UIImage imageNamed:@"reload_button_loading_pushed.png"] forState:UIControlStateHighlighted];
+		}
 	}
-	[ai startAnimating];
-	[v addSubview:ai];
-	
-	return v;
+}
+
+- (UIView*)reloadView {
+	UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
+	b.frame = CGRectMake(0, 0, 320, 55);
+	[b addTarget:self action:@selector(reloadButton:) forControlEvents:UIControlEventTouchUpInside];
+	headReloadButton = [b retain];
+	[self setReloadButtonNormal:YES];
+	return b;
 }
 
 - (void)setupTableView {
 	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-	footerShowMoreTweetView = [[self showMoreTweetView] retain];
+	self.tableView.tableHeaderView = [self reloadView];
 }
 
 - (void)setupNavigationBar {
-	
-	reloadButton = [[UIBarButtonItem alloc] 
+/*	reloadButton = [[UIBarButtonItem alloc] 
 					initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
 					target:self action:@selector(reloadButton:)];
 	
 	[[self navigationItem] setRightBarButtonItem:reloadButton];
+*/
 }
 
 - (void)insertNowloadingViewIfNeeds {
@@ -93,26 +85,49 @@
 	}
 }
 
-- (void)attachOrDetachAutopagerizeView {
-	if ([[NTLNConfiguration instance] showMoreTweetMode]) {
-		if (timeline.count >= 20 && self.tableView.tableFooterView == nil) {
-			self.tableView.tableFooterView = footerShowMoreTweetView;
-		}
-		//		if (self.tableView.tableFooterView && currentPage >= 10) {
-		//			self.tableView.tableFooterView = nil;
-		//		}
-	} else if (self.tableView.tableFooterView) {
-		self.tableView.tableFooterView = nil;
-	}
-}
-
 -(IBAction)reloadButton:(id)sender {
-	if (activeTwitterClient == nil) {
-		[self getTimelineWithPage:0 autoload:NO];
+	if (![timeline isClientActive]) {
+		[timeline getTimelineWithPage:0 autoload:NO];
 	} else {
-		[activeTwitterClient cancel];
+		[timeline clientCancel];
 	}
 }
 
+- (void)iconUpdate:(NSNotification*)sender {
+	NTLNIconContainer *container = (NTLNIconContainer*)sender.object;
+	NSArray *vc = [self.tableView visibleCells];
+	for (NTLNStatusCell *cell in vc) {
+		if (container == cell.status.message.iconContainer){
+			[cell updateIcon];
+		}
+	}
+}
+
+- (void)clearButton:(id)sender {
+	[timeline markAllAsRead];
+	[super.tableView reloadData];
+	[self updateBadge];
+}
+
+- (UIBarButtonItem*)clearButtonItem {
+	UIBarButtonItem *b = [[UIBarButtonItem alloc] 
+						  initWithImage:[UIImage imageNamed:@"checkmark.png"]
+//						  initWithImage:[UIImage imageNamed:@"unread_clear.png"]
+						  style:UIBarButtonItemStyleBordered 
+						  target:self action:@selector(clearButton:)];
+	[b autorelease];
+	return b;
+}
+
+- (void)setupClearButton {
+	if ([[NTLNConfiguration instance] lefthand]) {
+		[[self navigationItem] setRightBarButtonItem:[self clearButtonItem]];
+	} else {
+		if (! [(NTLNAppDelegate*)[[UIApplication sharedApplication] delegate] 
+				isInMoreTab:self]){
+			[[self navigationItem] setLeftBarButtonItem:[self clearButtonItem]];
+		}
+	}
+}
 
 @end

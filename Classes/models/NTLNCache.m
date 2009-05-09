@@ -12,7 +12,7 @@
 @implementation NTLNCache
 
 + (NSString*)createCacheDirectoryWithName:(NSString*)name {
-	NSString *path = [NSHomeDirectory() stringByAppendingString:@"/tmp"];
+	NSString *path = [NSHomeDirectory() stringByAppendingString:@"/Documents"];
 	[[NSFileManager defaultManager] createDirectoryAtPath:path attributes:nil];
 	path = [NSString stringWithFormat:@"%@/%@", path, name];
 	[[NSFileManager defaultManager] createDirectoryAtPath:path attributes:nil];
@@ -23,8 +23,8 @@
 	return [self createCacheDirectoryWithName:@"icon_cache"];
 }
 
-+ (NSString*)createXMLCacheDirectory {
-	return [self createCacheDirectoryWithName:@"xml_cache"];
++ (NSString*)createArchiverCacheDirectory {
+	return [self createCacheDirectoryWithName:@"archiver_cache"];
 }
 
 + (NSString*)createTextCacheDirectory {
@@ -32,7 +32,7 @@
 }
 
 + (void)saveWithFilename:(NSString*)filename data:(NSData*)data {
-//	NSLog(@"Write cache to:%@", filename);
+//	LOG(@"Write cache to:%@", filename);
 	[[NSFileManager defaultManager] createFileAtPath:filename contents:data attributes:nil];
 }
 
@@ -40,7 +40,7 @@
 	NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:filename];
 	NSData *ret = nil;
 	if (fh) {
-//		NSLog(@"Read cache from:%@", filename);
+//		LOG(@"Read cache from:%@", filename);
 		ret = [fh readDataToEndOfFile];
 		[fh closeFile];
 		//[ret retain];
@@ -51,7 +51,7 @@
 
 + (void)removeAllCachedData {
 	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createIconCacheDirectory] error:nil];
-	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createXMLCacheDirectory] error:nil];
+	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createArchiverCacheDirectory] error:nil];
 	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createTextCacheDirectory] error:nil];
 }
 

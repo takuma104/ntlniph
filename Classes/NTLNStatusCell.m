@@ -1,12 +1,14 @@
 #import "NTLNStatusCell.h"
 #import "NTLNColors.h"
 #import "NTLNIconRepository.h"
-#import "ntlniphAppDelegate.h"
+#import "NTLNAppDelegate.h"
 #import "NTLNTweetPostViewController.h"
 #import "NTLNConfiguration.h"
 #import "NTLNCellBackgroundView.h"
 #import "NTLNImages.h"
 #import "NTLNSelectedCellBackgroundView.h"
+#import "NTLNTwitterPost.h"
+#import "NSDateExtended.h"
 
 @implementation NTLNStatusCell
 
@@ -25,7 +27,7 @@
     textLabel.font = [NTLNStatusCell textFont];
     textLabel.numberOfLines = 10;
     textLabel.text = str;
-    CGRect bounds = CGRectMake(0, 0, 250.0, 300.0);
+    CGRect bounds = CGRectMake(0, 0, 256, 300.0);
     CGRect result = [textLabel textRectForBounds:bounds limitedToNumberOfLines:10];
 	CGFloat h = result.size.height;
 	[textLabel release];
@@ -34,7 +36,7 @@
 
 + (void)drawTexts:(NTLNStatus*)status selected:(BOOL)selected{
 	CGContextRef context = UIGraphicsGetCurrentContext();
-	CGFloat metaTextY = status.cellHeight - 16;
+	CGFloat metaTextY = status.cellHeight - 17;
 	
 	CGContextSetTextDrawingMode(context, kCGTextFill);
 	if (selected) {
@@ -42,8 +44,8 @@
 	} else {
 		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textForground].CGColor);
 	}
-
-	[status.message.text drawInRect:CGRectMake(48.0, 4.0, 250.0, status.textHeight) 
+	
+	[status.message.text drawInRect:CGRectMake(48.0, 4.0, 256, status.textHeight) 
 	 withFont:[NTLNStatusCell textFont]
 	 lineBreakMode:UILineBreakModeWordWrap];
 	
@@ -51,6 +53,7 @@
 		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textSelected].CGColor);
 	} else {
 		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textAnnotateForground].CGColor);
+		[[NTLNColors instance] textShadowBegin:context];
 	}
 	
 	NSString *name;
@@ -64,22 +67,20 @@
 	[name drawInRect:CGRectMake(48.0, metaTextY, 200.0, 12.0) 
 			withFont:[NTLNStatusCell metaFont]
 	   lineBreakMode:UILineBreakModeTailTruncation];
-	
-	char tmp[80];
-	time_t tt = [status.message.timestamp timeIntervalSince1970];
-	struct tm *t = localtime(&tt);
-	strftime(tmp, sizeof(tmp), "%H:%M:%S", t);
-	
-	NSString *timestamp = [NSString stringWithUTF8String:tmp];
-	
-	[timestamp drawInRect:CGRectMake(250.0, metaTextY, 100.0, 12.0) 
-				 withFont:[NTLNStatusCell metaFont]
-			lineBreakMode:UILineBreakModeTailTruncation];
+		
+	[[status.message.timestamp descriptionWithNTLNStyle] 
+				   drawInRect:CGRectMake(264.0, metaTextY, 100.0, 12.0) 
+					 withFont:[NTLNStatusCell metaFont]
+				lineBreakMode:UILineBreakModeTailTruncation];
+
+	if (!selected) {
+		[[NTLNColors instance] textShadowEnd:context];
+	}
 }
 
 - (UIColor*)colorForBackground {
 	UIColor *color = nil;
-	if (status) {
+	if (status && !disableColorize) {
 		switch (status.message.replyType) {
 			case NTLN_MESSAGE_REPLY_TYPE_REPLY:
 				color = [[NTLNColors instance] replyBackground];
@@ -110,12 +111,11 @@
 				 round:5.0] autorelease];
 	[self.contentView addSubview:iconView];	
 
-	
 	unreadView = [[[UIImageView alloc] initWithFrame:CGRectMake(300, 0, 16, 16)] autorelease];
 	unreadView.hidden = YES;
 	[self.contentView addSubview:unreadView];
 
-	self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	self.accessoryType = UITableViewCellAccessoryNone;
 	
 	NTLNSelectedCellBackgroundView *v = [[[NTLNSelectedCellBackgroundView alloc] initWithFrame:CGRectZero] autorelease];
 	v.status = status;
@@ -147,14 +147,13 @@
 }
 
 - (void)iconButtonPushed:(id)sender {
-	NSLog(@"reply to @%@", status.message.screenName);
-
-	NTLNAppDelegate* appDelegate = (NTLNAppDelegate*)[UIApplication sharedApplication].delegate;
+	LOG(@"reply to @%@", status.message.screenName);
 	
 	if (status.message.replyType == NTLN_MESSAGE_REPLY_TYPE_DIRECT) {
-		[appDelegate.tweetPostViewController createDMPost:status.message.screenName];
+		[[NTLNTwitterPost shardInstance] createDMPost:status.message.screenName withReplyMessage:status.message];
 	} else {
-		[appDelegate.tweetPostViewController createReplyPost:[@"@" stringByAppendingString:status.message.screenName] reply_id:status.message.statusId];
+		[[NTLNTwitterPost shardInstance] createReplyPost:[@"@" stringByAppendingString:status.message.screenName]
+										withReplyMessage:status.message];
 	}
 }
 
@@ -166,10 +165,8 @@
 	
 	isEven = iseven;
 	
-	CGFloat metaTextY = status.cellHeight - 16;
-	
 	if (status.message.favorited) {
-		CGRect r = CGRectMake(300, metaTextY-2, 16, 16);
+		CGRect r = CGRectMake(300, (status.cellHeight-16)/2, 16, 16);
 		if (starView == nil) {
 			starView = [[UIImageView alloc] initWithFrame:r];
 			starView.image = [[NTLNImages sharedInstance] starHilighted];
@@ -183,13 +180,15 @@
 		starView = nil;
 	}
 	
+	unreadView.frame = CGRectMake(302, 2, 16, 16);
+	
 	if ([[NTLNConfiguration instance] darkColorTheme]) {
 		unreadView.image = [[NTLNImages sharedInstance] unreadDark];
 	} else {
 		unreadView.image = [[NTLNImages sharedInstance] unreadLight];
 	}
 
-	UIImage *icon = status.message.icon;
+	UIImage *icon = status.message.iconContainer.iconImage;
 	if (icon == nil) {
 		icon = [NTLNIconRepository defaultIcon];
 	}
@@ -203,15 +202,21 @@
 	[self setNeedsDisplay];
 	
 	((NTLNSelectedCellBackgroundView*)self.selectedBackgroundView).status = status;
+	[(NTLNSelectedCellBackgroundView*)self.selectedBackgroundView setNeedsDisplay];
 }
 
 - (void)updateIcon {
-	[iconView setImage:status.message.icon];
+	[iconView setImage:status.message.iconContainer.iconImage];
 }
 
 - (void)drawRect:(CGRect)rect {
+//	[NTLNCellBackgroundView drawBackground:rect gradient:[[NTLNColors instance] timelineBackgroundGradient]];
 	[NTLNCellBackgroundView drawBackground:rect backgroundColor:[self colorForBackground]];
 	[NTLNStatusCell drawTexts:status selected:NO];
+}
+
+- (void)setDisableColorize {
+	disableColorize = YES;
 }
 
 

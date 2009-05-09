@@ -1,20 +1,14 @@
 #import "NTLNIconDownloader.h"
+#import "NTLNHttpClientPool.h"
 
 @implementation NTLNIconDownloader
 
+@synthesize delegate;
+
 - (void) dealloc {
-#ifdef DEBUG
-	NSLog(@"NTLNIconDownloader#dealloc");
-#endif
+	LOG(@"NTLNIconDownloader#dealloc");
 	[delegate release];
 	[super dealloc];
-}
-
-- (id)initWithDelegate:(NSObject<NTLNIconDownloaderDelegate>*)aDelegate {
-	self = [super init];
-	delegate = aDelegate;
-	[delegate retain];
-	return self;
 }
 
 - (void)download:(NSString*)url {
@@ -23,12 +17,12 @@
 
 - (void)requestSucceeded {
 	[delegate iconDownloaderSucceeded:self];
-	[self autorelease];
+	[[NTLNHttpClientPool sharedInstance] releaseClient:self];
 }
 
 - (void)requestFailed:(NSError*)error {
 	[delegate iconDownloaderFailed:self];
-	[self autorelease];
+	[[NTLNHttpClientPool sharedInstance] releaseClient:self];
 }
 
 @end

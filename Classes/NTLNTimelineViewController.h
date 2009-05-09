@@ -5,6 +5,7 @@
 #import "NTLNStatus.h"
 #import "NTLNStatusCell.h"
 #import "NTLNAccelerometerSensor.h"
+#import "NTLNTimeline.h"
 
 @class NTLNAppDelegate;
 @class NTLNLinkViewController;
@@ -13,50 +14,39 @@
 @class NTLNTweetPostViewController;
 
 @interface NTLNTimelineViewController : UITableViewController {
-
-	// Main
-	IBOutlet NTLNAppDelegate *appDelegate;
-	IBOutlet NTLNTweetPostViewController *tweetPostViewController;
-
-	// Timeline
-	NSMutableArray *timeline;
-
-	// Timer
-	NSTimer *_refreshTimer;
+	NTLNTimeline *timeline;
 	
 	// Read
-	int unread_count;
 	BOOL badge_enable;
-			
-	// Client
-	NTLNTwitterClient *activeTwitterClient;
-	BOOL always_read_tweets;
-	
-	// Cache
-	NSString *xmlCachePath;
 	
 	// View
 	BOOL enable_read;
-	UIBarButtonItem *reloadButton;
-	int currentPage;
-	UIView *footerShowMoreTweetView;
-	UIActivityIndicatorView *autoloadActivityView;
 	UIView *nowloadingView;
 	NSDate *lastReloadTime;
+	UIActivityIndicatorView *footerActivityIndicatorView;
+	BOOL evenInv;
 	
-	// Scroll
-	BOOL scrollMoved;	
-			
+	UIButton *headReloadButton;
+	
+	UIButton *moreButton;
+				
 	// Accerlerometer
 	UIView *tableViewSuperView;
-	CGRect tableViewOriginalFrame;			
+	CGRect tableViewOriginalFrame;		
+	
+	BOOL disableColorize;
+
+	// ReadTrack
+	int readTrackContinueCounter;
+	NSTimer *readTrackTimer;
+	
+	NSString *lastTopStatusId;
+	
 }
 
-@property(readwrite, assign) NTLNAppDelegate *appDelegate;
-@property(readwrite, assign) NTLNTweetPostViewController *tweetPostViewController;
+@property (readonly) NTLNTimeline *timeline;
 
 @end
-
 
 @interface NTLNTimelineViewController(Accerlerometer) <NTLNAccelerometerSensorDelegate>
 - (void)normalScreenTimeline;
@@ -68,53 +58,46 @@
 - (void)removeNowloadingView;
 - (void)setupTableView;
 - (void)setupNavigationBar;
-- (void)attachOrDetachAutopagerizeView;
+- (UIBarButtonItem*)clearButtonItem;
+- (void)setReloadButtonNormal:(BOOL)normal;
+- (void)setupClearButton;
 
 @end
 
-@interface NTLNTimelineViewController(Cache)
-- (void)initialCacheLoading;
-- (void)initialCacheLoading:(NSString*)name;
-- (void)saveCache:(NTLNTwitterClient*)sender filename:(NSString*)filename;
-- (void)saveCache:(NTLNTwitterClient*)sender;
-- (void)loadCacheWithFilename:(NSString*)fn;
-- (void)loadCache;
-
-@end
-
-@interface NTLNTimelineViewController(Timer)
-- (void)resetTimer;
-- (void)stopTimer;
-- (void)startTimer;
-- (void)timerExpired;
-
-@end
 
 @interface NTLNTimelineViewController(Scroll) <UIScrollViewDelegate>
 
 @end
 
-@interface NTLNTimelineViewController(Read) <NTLNStatusReadProtocol>
-- (void)checkCellRead;
+@interface NTLNTimelineViewController(Read)
+- (void)startReadTrackTimer;
+- (void)stopReadTrackTimer;
+- (BOOL)readTrackTimerActivated;
+- (void)updateBadge;
+- (BOOL)doReadTrack;
 
 @end
 
 @interface NTLNTimelineViewController(Post)
 - (void)setupPostButton;
+- (void)postButton:(id)sender;
 
 @end
 
-@interface NTLNTimelineViewController(Client) <NTLNTwitterClientDelegate, NTLNMessageIconUpdate>
-- (void)getTimelineWithPage:(int)page autoload:(BOOL)autoload;
-- (void)removeLastReloadTime; // !!
-
-@end
-
-@interface NTLNTimelineViewController(tableView) <UITableViewDataSource, UITableViewDelegate>
+@interface NTLNTimelineViewController(TableView) <UITableViewDataSource, UITableViewDelegate>
 - (CGFloat)cellHeightForIndex:(int)index;
 
 @end
 
+@interface NTLNTimelineViewController(Paging)
+- (void)autopagerize;
+- (void)updateFooterView;
+- (void)footerActivityIndicator:(BOOL)active;
+
+@end
+
+@interface NTLNTimelineViewController(Timeline) <NTLNTimelineDelegate>
+@end
 
 
 

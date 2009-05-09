@@ -3,34 +3,44 @@
 
 @implementation NTLNTimelineViewController(Scroll)
 
-#pragma mark Private
-
-- (void)Autopagerize {
-	if ([[NTLNConfiguration instance] showMoreTweetMode]) {
-		currentPage++;
-		if (currentPage < 2) currentPage = 2;
-		
-		[self stopTimer];
-		[self getTimelineWithPage:currentPage autoload:NO];
-		[self startTimer];
-	}
-}
-
 #pragma mark UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-	//	NSLog(@"scroll: %3.2f:%3.2f %3.2f:%3.2f", scrollView.contentOffset.x, scrollView.contentOffset.y, 
-	//		  scrollView.frame.size.width, scrollView.frame.size.height);
-	[self checkCellRead];
-	scrollMoved = YES;
-	
-	// autopagerize
-	if (activeTwitterClient == nil && self.tableView.tableFooterView != nil) {
-		const int offset = 0;
-		if (scrollView.contentOffset.y + scrollView.frame.size.height > scrollView.contentSize.height + offset) {
-			[self Autopagerize];
+	if (scrollView.contentOffset.y + scrollView.frame.size.height > scrollView.contentSize.height) {
+		if (![timeline isClientActive] && self.tableView.tableFooterView != nil) {
+			if ([[NTLNConfiguration instance] showMoreTweetMode]) {
+				[self autopagerize];
+			}
 		}
 	}
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+//	LOG(@"scrollViewWillBeginDragging");
+	if (! [self readTrackTimerActivated]) {
+		[NSObject cancelPreviousPerformRequestsWithTarget:self 
+												 selector:@selector(stopReadTrackTimer) 
+												   object:nil];
+		[self startReadTrackTimer];
+	}
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+	if (! decelerate) {
+//		LOG(@"scrollViewDidEndDragging");
+		[NSObject cancelPreviousPerformRequestsWithTarget:self 
+												 selector:@selector(stopReadTrackTimer) 
+												   object:nil];
+		[self performSelector:@selector(stopReadTrackTimer) withObject:nil afterDelay:2.0];
+	}
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+//	LOG(@"scrollViewDidEndDecelerating");
+	[NSObject cancelPreviousPerformRequestsWithTarget:self 
+											 selector:@selector(stopReadTrackTimer) 
+											   object:nil];
+	[self performSelector:@selector(stopReadTrackTimer) withObject:nil afterDelay:2.0];
 }
 
 

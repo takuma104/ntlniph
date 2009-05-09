@@ -21,14 +21,23 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.07</string>
+	<string>1.50</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleBlackOpaque</string>
-	<key>NSMainNibFile</key>
-	<string>MainWindow</string>
 	<key>UIPrerenderedIcon</key>
 	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>natsulion</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>org.natsulion.natsuliphoneprotocol</string>
+		</dict>
+	</array>
 </dict>
 </plist>

@@ -2,30 +2,34 @@
 #import "NTLNLinkViewController.h"
 #import "NTLNAccount.h"
 #import "NTLNConfiguration.h"
-#import "ntlniphAppDelegate.h"
+#import "NTLNAppDelegate.h"
 #import "NTLNTweetPostViewController.h"
-
-#define kLeftMargin				20.0
-#define kTopMargin				20.0
-#define kRightMargin			20.0
-#define kBottomMargin			20.0
-#define kTweenMargin			10.0
-#define kTextFieldHeight		30.0
+#import "NTLNReplysViewController.h"
+#import "NTLNHttpClientPool.h"
 
 #define TITLE_NAME @"NatsuLion for iPhone"
 
 @implementation NTLNFriendsViewController
 
+@synthesize replysViewController;
+
+- (id)init {
+	if (self = [super init]) {
+		BOOL loadArchive = ! [[NTLNConfiguration instance] showMoreTweetMode];
+		timeline = [[NTLNTimeline alloc] initWithDelegate:self 
+									  withArchiveFilename:@"friends_timeline.plist"
+										  withLoadArchive:loadArchive];
+		timeline.readTracker = YES;
+		timeline.autoRefresh = YES;
+	}
+	return self;
+}
+
 - (void)setupNavigationBar {
 	[super setupNavigationBar];
 	[super setupPostButton];
+	[super setupClearButton];
 	[self.navigationItem setTitle:TITLE_NAME];
-}
-
-- (void)initialCacheLoading {
-	[super initialCacheLoading:@"friends_timeline.xml"];
-	always_read_tweets = NO;
-	badge_enable = YES;
 }
 
 - (void) dealloc {
@@ -44,51 +48,36 @@
 	[super viewWillAppear:animated];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-	[super viewDidAppear:animated];
+- (void)timeline:(NTLNTimeline*)tl requestForPage:(int)page since_id:(NSString*)since_id {
+	NTLNTwitterClient *tc = [[NTLNHttpClientPool sharedInstance] 
+								idleClientWithType:NTLNHttpClientPoolClientType_TwitterClient];
+	tc.delegate = tl;
+	[tc getFriendsTimelineWithPage:page since_id:since_id];
 }
 
-- (void)loadCache {
-	if ( ! [[NTLNConfiguration instance] showMoreTweetMode]) {
-		[super loadCache];
-	}
-}
+- (void)timeline:(NTLNTimeline*)tl clientSucceeded:(NTLNTwitterClient*)client insertedStatuses:(NSArray*)statuses {
+	[super timeline:tl clientSucceeded:client insertedStatuses:statuses];
 
-/////////////////// timer
-
-- (void) timerExpired {
-	[self getTimelineWithPage:0 autoload:YES];
-}
-
-- (void)getTimelineImplWithPage:(int)page since_id:(NSString*)since_id {
-    if (!tweetPostViewController.active && appDelegate.applicationActive) {
-		NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
-		[tc getFriendsTimelineWithPage:page since_id:since_id];
-	}
-}
-
-// !! duplicated to replys view
-- (NSMutableArray*)unreadStatuses {
-	NSMutableArray *ret = [[NSMutableArray alloc] init];
-	@synchronized(timeline) {
-		for (NTLNStatus *s in timeline) {
-			if (s.message.status == NTLN_MESSAGE_STATUS_NORMAL) {
-				[ret addObject:[s retain]];
-			}
+	NSMutableArray *replies = [[NSMutableArray alloc] init];
+	for (NTLNStatus *s in statuses) {
+		if (s.message.replyType == NTLN_MESSAGE_REPLY_TYPE_REPLY || 
+			s.message.replyType == NTLN_MESSAGE_REPLY_TYPE_REPLY_PROBABLE) {
+			[replies addObject:s];
 		}
 	}
-	return ret;
+	if (replies.count > 0) {
+		[replysViewController.timeline appendStatuses:replies];
+		[replysViewController updateBadge];
+	}
+	[replies release];
 }
 
-// !! duplicated to replys view
-- (void)allRead {
-	@synchronized(timeline) {
-		for (NTLNStatus *s in timeline) {
-			s.message.status = NTLN_MESSAGE_STATUS_READ;
-		}
+- (BOOL)doReadTrack {
+	BOOL updated = [super doReadTrack];
+	if (updated) {
+		[replysViewController updateBadge];
 	}
-	unread_count = 0;
-	super.tabBarItem.badgeValue = nil;
+	return updated;
 }
 
 @end

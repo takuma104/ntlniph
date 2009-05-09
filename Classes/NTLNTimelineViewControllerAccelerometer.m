@@ -1,5 +1,6 @@
 #import "NTLNTimelineViewController.h"
 #import "NTLNTweetPostViewController.h"
+#import "NTLNAppDelegate.h"
 
 @implementation NTLNTimelineViewController(Accerlerometer)
 
@@ -7,10 +8,9 @@
 
 - (void)fullScreenTimeline {
 	if (tableViewSuperView == nil) {
-		if (tweetPostViewController.view.hidden == NO) {
-			[tweetPostViewController closeWindow];
+		if ([NTLNTweetPostViewController active]) {
+			[NTLNTweetPostViewController dismiss];
 		}
-		
 		tableViewSuperView = self.tableView.superview;
 		[self.tableView removeFromSuperview];
 		[[self tabBarController].view addSubview:self.tableView];

@@ -3,27 +3,33 @@
 
 @class NTLNIconContainer;
 
+/*
 @protocol NTLNIconDownloadDelegate
 - (void) finishedToGetIcon:(NTLNIconContainer*)sender;
 - (void) failedToGetIcon:(NTLNIconContainer*)sender;
 @end
+*/
 
 @interface NTLNIconContainer : NSObject <NTLNIconDownloaderDelegate>
 {
 	UIImage *iconImage;
-	NSMutableArray *delegates;
 	NSString *url;
 	BOOL downloading;
 }
 
 @property (readonly) UIImage *iconImage;
+@property (readonly) NSString *url;
 
-- (BOOL)requestForURL:(NSString*)url delegate:(NSObject<NTLNIconDownloadDelegate>*)delegate;
+
+- (id)initWithIconURL:(NSString*)url;
+- (BOOL)loadCache;
+- (void)requestDownload;
 
 @end
 
 @interface NTLNIconRepository : NSObject  {
     NSMutableDictionary *urlToContainer;
+	NSMutableArray *downloadQueue;
 	NSString *iconCacheRootPath;
 }
 
@@ -32,6 +38,9 @@
 + (NTLNIconRepository*) instance;
 + (UIImage*) defaultIcon;
 
-- (UIImage*)imageForURL:(NSString*)url delegate:(NSObject<NTLNIconDownloadDelegate>*)delegate;
+- (NTLNIconContainer*)iconContainerForURL:(NSString*)url;
+
++ (void)addObserver:(id)observer selectorSuccess:(SEL)success;
++ (void)removeObserver:(id)observer;
 
 @end

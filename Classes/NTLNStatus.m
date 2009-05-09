@@ -4,18 +4,33 @@
 #define SCROLLPOS_INIT_VALUE	(-10000)
 
 @implementation NTLNStatus
-@synthesize message, textHeight, cellHeight, statusRead;
+@synthesize message, textHeight, cellHeight;
+
+- (void)encodeWithCoder:(NSCoder*)coder {
+	[coder encodeFloat:cellHeight forKey:@"cellHeight"];
+	[coder encodeFloat:textHeight forKey:@"textHeight"];
+	[coder encodeObject:message forKey:@"message"];	
+}
+
+- (id)initWithCoder:(NSCoder*)decoder {
+	if (self = [super init]) {
+		cellHeight	= [decoder decodeFloatForKey:@"cellHeight"];
+		textHeight	= [decoder decodeFloatForKey:@"textHeight"];
+		message		= [[decoder decodeObjectForKey:@"message"] retain];
+	}
+	return self;
+}
 
 - (NTLNStatus*)initWithMessage:(NTLNMessage*)msg {
-	self = [super init];
-	message = msg;
-	[message retain];
-	[self setTextHeight:[NTLNStatusCell getTextboxHeight:msg.text]];
+	if (self = [super init]) {
+		message = msg;
+		[message retain];
+		[self setTextHeight:[NTLNStatusCell getTextboxHeight:msg.text]];
+	}
 	return self;
 }
 
 - (void)dealloc {
-	[self stopTimer];
 	[message release];
 	[super dealloc];
 }
@@ -31,40 +46,23 @@
 	cellHeight = height;
 }
 
-- (void)didAppearWithScrollPos {
-	if (! readTimer) {
-		readTimer = [[NSTimer scheduledTimerWithTimeInterval:2.0
-                                                      target:self
-                                                    selector:@selector(expireReadTimer)
-                                                    userInfo:nil
-                                                     repeats:NO] retain];
-	}
-}
-
-- (void)didDisapper {
-	[self stopTimer];
-}
-
-- (void)stopTimer {
-	if (readTimer) {
-		[readTimer invalidate];
-		[readTimer release];
-		readTimer = nil;
-	}
-}
-
-- (void)expireReadTimer {
-	[self stopTimer];
-	[self read];
-}
-
-- (void)read {
+- (BOOL)markAsRead {
 	if (message.status == NTLN_MESSAGE_STATUS_NORMAL) {
-		if ([statusRead scrollMoved]) {
-			message.status = NTLN_MESSAGE_STATUS_READ;
-			[statusRead decrementReadStatus:self];
-		}
+		message.status = NTLN_MESSAGE_STATUS_READ;
+		return YES;
 	}
+	return NO;
 }
+
+- (int)updateReadTrackCounter:(int)continueCounter {
+	if (continueCounter == readTrackContinueCounter + 1) {
+		readTrackCounter++;
+	} else {
+		readTrackCounter = 0;
+	}
+	readTrackContinueCounter = continueCounter;
+	return readTrackCounter;
+}
+
 
 @end

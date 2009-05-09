@@ -10,14 +10,21 @@
 #import "NTLNConfiguration.h"
 #import "NTLNColors.h"
 #import "NTLNCellBackgroundView.h"
+#import "NTLNAppDelegate.h"
+#import "NTLNIconTextCell.h"
+#import "NTLNLinkTweetCell.h"
+#import "NTLNCell.h"
+#import "NTLNTwitterPost.h"
+#import "NTLNUserViewController.h"
+#import "NSDateExtended.h"
+#import "NTLNConversationViewController.h"
+#import "NTLNImages.h"
+#import "NTLNHttpClientPool.h"
 
 #define TEXT_FONT_SIZE	16.0
 
-#define FAVBUTTON_DESTROY_FAV	@"Remove Favorite"
-#define FAVBUTTON_MAKE_FAV		@"Make Favorite"
-
 @implementation NTLNURLPair
-@synthesize url, text, screenName;
+@synthesize url, text, screenName, conversation;
 
 - (void)dealloc {
 	[url release];
@@ -27,9 +34,21 @@
 }
 @end
 
+
+@interface NTLNLinkViewController(Private)
+- (CGFloat)getTextboxHeight:(NSString *)str;
+- (UITableViewCell *)screenNameCell;
+- (UITableViewCell *)urlCell:(NTLNURLPair*)pair isEven:(BOOL)isEven;
+- (UITableViewCell *)nameCell;
+- (UITableViewCell *)tweetCell;
+- (void)parseToken;
+
+@end
+
+
 @implementation NTLNLinkViewController
 
-@synthesize message, appDelegate, tweetPostViewController;
+@synthesize message;
 
 - (void)setupTableView {
 	UITableView *tv = [[[UITableView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame] 
@@ -39,36 +58,47 @@
 	tv.autoresizesSubviews = YES;
 	tv.separatorStyle = UITableViewCellSeparatorStyleNone;
 	
-/*	
-	UIView *v = [[[UIView alloc] initWithFrame:CGRectMake(0, -10, 320, 10)] autorelease];
-	v.backgroundColor = [UIColor blueColor];
-	[tv addSubview:v];
-	
-	v = [[[UIView alloc] initWithFrame:CGRectMake(0, 300, 320, 10)] autorelease];
-	v.backgroundColor = [UIColor blueColor];
-	[tv addSubview:v];
-*/		
 	self.view = tv;
 }
 
 - (void)viewDidLoad {
 	[self setupTableView];
-	[urls release];
-	urls = [[NSMutableArray alloc] init];
 	((UITableView*)self.view).autoresizesSubviews = YES;
 	[self.navigationItem setTitle:@"Tweet"];
+}
+
+- (void)makeLinks {
+	if (links == nil) {
+		links = [[NSMutableArray alloc] init];
+
+		if (message.in_reply_to_status_id.length > 0) {
+			NTLNURLPair *pair = [[NTLNURLPair alloc] init];
+			pair.text = [NSString stringWithFormat:@"in reply to %@", message.in_reply_to_screen_name];
+			pair.conversation = YES;
+			[links addObject:pair];
+		}
+
+		NTLNURLPair *pair = [[NTLNURLPair alloc] init];
+		pair.text = message.screenName;
+		[links addObject:pair];
+		[self parseToken];
+	}
+}
+
+- (void)setupPostButton {
+	UIBarButtonItem *postButton = [[[UIBarButtonItem alloc] 
+									initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
+									target:self 
+									action:@selector(replyButtonAction:)] autorelease];
+	
+	[[self navigationItem] setRightBarButtonItem:postButton];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 	NSIndexPath *tableSelection = [(UITableView*)self.view indexPathForSelectedRow];
 	[(UITableView*)self.view deselectRowAtIndexPath:tableSelection animated:NO];
 	
-	[self parseToken];
-
-	[messageOwnerUrl release];
-	messageOwnerUrl = [[NTLNURLPair alloc] init];
-	messageOwnerUrl.url = [@"http://twitter.com/" stringByAppendingString:message.screenName];
-	messageOwnerUrl.text = [@"@" stringByAppendingString:message.screenName];
+	[self makeLinks];
 	
 	[(UITableView*)self.view reloadData];
 	
@@ -77,6 +107,10 @@
 		((UITableView*)self.view).indicatorStyle = UIScrollViewIndicatorStyleWhite;
 	} else {
 		((UITableView*)self.view).indicatorStyle = UIScrollViewIndicatorStyleBlack;
+	}
+
+	if (![[NTLNConfiguration instance] lefthand]) {
+		[self setupPostButton];
 	}
 }
 
@@ -88,14 +122,15 @@
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
 	// Release anything that's not essential, such as cached data
-	NSLog(@"NTLNLinkViewController#didReceiveMemoryWarning");
+	LOG(@"NTLNLinkViewController#didReceiveMemoryWarning");
 }
 
 - (void)dealloc {
-	NSLog(@"NTLNLinkViewController#dealloc");
-	[urls release];
-	[messageOwnerUrl release];
+	LOG(@"NTLNLinkViewController#dealloc");
+	[links release];
 	[message release];
+	[favAI release];
+	[favButton release];
 	[super dealloc];
 }
 
@@ -104,48 +139,56 @@
 	return nil;
 }
 
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-	if ([indexPath row] == 0) {
-		return 140 + [self getTextboxHeight:message.text];
+	switch ([indexPath row]) {
+		case 0:
+			return 70;
+		case 1:
+			return 70 + [self getTextboxHeight:message.text] + 12;
 	}
 	return 44;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return 2 + [urls count];
+	return 2 + [links count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	int row = [indexPath row];
+	NTLNCell *cell = nil;
 	switch(row)
 	{
 		case 0:
-			return [self screenNameCell];
+			cell = (NTLNCell*)[self nameCell];
+			break;
 		case 1:
-			return [self urlCell:messageOwnerUrl isEven:NO];
+			cell = (NTLNCell*)[self tweetCell];
+			break;
 		default:
-			return [self urlCell:[urls objectAtIndex:row-2] isEven:(row%2==0)];
+			cell = (NTLNCell*)[self urlCell:[links objectAtIndex:row-2] isEven:((row%2)==0)];
+			break;
 	}
+	
+	if (row >= [links count] + 1) {
+		cell.cellType = NTLNCellTypeRoundBottom;
+	}
+	
+	return cell;
 }
 
 - (void)switchToUserTimelineViewWithScreenName:(NSString*)screenName {
 	NTLNUserTimelineViewController *utvc = [[[NTLNUserTimelineViewController alloc] init] autorelease];
 	utvc.screenName = screenName;
-	utvc.appDelegate = appDelegate;
-	utvc.tweetPostViewController = tweetPostViewController;
 	[[self navigationController] pushViewController:utvc animated:YES];
 }
 
 - (void)switchToUserTimelineViewWithScreenNames:(NSArray*)screenNames {
 	NTLNUserTimelineViewController *utvc = [[[NTLNUserTimelineViewController alloc] init] autorelease];
 	utvc.screenNames = screenNames;
-	utvc.appDelegate = appDelegate;
-	utvc.tweetPostViewController = tweetPostViewController;
 	[[self navigationController] pushViewController:utvc animated:YES];
 }
 
@@ -153,170 +196,211 @@
 	if ([[NTLNConfiguration instance] useSafari]) {
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 	} else {
+		NTLNAppDelegate *appDelegate = (NTLNAppDelegate*)[UIApplication sharedApplication].delegate;
 		NTLNBrowserViewController *browser = appDelegate.browserViewController;
 		browser.url = url;
 		[[self navigationController] pushViewController:browser animated:YES];
 	}
 }
-	
-- (void)tableView:(UITableView *)tView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	NTLNURLPair *pair = nil;
-	int row = [indexPath row];
 
-	switch (row){
-		case 0:
-			break;
-		case 1:
+- (void)switchToUserViewWithScreenName:(NSString*)screenName {
+	NTLNUserViewController *vc = [[[NTLNUserViewController alloc] init] autorelease];
+	vc.message = message;
+	[[self navigationController] pushViewController:vc animated:YES];
+}
+
+- (void)switchToConversationView {
+	NTLNConversationViewController *vc = [[[NTLNConversationViewController alloc] init] autorelease];
+	vc.rootMessage = message;
+	[[self navigationController] pushViewController:vc animated:YES];
+}
+
+- (void)tableView:(UITableView *)tView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	int row = [indexPath row];
+	if (row == 0) {
+//		[self switchToUserViewWithScreenName:message.screenName];
+	} else if (row == 1) {
+		
+	} else {
+		NTLNURLPair *pair = [links objectAtIndex:row-2];
+		
+		if (pair.screenName) {
+			NSArray *names = [[NSArray alloc] initWithObjects:message.screenName, pair.screenName, nil];
+			[self switchToUserTimelineViewWithScreenNames:names];
+			[names release];
+		} else if (pair.url) {
+			[self switchToBrowserViewWithURL:pair.url];
+		} else if (pair.conversation) {
+			[self switchToConversationView];
+		} else {
 			[self switchToUserTimelineViewWithScreenName:message.screenName];
-			break;
-		default:
-			{
-				NTLNURLPair *up = [urls objectAtIndex:row-2];
-				if (up.screenName) {
-					NSArray *names = [[NSArray alloc] initWithObjects:message.screenName, up.screenName, nil];
-					[self switchToUserTimelineViewWithScreenNames:names];
-					[names release];
-				} else {
-					pair = up;
-				}
-			}
-			break;
-	}
-	
-	if (pair)
-	{
-		[self switchToBrowserViewWithURL:pair.url];
+		}		
 	}
 }
 
 - (void)favButtonAction:(id)sender {
-	NTLNTwitterClient *twitterClient = [[NTLNTwitterClient alloc] initWithDelegate:self];
+	NTLNTwitterClient *twitterClient = [[NTLNHttpClientPool sharedInstance] 
+							 idleClientWithType:NTLNHttpClientPoolClientType_TwitterClient];
+	twitterClient.delegate = self;
+
 	if (message.favorited) {
 		[twitterClient destroyFavoriteWithID:message.statusId];
 	} else {
 		[twitterClient createFavoriteWithID:message.statusId];
 	}
 	
-	[favButton setTitle:@"(sending...)" forState:UIControlStateNormal]; // to redraw
-	[favButton setTitle:@"(sending...)" forState:UIControlStateDisabled];
+	UIImage *buttonImage = nil;
+	if ([[NTLNConfiguration instance] darkColorTheme]) {
+		buttonImage = [UIImage imageNamed:@"pushed_black_04.png"];
+	} else {
+		buttonImage = [UIImage imageNamed:@"pushed_04.png"];
+	}
+	[favButton setBackgroundImage:buttonImage forState:UIControlStateNormal];
+	[favButton addSubview:favAI];
+	[favAI startAnimating];
 }
 
 - (void)replyButtonAction:(id)sender {
-	[[self navigationController].view addSubview:tweetPostViewController.view];
-	
 	if (message.replyType == NTLN_MESSAGE_REPLY_TYPE_DIRECT) {
-		[tweetPostViewController createDMPost:message.screenName];
+		[[NTLNTwitterPost shardInstance] createDMPost:message.screenName withReplyMessage:message];
 	} else {
-		[tweetPostViewController createReplyPost:[@"@" stringByAppendingString:message.screenName] reply_id:message.statusId];
+		[[NTLNTwitterPost shardInstance] createReplyPost:[@"@" stringByAppendingString:message.screenName] 
+										withReplyMessage:message];
 	}
-	
-	[tweetPostViewController showWindow];
+	[NTLNTweetPostViewController present:self.tabBarController];
+}
+
+- (void)retweetButtonAction:(id)sender {
+	[[NTLNTwitterPost shardInstance] updateText:[NSString stringWithFormat:@"RT @%@: %@", message.screenName, message.text]];
+	[NTLNTweetPostViewController present:self.tabBarController];
 }
 
 - (CGFloat)getTextboxHeight:(NSString *)str
 {
-	CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:TEXT_FONT_SIZE] constrainedToSize:CGSizeMake(290.0, 290.0)];
+	CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:TEXT_FONT_SIZE] 
+				  constrainedToSize:CGSizeMake(300.0, 280.0)];
 	CGFloat h = size.height;
-//	if (h < 26.0) return 26.0;
+	if (h < 20) return 20.0;
 	return h;
 }
 
-- (NSString*)favButtonText {
+- (UIImage*)favButtonImage{
 	if (message.favorited) {
-		return FAVBUTTON_DESTROY_FAV;
+		if ([[NTLNConfiguration instance] darkColorTheme]) {
+			return [UIImage imageNamed:@"normal_black_04_.png"];
+		} else {
+			return [UIImage imageNamed:@"normal_04_.png"];
+		}
 	} else {
-		return FAVBUTTON_MAKE_FAV;
+		if ([[NTLNConfiguration instance] darkColorTheme]) {
+			return [UIImage imageNamed:@"normal_black_04.png"];
+		} else {
+			return [UIImage imageNamed:@"normal_04.png"];
+		}
 	}
 }
 
-- (UITableViewCell *)screenNameCell {
-	UIColor *bgcolor = [[NTLNColors instance] evenBackground];
+- (UITableViewCell *)nameCell {	
+	NTLNLinkNameCell *cell = [[[NTLNLinkNameCell alloc] initWithFrame:CGRectZero] autorelease];
+	[cell createCellWithName:message.name screenName:message.screenName];
 
-	UITableViewCell *cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero] autorelease];
-		
-	UILabel *name = [[[UILabel alloc] initWithFrame:CGRectMake(76.0, 6.0, 230.0, 30.0)] autorelease];
-	name.font = [UIFont boldSystemFontOfSize:20.0];
-//	name.textColor = [UIColor grayColor];
-	name.backgroundColor = bgcolor;
-	name.lineBreakMode = UILineBreakModeTailTruncation;
-	name.adjustsFontSizeToFitWidth = YES;
-	name.textColor = [[NTLNColors instance] textForground];
-	name.text = message.name;
-	name.shadowColor = [[NTLNColors instance] textShadow];
-	name.shadowOffset = CGSizeMake(0, 1);
-	[cell.contentView addSubview:name];	
-
-	UILabel *name2 = [[[UILabel alloc] initWithFrame:CGRectMake(76.0, 6.0+30, 230.0, 20.0)] autorelease];
-	name2.font = [UIFont boldSystemFontOfSize:14.0];
-//	name2.textColor = [UIColor grayColor];
-	name2.backgroundColor = bgcolor;
-	name2.lineBreakMode = UILineBreakModeTailTruncation;
-	name2.textColor = [[NTLNColors instance] textForground];
-	name2.text = message.screenName;
-	name2.shadowColor = [[NTLNColors instance] textShadow];
-	name2.shadowOffset = CGSizeMake(0, 1);
-	[cell.contentView addSubview:name2];	
-	
 	NTLNRoundedIconView *iconview = [[[NTLNRoundedIconView alloc] 
-										initWithFrame:CGRectMake(10, 10.0, 56.0, 56.0) 
-												image:message.icon 
-												round:10.0] autorelease];
-	iconview.backgroundColor = bgcolor;
+									  initWithFrame:CGRectMake(6.5, 6.5, 56.0, 56.0) 
+									  image:message.iconContainer.iconImage 
+									  round:8.0] autorelease];
+	iconview.backgroundColor = [UIColor clearColor];
 	[iconview addTarget:self action:@selector(replyButtonAction:)
-		forControlEvents:UIControlEventTouchUpInside];
+	   forControlEvents:UIControlEventTouchUpInside];
 	[cell.contentView addSubview:iconview];	
-	
-	
-	CGFloat textHeight = [self getTextboxHeight:message.text];
-	
-	UILabel *text = [[[UILabel alloc] initWithFrame:CGRectMake(10.0, 76.0, 290.0, textHeight)] autorelease];
-	text.font = [UIFont systemFontOfSize:TEXT_FONT_SIZE];
-	//	text.textColor = [UIColor grayColor];
-	text.backgroundColor = bgcolor;
-	text.lineBreakMode = UILineBreakModeWordWrap;
-	text.textColor = [[NTLNColors instance] textForground];
-	text.text = message.text;
-	text.numberOfLines = 0;	
-	[cell.contentView addSubview:text];	
-	
-	
-	cell.accessoryType = UITableViewCellAccessoryNone;
+
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	cell.selectedTextColor = [UIColor whiteColor];
-		
+	cell.accessoryType = UITableViewCellAccessoryNone;
 	
-	{
-		UIButton *b = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-		[b setFrame:CGRectMake(20+145, 86 + textHeight, 145, 40)];
-		[b setTitle:[self favButtonText] forState:UIControlStateNormal];
-		[b addTarget:self action:@selector(favButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-		[cell addSubview:b];
-		favButton = b;
+	return cell;
+}
+
+- (UITableViewCell *)tweetCell {
+	CGFloat textHeight = [self getTextboxHeight:message.text];
+	NTLNLinkTweetCell *cell = [[[NTLNLinkTweetCell alloc] initWithFrame:CGRectZero] autorelease];
+
+	NSString *footer;
+	if (message.source.length > 0) {
+		footer = [NSString stringWithFormat:@"%@ from %@", [message.timestamp descriptionWithTwitterStyle], message.source];
+	} else {
+		footer = [message.timestamp descriptionWithTwitterStyle];
 	}
+	[cell createCellWithText:message.text footer:footer textHeight:textHeight];
+	
+	textHeight += 12;
+	
+	
+	UIImage *bimage[5];
+	if ([[NTLNConfiguration instance] darkColorTheme]) {
+		bimage[0] = [UIImage imageNamed:@"normal_black_03.png"];
+		bimage[1] = [UIImage imageNamed:@"pushed_black_03.png"];
+		bimage[2] = [UIImage imageNamed:@"pushed_black_04.png"];
+		bimage[3] = [UIImage imageNamed:@"normal_black_05.png"];
+		bimage[4] = [UIImage imageNamed:@"pushed_black_05.png"];
+	} else {
+		bimage[0] = [UIImage imageNamed:@"normal_03.png"];
+		bimage[1] = [UIImage imageNamed:@"pushed_03.png"];
+		bimage[2] = [UIImage imageNamed:@"pushed_04.png"];
+		bimage[3] = [UIImage imageNamed:@"normal_05.png"];
+		bimage[4] = [UIImage imageNamed:@"pushed_05.png"];
+	}
+		
+	int y = textHeight + 13*2;
 	{
-		UIButton *b = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-		[b setFrame:CGRectMake(10, 86 + textHeight, 145, 40)];
-		[b setTitle:@"Reply" forState:UIControlStateNormal];
+		UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
+		[b setFrame:CGRectMake(13, y, 100, 36)];
+		[b setBackgroundImage:bimage[0] forState:UIControlStateNormal];
+		[b setBackgroundImage:bimage[1] forState:UIControlStateHighlighted];
 		[b addTarget:self action:@selector(replyButtonAction:) forControlEvents:UIControlEventTouchUpInside];
 		[cell addSubview:b];
 	}
-	
-	cell.backgroundView = [[[NTLNCellBackgroundView alloc] initWithFrame:CGRectZero] autorelease];
-	cell.backgroundView.backgroundColor = bgcolor;
-	
+	{
+		UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
+		[b setFrame:CGRectMake(13+100, y, 97, 36)];
+		[b setBackgroundImage:[self favButtonImage] forState:UIControlStateNormal];
+		[b setBackgroundImage:bimage[2] forState:UIControlStateHighlighted];
+		[b addTarget:self action:@selector(favButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+		[cell addSubview:b];
+		favButton = [b retain];
+		
+		UIActivityIndicatorView *ai = [[[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(97/2-12, 36/2-12, 24, 24)] autorelease];
+		ai.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+		ai.hidesWhenStopped = YES;
+		favAI = [ai retain];
+	}
+	{
+		UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
+		[b setFrame:CGRectMake(13+100+97, y, 100, 36)];
+		[b setBackgroundImage:bimage[3] forState:UIControlStateNormal];
+		[b setBackgroundImage:bimage[4] forState:UIControlStateHighlighted];
+		[b addTarget:self action:@selector(retweetButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+		[cell addSubview:b];
+	}
+	cell.selectionStyle = UITableViewCellSelectionStyleNone;
+//	cell.cellType = NTLNCellTypeNoRound;
+//	cell.bgcolor = [[NTLNColors instance] oddBackground];
 	return cell;
 }
 
 - (UITableViewCell *)urlCell:(NTLNURLPair*)pair isEven:(BOOL)isEven {	
-	NTLNLinkCell *cell = [[[NTLNLinkCell alloc] initWithFrame:CGRectZero] autorelease];
-	[cell createCell:pair isEven:isEven];
+	NTLNIconTextCell *cell = [[[NTLNIconTextCell alloc] initWithFrame:CGRectZero] autorelease];
+	UIImage *icon = nil;
+	if (pair.screenName || pair.conversation) {
+		icon = [[NTLNImages sharedInstance] iconConversation];
+	} else if (pair.url != nil) {
+		icon = [[NTLNImages sharedInstance] iconURL];
+	} else {
+		icon = [[NTLNImages sharedInstance] iconChat];
+	}
+	[cell createCellWithText:pair.text icon:icon isEven:isEven];
 	return cell;
 }
 
 - (void)parseToken {
-	
-	[urls removeAllObjects];
-
 	NTLNURLUtils *utils = [NTLNURLUtils utils];
     NSArray *tokens = [utils tokenizeByAll:message.text];
 	int i;
@@ -326,15 +410,14 @@
 			NTLNURLPair *pair = [[NTLNURLPair alloc] init];
 			pair.text = token;
 			pair.url = token;
-			[urls addObject:pair];
+			[links addObject:pair];
 			[pair release];
 		} else if ([utils isIDToken:token] && 
 				   ! [message.screenName isEqualToString:[token substringFromIndex:1]]) {
 			NTLNURLPair *pair = [[NTLNURLPair alloc] init];
-			pair.text = [NSString stringWithFormat:@"@%@ + %@", message.screenName, token];
+			pair.text = [NSString stringWithFormat:@"%@ + %@", message.screenName, [token substringFromIndex:1]];
 			pair.screenName = [token substringFromIndex:1];
-			pair.url = [@"http://twitter.com/" stringByAppendingString:pair.screenName];
-			[urls addObject:pair];
+			[links addObject:pair];
 			[pair release];
         }
     }
@@ -342,88 +425,26 @@
 
 - (void)twitterClientSucceeded:(NTLNTwitterClient*)sender messages:(NSArray*)messages {
 	message.favorited = !message.favorited;
-	[favButton setTitle:[self favButtonText] forState:UIControlStateNormal];
+	[favButton setBackgroundImage:[self favButtonImage] forState:UIControlStateNormal];
+	[favAI stopAnimating];
+	[favAI removeFromSuperview];
 }
 
 - (void)twitterClientFailed:(NTLNTwitterClient*)sender {
-	[favButton setTitle:[self favButtonText] forState:UIControlStateNormal];
+	[favButton setBackgroundImage:[self favButtonImage] forState:UIControlStateNormal];
+	[favAI stopAnimating];
+	[favAI removeFromSuperview];
 }
 
 - (void)twitterClientBegin:(NTLNTwitterClient*)sender {
-	NSLog(@"LinkView#twitterClientBegin");
+	LOG(@"LinkView#twitterClientBegin");
 }
 
 - (void)twitterClientEnd:(NTLNTwitterClient*)sender {
-	NSLog(@"LinkView#twitterClientEnd");
+	LOG(@"LinkView#twitterClientEnd");
 }
 
 @end
 
 
-@implementation NTLNLinkCell
-
-+ (void)drawText:(NSString*)text selected:(BOOL)selected{
-	CGContextRef context = UIGraphicsGetCurrentContext();
-	
-	CGContextSetTextDrawingMode(context, kCGTextFill);
-	if (selected) {
-		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textSelected].CGColor);
-	} else {
-		CGContextSetFillColorWithColor(context, [[NTLNColors instance] textForground].CGColor);
-	}
-	
-	[text drawInRect:CGRectMake(10, 10, 280, 24)
-						withFont:[UIFont boldSystemFontOfSize:18]
-					lineBreakMode:UILineBreakModeTailTruncation];
-}	
-
-- (void)createCell:(NTLNURLPair*)aPair isEven:(BOOL)_isEven {
-	self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-
-	[pair release];
-	pair = [aPair retain];
-	isEven = _isEven;
-	
-	NTLNSelectedLinkCellBackground *v = [[[NTLNSelectedLinkCellBackground alloc] 
-										  initWithFrame:CGRectZero] autorelease];
-	v.pair = pair;
-	self.selectedBackgroundView = v;
-}
-
-- (void)dealloc {
-	[pair release];
-	[super dealloc];
-}
-
-- (void)drawRect:(CGRect)rect {
-	
-	UIColor *bgcolor;
-	if (isEven) {
-		bgcolor = [[NTLNColors instance] evenBackground];
-	} else {
-		bgcolor = [[NTLNColors instance] oddBackground];
-	}
-	
-	[NTLNCellBackgroundView drawBackground:rect backgroundColor:bgcolor];
-	[NTLNLinkCell drawText:pair.text selected:NO];
-}
-
-@end
-
-
-@implementation NTLNSelectedLinkCellBackground
-
-@synthesize pair;
-
-- (void)dealloc {
-	[pair release];
-	[super dealloc];
-}
-
-- (void)drawRect:(CGRect)rect {
-	[NTLNCellBackgroundView drawBackground:rect backgroundColor:[[NTLNColors instance] selectedBackground]];
-	[NTLNLinkCell drawText:pair.text selected:YES];
-}
-
-@end
 

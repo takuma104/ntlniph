@@ -4,10 +4,17 @@
 #import "NTLNConfiguration.h"
 #import "NTLNTwitterXMLReader.h"
 #import "NTLNAlert.h"
+#import "NTLNRateLimit.h"
+#import "NSDateExtended.h"
+#import "NTLNTwitterClientOperation.h"
+#import "NTLNTwitterClientOperationQueue.h"
+#import "NTLNTwitterXMLParser.h"
+#import "NTLNHttpClientPool.h"
 
 @implementation NTLNTwitterClient
 
 @synthesize requestPage, requestForDirectMessage;
+@synthesize delegate;
 
 /// private methods
 
@@ -15,12 +22,12 @@
 	return @"http://twitter.com/";
 }
 
-- (void)getTimeline:(NSString*)path page:(int)page count:(int)count since_id:(NSString*)since_id forceGet:(BOOL)forceGet {
+- (void)getTimeline:(NSString*)path page:(int)page count:(int)count since_id:(NSString*)since_id {
 	NSString* url = [NSString stringWithFormat:@"%@%@.xml?count=%d", 
 					 [NTLNTwitterClient URLForTwitterWithAccount], path, count];
 		
 	if (page >= 2) {
-		url = [NSString stringWithFormat:@"%@&page=%d", url, page];
+		url = [NSString stringWithFormat:@"%@&page=%d&max_id=%@", url, page, since_id];
 	} else if (since_id) {
 		url = [NSString stringWithFormat:@"%@&since_id=%@", url, since_id];
 	}
@@ -32,13 +39,8 @@
 	NSString *username = [[NTLNAccount instance] username];
 	NSString *password = [[NTLNAccount instance] password];
 
-	if ( !forceGet && [[NTLNConfiguration instance] usePost]) {
-		[super requestPOST:url body:nil username:username password:password];
-//		[super requestPOST:@"http://www.livedoor.com/" body:nil];
-	} else {
-		[super requestGET:url username:username password:password];
+	[super requestGET:url username:username password:password];
 //		[super requestGET:@"http://www.livedoor.com/"];
-	}
 	
 	[delegate twitterClientBegin:self];
 }
@@ -49,21 +51,43 @@
 	[super dealloc];
 }
 
+- (void)reset {
+	[super reset];
+	[xmlParser release];
+	xmlParser = [[NTLNTwitterXMLParser alloc] init];
+}
+
+- (void)connection:(NSURLConnection *)c didReceiveResponse:(NSURLResponse *)response {
+	[super connection:c didReceiveResponse:response];
+
+	if (rate_limit) {
+		[NTLNRateLimit shardInstance].rate_limit = rate_limit;
+		[NTLNRateLimit shardInstance].rate_limit_remaining = rate_limit_remaining;
+		[NTLNRateLimit shardInstance].rate_limit_reset = rate_limit_reset;
+	}
+}
+
+- (void)connection:(NSURLConnection *)c didReceiveData:(NSData *)data {
+	// don't use recievedData
+	if (statusCode == 200 && parseResultXML && contentTypeIsXml) {
+		[xmlParser parseXMLDataPartial:data];
+	}
+}
+
 - (void)requestSucceeded {
 
 	if (statusCode == 200) {
 		if (parseResultXML) {
-			if (contentTypeIsXml) {
-				NTLNTwitterXMLReader *xr = [[NTLNTwitterXMLReader alloc] init];
-				[xr parseXMLData:recievedData];
-				
-				if ([xr.messages count] > 0) {
-					[delegate twitterClientSucceeded:self messages:xr.messages];
+			if (contentTypeIsXml) {		
+
+				// finish parsing
+				[xmlParser parseXMLDataPartial:nil];
+				if (xmlParser.messages.count > 0) {
+					[delegate twitterClientSucceeded:self messages:xmlParser.messages];
 				} else {
 					[delegate twitterClientSucceeded:self messages:nil];
 				}
-				
-				[xr release];
+								
 			} else {
 				[[NTLNAlert instance] alert:@"Invaild XML Format" 
 								withMessage:@"Twitter responded invalid format message, or please check your network environment."];
@@ -72,9 +96,18 @@
 		} else {
 			[delegate twitterClientSucceeded:self messages:nil];
 		}
+				
 	} else {
 		if (statusCode != 304) {
 			switch (statusCode) {
+				case 400:
+					[[NTLNAlert instance] alert:@"Twitter: exceeded the rate limit" 
+									withMessage:[NSString 
+												 stringWithFormat:@"The client has exceeded the rate limit. Clients are allowed %d requests per hour time period. The period will be in %@.", 
+												 [NTLNRateLimit shardInstance].rate_limit,
+												 [[NTLNRateLimit shardInstance].rate_limit_reset descriptionWithRateLimitRemaining]]];
+					
+					break;
 				case 401:
 				case 403:
 					if (screenNameForUserTimeline) {
@@ -103,8 +136,11 @@
 		[delegate twitterClientFailed:self];
 	}
 	
+	[xmlParser release];
+	xmlParser = nil;
+
 	[delegate twitterClientEnd:self];
-	[self autorelease];
+	[[NTLNHttpClientPool sharedInstance] releaseClient:self];
 }
 
 - (void)requestFailed:(NSError*)error {
@@ -114,49 +150,46 @@
 	
 	[delegate twitterClientFailed:self];
 	[delegate twitterClientEnd:self];
-	[self autorelease];
+	[[NTLNHttpClientPool sharedInstance] releaseClient:self];
 }
 
 /// public interfaces
 
-- (id)initWithDelegate:(NSObject<NTLNTwitterClientDelegate>*)aDelegate {
-	self = [super init];
-	delegate = aDelegate;
-	[delegate retain];
-	return self;
-}
-
 - (void)getFriendsTimelineWithPage:(int)page since_id:(NSString*)since_id {
+	int count = [[NTLNConfiguration instance] fetchCount];
+	if (since_id && page < 2) count = 200;
 	[self getTimeline:@"statuses/friends_timeline" 
 				 page:page 
-				count:[[NTLNConfiguration instance] fetchCount] 
-			 since_id:since_id
-			 forceGet:NO];
+				count:count
+			 since_id:since_id];
 }
 
-- (void)getRepliesTimelineWithPage:(int)page {
+- (void)getRepliesTimelineWithPage:(int)page since_id:(NSString*)since_id {
+	int count = 20;
+	if (since_id && page < 2) count = 200;
 	[self getTimeline:@"statuses/replies" 
 				 page:page 
-				count:20 
-			 since_id:nil 
-			 forceGet:NO];
+				count:count 
+			 since_id:since_id];
 }
 
 - (void)getSentsTimelineWithPage:(int)page since_id:(NSString*)since_id {
+	int count = 20;
+	if (since_id && page < 2) count = 200;
 	[self getTimeline:@"statuses/user_timeline" 
 				 page:page 
-				count:20 
-			 since_id:since_id 
-			 forceGet:NO];
+				count:count 
+			 since_id:since_id];
 }
 
-- (void)getDirectMessagesWithPage:(int)page {
+- (void)getDirectMessagesWithPage:(int)page since_id:(NSString*)since_id{
+	int count = 20;
+	if (since_id && page < 2) count = 200;
 	requestForDirectMessage = YES;
 	[self getTimeline:@"direct_messages" 
 				 page:page 
-				count:20 
-			 since_id:nil 
-			 forceGet:YES];
+				count:count
+			 since_id:since_id];
 }
 
 - (void)getSentDirectMessagesWithPage:(int)page {
@@ -164,8 +197,7 @@
 	[self getTimeline:@"direct_messages/sent" 
 				 page:page 
 				count:20 
-			 since_id:nil 
-			 forceGet:YES];
+			 since_id:nil];
 }
 
 - (void)getUserTimelineWithScreenName:(NSString*)screenName page:(int)page since_id:(NSString*)since_id {
@@ -175,22 +207,27 @@
 	[self getTimeline:[NSString stringWithFormat:@"statuses/user_timeline/%@", screenName]
 				 page:page 
 				count:20 
-			 since_id:since_id
-			 forceGet:NO];
+			 since_id:since_id];
+}
+
+- (void)getStatusWithStatusId:(NSString*)statusId {
+	[self getTimeline:[NSString stringWithFormat:@"statuses/show/%@", statusId]
+				 page:1
+				count:20 
+			 since_id:nil];
 }
 
 - (void)post:(NSString*)tweet reply_id:(NSString*)reply_id {
 	NSString* url = [NSString stringWithFormat:@"%@statuses/update.xml", 
 						[NTLNTwitterClient URLForTwitterWithAccount]];
-    NSString *postString;
-	
-	if (reply_id == nil) {
-		postString = [NSString stringWithFormat:@"status=%@&source=NatsuLiphone", 
-								[NTLNXMLHTTPEncoder encodeHTTP:tweet]];
-	} else {
-		postString = [NSString stringWithFormat:@"status=%@&in_reply_to_status_id=%@&source=NatsuLiphone", 
-					  [NTLNXMLHTTPEncoder encodeHTTP:tweet],
-					  reply_id];
+	NSString *postString; 
+	if (reply_id == nil) { 
+		postString = [NSString stringWithFormat:@"status=%@&source=NatsuLiphone",  
+					  [NTLNXMLHTTPEncoder encodeHTTP:tweet]]; 
+	} else { 
+		postString = [NSString stringWithFormat:@"status=%@&in_reply_to_status_id=%@&source=NatsuLiphone",  
+					  [NTLNXMLHTTPEncoder encodeHTTP:tweet], 
+					  reply_id]; 
 	}
 	
 	NSString *username = [[NTLNAccount instance] username];
@@ -216,6 +253,13 @@
 	NSString *password = [[NTLNAccount instance] password];
 
 	[self requestPOST:url body:nil username:username password:password];
+}
+
+- (void)getFavoriteWithScreenName:(NSString*)screenName page:(int)page since_id:(NSString*)since_id{
+	[self getTimeline:[NSString stringWithFormat:@"favorites/%@", screenName]
+				 page:page 
+				count:20 
+			 since_id:since_id];
 }
 
 @end

@@ -8,17 +8,17 @@
 @synthesize recievedData, statusCode;
 
 - (id)init {
-	self = [super init];
-	recievedData = [[NSMutableData alloc] init];
+	if (self = [super init]) {
+		[self reset];
+	}
 	return self;
 }
 
 - (void)dealloc {
-#ifdef DEBUG
-	NSLog(@"NTLNHttpClient#dealloc");
-#endif
+	LOG(@"NTLNHttpClient#dealloc");
 	[connection release];
 	[recievedData release];
+	[rate_limit_reset release];
 	[super dealloc];
 }
 
@@ -63,9 +63,8 @@
 }
 
 + (NSString*) stringOfAuthorizationHeaderWithUsername:(NSString*)username password:(NSString*)password {
-    NSString *s = @"Basic ";
-    [s autorelease];
-    return [s stringByAppendingString:[NTLNHttpClient stringEncodedWithBase64:[NSString stringWithFormat:@"%@:%@", username, password]]];
+    return [@"Basic " stringByAppendingString:[NTLNHttpClient stringEncodedWithBase64:
+											   [NSString stringWithFormat:@"%@:%@", username, password]]];
 }
 
 - (NSMutableURLRequest*)makeRequest:(NSString*)url {
@@ -87,31 +86,35 @@
 	return request;
 }
 
+- (void)reset {
+	[recievedData release];
+	recievedData = [[NSMutableData alloc] init];
+	[connection release];
+	connection = nil;
+	[rate_limit_reset release];
+	rate_limit_reset = nil;
+	
+	statusCode = 0;	
+	contentTypeIsXml = NO;
+	
+	rate_limit = 0;
+	rate_limit_remaining = 0;
+}
+
 - (void)requestGET:(NSString*)url {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+	[self reset];
 	NSMutableURLRequest *request = [self makeRequest:url];
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
 
 - (void)requestGET:(NSString*)url username:(NSString*)username password:(NSString*)password {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+	[self reset];
 	NSMutableURLRequest *request = [self makeRequest:url username:username password:password];
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
-/*
-- (void)requestPOST:(NSString*)url body:(NSString*)body {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-	NSMutableURLRequest *request = [self makeRequest:url];
-    [request setHTTPMethod:@"POST"];
-	if (body) {
-		[request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
-	}
-	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-}
-*/
 
 - (void)requestPOST:(NSString*)url body:(NSString*)body username:(NSString*)username password:(NSString*)password {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+	[self reset];
 	NSMutableURLRequest *request = [self makeRequest:url username:username password:password];
     [request setHTTPMethod:@"POST"];
 	if (body) {
@@ -122,8 +125,8 @@
 
 - (void)cancel {
 	[connection cancel];
+	[self reset];
 	[self requestFailed:nil];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void)requestSucceeded {
@@ -139,7 +142,9 @@
 }    
 */
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-    statusCode = [(NSHTTPURLResponse*)response statusCode];
+//    NSLog(@"didReceiveResponse");
+	
+	statusCode = [(NSHTTPURLResponse*)response statusCode];
 	NSDictionary *header = [(NSHTTPURLResponse*)response allHeaderFields];
 
 	contentTypeIsXml = NO;
@@ -150,20 +155,37 @@
 			contentTypeIsXml = YES;
 		}
 	}
+
+/*	for (NSString *s in [header allKeys]) {
+		LOG(@"header: %@", s);
+	}
+*/	
+	NSString *rateLimit = [header objectForKey:@"X-Ratelimit-Limit"];
+	NSString *rateLimitRemaining = [header objectForKey:@"X-Ratelimit-Remaining"];
+	NSString *rateLimitReset = [header objectForKey:@"X-Ratelimit-Reset"];
+	if (rateLimit && rateLimitRemaining) {
+		rate_limit = [rateLimit intValue];
+		rate_limit_remaining = [rateLimitRemaining intValue];
+		rate_limit_reset = [[NSDate dateWithTimeIntervalSince1970:[rateLimitReset intValue]] retain];
+		LOG(@"rate_limit: %d rate_limit_remaining:%d",rate_limit, rate_limit_remaining);
+	}
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+//    NSLog(@"didReceiveData");
     [recievedData appendData:data];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+//    NSLog(@"connectionDidFinishLoading");
 	[self requestSucceeded];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+	[self reset];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError*) error {
+//    NSLog(@"didFailWithError");
 	[self requestFailed:error];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+	[self reset];
 }
 
 @end

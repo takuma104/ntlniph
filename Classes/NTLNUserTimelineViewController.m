@@ -1,19 +1,26 @@
 #import "NTLNUserTimelineViewController.h"
 #import "NTLNAccount.h"
 #import "NTLNConfiguration.h"
+#import "NTLNHttpClientPool.h"
+#import "NTLNTwitterPost.h"
 
 @implementation NTLNUserTimelineViewController
 
 @synthesize screenName, screenNames;
 
-- (void)dealloc {
-	NSLog(@"NTLNUserTimelineViewController#dealloc");
-	[super dealloc];
+- (id)init {
+	if (self = [super init]) {
+		timeline = [[NTLNTimeline alloc] initWithDelegate:self 
+									  withArchiveFilename:nil];
+	}
+	return self;
 }
 
-- (void)viewDidLoad {	
-	always_read_tweets = TRUE;
-	[super viewDidLoad];
+- (void)dealloc {
+	LOG(@"NTLNUserTimelineViewController#dealloc");
+	[screenName release];
+	[screenNames release];
+	[super dealloc];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -31,37 +38,51 @@
 	}
 	
 	[self.navigationItem setTitle:title];
+	
+	if (![[NTLNConfiguration instance] lefthand]) {
+		[super setupPostButton];
+	}
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-	[super viewDidAppear:animated];
-}
-
-- (void)getTimelineImplWithPage:(int)page since_id:(NSString*)since_id {
+- (void)timeline:(NTLNTimeline*)tl requestForPage:(int)page since_id:(NSString*)since_id {
 	if (screenNames) {
 		for (NSString *n in screenNames) {
-			NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
+			NTLNTwitterClient *tc = [[NTLNHttpClientPool sharedInstance] 
+									 idleClientWithType:NTLNHttpClientPoolClientType_TwitterClient];
+			tc.delegate = tl;
 			[tc getUserTimelineWithScreenName:n page:page since_id:since_id];
 		}
 	} else {
-		NTLNTwitterClient *tc = [[NTLNTwitterClient alloc] initWithDelegate:self];
+		NTLNTwitterClient *tc = [[NTLNHttpClientPool sharedInstance] 
+								 idleClientWithType:NTLNHttpClientPoolClientType_TwitterClient];
+		tc.delegate = tl;
 		[tc getUserTimelineWithScreenName:screenName page:page since_id:since_id];
 	}
 }
 
-- (void)twitterClientSucceeded:(NTLNTwitterClient*)sender messages:(NSArray*)statuses {
+- (void)timeline:(NTLNTimeline*)tl clientSucceeded:(NTLNTwitterClient*)client insertedStatuses:(NSArray*)statuses {
+	[super timeline:tl clientSucceeded:client insertedStatuses:statuses];
+
 	if (screenNames) {
-		NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
-		for (NTLNMessage *m in statuses) {
-			for (NSString *n in screenNames) {
-				[m hilightUserReplyWithScreenName:n];
-			}
-			[array addObject:m];
+		for (NSString *n in screenNames) { 
+			[timeline hilightByScreenName:n];
 		}
-		statuses = array;
 	}
-	
-	[super twitterClientSucceeded:sender messages:statuses];
 }
+
+- (void)postButton:(id)sender {
+	NSString *txt = nil;
+	if (screenName) {
+		txt = [@"@" stringByAppendingString:screenName];
+	} else if (screenNames.count == 2){
+		txt = [NSString stringWithFormat:@"@%@ @%@", 
+			 [screenNames objectAtIndex:0],
+			 [screenNames objectAtIndex:1]];
+	}
+
+	[[NTLNTwitterPost shardInstance] createReplyPost:txt withReplyMessage:nil];
+	[super postButton:sender];
+}
+
 @end
 

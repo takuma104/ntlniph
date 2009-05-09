@@ -18,7 +18,7 @@
 
 - (void)dealloc
 {
-	NSLog(@"NTLNBrowserViewController#dealloc");
+	LOG(@"NTLNBrowserViewController#dealloc");
 	[myWebView release];
 	[reloadButton release];
 	[urlLabel release];
@@ -112,12 +112,13 @@
 - (void)viewWillDisappear:(BOOL)animated {
 	[NTLNAccelerometerSensor sharedInstance].delegate = nil;
 	shown = NO;
-	[myWebView loadHTMLString:nil baseURL:nil];
+	myWebView.delegate = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
 	shown = YES;
 	urlLabel.text = url;
+	myWebView.delegate = self;
 	[myWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
 	[NTLNAccelerometerSensor sharedInstance].delegate = self;
 }
@@ -162,5 +163,9 @@
 	[self toggleFullScreenTimeline];
 }
 
+- (void)didReceiveMemoryWarning {
+	[myWebView stopLoading];
+	[super didReceiveMemoryWarning];
+}
 
 @end

@@ -5,19 +5,10 @@
 
 #pragma mark Private
 
-- (NTLNStatus*)timelineStatusAtIndex:(int)index {
-	int cnt = [timeline count];
-	if (index >= 0 && cnt > index) {
-		return [timeline objectAtIndex:index];
-	}
-	return nil;
-}
-
 - (CGFloat)cellHeightForIndex:(int)index {
-	NTLNStatus *s = [self timelineStatusAtIndex:index];	
+	NTLNStatus *s = [timeline statusAtIndex:index];	
 	return s.cellHeight;
 }
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -41,24 +32,19 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	NTLNStatus *s = nil;
-	int n = 0;
-	@synchronized(timeline) {
-		s = [self timelineStatusAtIndex:[indexPath row]];
-		n = [timeline count];
-	}
-	
-	BOOL isEven = ([indexPath row] % 2 == 0);
-	if (n % 2 == 1) isEven = !isEven;
+	int row = [indexPath row];
+	NTLNStatus *s = [timeline statusAtIndex:row];
+	BOOL isEven = [timeline isEven:row];
 	
 	NTLNStatusCell *cell = (NTLNStatusCell*)[tv dequeueReusableCellWithIdentifier:CELL_RESUSE_ID];
-	//	NTLNTweetCell *cell = (NTLNTweetCell*)[tv dequeueReusableCellWithIdentifier:CELL_RESUSE_ID];
 	if (cell == nil) {
 		cell = [[[NTLNStatusCell alloc] initWithIsEven:isEven] autorelease];
-		//		cell = [[[NTLNTweetCell alloc] initWithFrame:CGRectZero reuseIdentifier:CELL_RESUSE_ID] autorelease];
 	}
 	
-	[s.message setIconUpdateDelegate:self];
+	if (disableColorize) {
+		[cell setDisableColorize];
+	}
+	
 	[cell updateCell:s isEven:isEven];
 	return cell;
 }
@@ -69,13 +55,11 @@
 	
 	NTLNStatus *s = nil;
 	@synchronized(timeline) {
-		s = [self timelineStatusAtIndex:[indexPath row]];
+		s = [timeline statusAtIndex:[indexPath row]];
 	}
 	
 	NTLNLinkViewController *lvc = [[[NTLNLinkViewController alloc] 
 									init] autorelease];
-	lvc.appDelegate = appDelegate;
-	lvc.tweetPostViewController = tweetPostViewController;
 	lvc.message = s.message;
 	[[self navigationController] pushViewController:lvc animated:YES];
 }

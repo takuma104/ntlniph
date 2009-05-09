@@ -1,5 +1,7 @@
 #import "NTLNTimelineViewController.h"
 #import "NTLNTweetPostViewController.h"
+#import "NTLNAppDelegate.h"
+#import "NTLNConfiguration.h"
 
 @implementation NTLNTimelineViewController(Post)
 
@@ -11,11 +13,21 @@
 									target:self 
 									action:@selector(postButton:)] autorelease];
 	
-	[[self navigationItem] setLeftBarButtonItem:postButton];
+
+	if ([[NTLNConfiguration instance] lefthand]) {
+		if (! [(NTLNAppDelegate*)[[UIApplication sharedApplication] delegate] 
+			   isInMoreTab:self]){
+			[[self navigationItem] setLeftBarButtonItem:postButton];
+		}
+		[[self navigationItem] setRightBarButtonItem:nil];
+	} else {
+		[[self navigationItem] setLeftBarButtonItem:nil];
+		[[self navigationItem] setRightBarButtonItem:postButton];
+	}
 }
 
 - (void)postButton:(id)sender {
-	[tweetPostViewController showWindow];
+	[NTLNTweetPostViewController present:self.tabBarController];
 }
 
 @end

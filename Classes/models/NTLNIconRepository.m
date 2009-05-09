@@ -1,13 +1,17 @@
 #import "NTLNIconRepository.h"
 #import "NTLNCache.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "NTLNHttpClientPool.h"
 
 static UIImage *default_icon = nil;
 static NTLNIconRepository *_instance = nil;
 
+#define ICON_FETCH_NOTIFICATION	@"ICON_FETCH_NOTIFICATION"
+
 @implementation NTLNIconContainer
 
 @synthesize iconImage;
+@synthesize url;
 
 + (NSString*)md5:(NSString*) str {
 	const char *cStr = [str UTF8String];
@@ -25,10 +29,10 @@ static NTLNIconRepository *_instance = nil;
 			result[14], result[15]];
 }
 
-
-- (id)init {
-	self = [super init];
-	delegates = [[NSMutableArray alloc] init];
+- (id)initWithIconURL:(NSString*)theUrl {
+	if (self = [super init]) {
+		url = [theUrl retain];
+	}
 	return self;
 }
 
@@ -46,58 +50,44 @@ static NTLNIconRepository *_instance = nil;
 
 - (void)dealloc {
 	[iconImage release];
-	[delegates release];
 	[url release];
 	[super dealloc];
 }
 
-- (BOOL)requestForURL:(NSString*)aUrl delegate:(NSObject<NTLNIconDownloadDelegate>*)delegate {
-	NSData *cached = [NTLNIconContainer readFromCacheFileForURL:aUrl];
+- (BOOL)loadCache {
+	NSData *cached = [NTLNIconContainer readFromCacheFileForURL:url];
 	if (cached) {
 		[iconImage release];
 		iconImage = [[UIImage alloc] initWithData:cached];
-#ifdef DEBUG
-		NSLog(@"Cached: %@", aUrl);
-#endif
+		LOG(@"Cached: %@", url);
 		return YES;
-	} else {
-		if (!downloading) {
-			downloading = YES;
-			[url release];
-			url = aUrl;
-			[url retain];
-			NTLNIconDownloader *downloader = [[NTLNIconDownloader alloc] initWithDelegate:self];
-			[downloader download:aUrl];
-#ifdef DEBUG
-			NSLog(@"Icon fetch: %@", aUrl);
-#endif
-		}
-		[delegates addObject:delegate];
 	}
-	return FALSE;
+	return NO;
+}
+
+- (void)requestDownload {
+	if (!downloading) {
+		downloading = YES;
+		NTLNIconDownloader *downloader = [[NTLNHttpClientPool sharedInstance] idleClientWithType:NTLNHttpClientPoolClientType_IconDownloader];
+		downloader.delegate = self;
+		[downloader download:url];
+		LOG(@"Icon fetch: %@", url);
+	}
 }
 
 - (void)iconDownloaderSucceeded:(NTLNIconDownloader*)sender {
 	[iconImage release];
 	iconImage = [[UIImage alloc] initWithData:sender.recievedData];
 	[NTLNIconContainer writeAsCacheFileForURL:url data:sender.recievedData];
-	[url release];
-	url = nil;
 	downloading = NO;
-	for (NSObject<NTLNIconDownloadDelegate>* d in delegates) {
-		[d finishedToGetIcon:self];
-	}
-	[delegates removeAllObjects];
+
+	NSNotification *notification = [NSNotification notificationWithName:ICON_FETCH_NOTIFICATION
+																 object:self];
+	[[NSNotificationCenter defaultCenter] postNotification:notification];
 }
 
 - (void)iconDownloaderFailed:(NTLNIconDownloader*)sender {
-	[url release];
-	url = nil;
 	downloading = NO;
-	for (NSObject<NTLNIconDownloadDelegate>* d in delegates) {
-		[d failedToGetIcon:self];
-	}
-	[delegates removeAllObjects];
 }
 
 @end
@@ -123,31 +113,71 @@ static NTLNIconRepository *_instance = nil;
 	return default_icon;
 }
 
-- (id) init {
-	self = [super init];
-    urlToContainer = [[NSMutableDictionary alloc] initWithCapacity:100];
-	iconCacheRootPath = [NTLNCache createIconCacheDirectory];
-	[iconCacheRootPath retain];
+- (id)init {
+	if (self = [super init]) {
+		urlToContainer = [[NSMutableDictionary alloc] initWithCapacity:100];
+		iconCacheRootPath = [NTLNCache createIconCacheDirectory];
+		[iconCacheRootPath retain];
+		downloadQueue = [[NSMutableArray alloc] init];
+		[[NTLNHttpClientPool sharedInstance] addIdleClientObserver:self selector:@selector(processDownloadQueue)];
+	}
     return self;
 }
 
-- (void) dealloc {
+- (void)dealloc {
 	[urlToContainer release];
 	[iconCacheRootPath release];
+	[downloadQueue release];
+	[[NTLNHttpClientPool sharedInstance] removeIdleClientObserver:self];
 	[super dealloc];
 }
 
-- (UIImage*)imageForURL:(NSString*)url delegate:(NSObject<NTLNIconDownloadDelegate>*)delegate {
+- (NTLNIconContainer*)iconContainerForURL:(NSString*)url {
 	NTLNIconContainer *container = [urlToContainer objectForKey:url];
 	if (!container) {
-		container = [[NTLNIconContainer alloc] init];
+		container = [[NTLNIconContainer alloc] initWithIconURL:url];
 		[urlToContainer setObject:container forKey:url];
 		[container release];
 	}
-	if (container.iconImage || [container requestForURL:url delegate:delegate]) {
-		return container.iconImage;
+	if (container.iconImage) {
+		return container;
 	}
-	return nil;
+	if ([container loadCache]) {
+		return container;
+	}
+
+	@synchronized (self){
+		[downloadQueue addObject:container];
+	}
+	[self performSelectorOnMainThread:@selector(processDownloadQueue) 
+						   withObject:nil 
+						waitUntilDone:NO];
+	return container;
+}
+
++ (void)addObserver:(id)observer selectorSuccess:(SEL)success {
+	[[NSNotificationCenter defaultCenter] addObserver:observer 
+											 selector:success 
+												 name:ICON_FETCH_NOTIFICATION 
+											   object:nil];
+}
+
++ (void)removeObserver:(id)observer {
+	[[NSNotificationCenter defaultCenter] removeObserver:observer];
+}
+
+- (void)processDownloadQueue {
+	@synchronized (self) {
+		if (downloadQueue.count > 0) {
+			int cnt = [[NTLNHttpClientPool sharedInstance] activeClientCountWithType:
+					   NTLNHttpClientPoolClientType_IconDownloader];
+			if (cnt < 5) {
+				NTLNIconContainer* container = [downloadQueue objectAtIndex:0];
+				[container requestDownload];
+				[downloadQueue removeObjectAtIndex:0];
+			}
+		}
+	}
 }
 
 @end

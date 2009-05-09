@@ -12,7 +12,8 @@
 	NSObject<NTLNIconDownloaderDelegate> *delegate;
 }
 
-- (id)initWithDelegate:(NSObject<NTLNIconDownloaderDelegate>*)delegate;
+@property (readwrite, retain) NSObject<NTLNIconDownloaderDelegate> *delegate;
+
 - (void)download:(NSString*)url;
 
 @end

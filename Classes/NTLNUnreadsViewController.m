@@ -1,40 +1,35 @@
 #import "NTLNUnreadsViewController.h"
 #import "NTLNFriendsViewController.h"
 #import "NTLNReplysViewController.h"
+#import "NTLNDirectMessageViewController.h"
 
 @implementation NTLNUnreadsViewController
 
-@synthesize friendsViewController, replysViewController;
+@synthesize friendsViewController, replysViewController, directMessageViewController;
 
 - (void)dealloc {
+	[friendsViewController release];
+	[replysViewController release];
+	[directMessageViewController release];
 	[super dealloc];
 }
 
 - (void)setupNavigationBar {
-	
-	UIBarButtonItem *b = [[UIBarButtonItem alloc] 
-					initWithImage:[UIImage imageNamed:@"unread_clear.png"]
-					style:UIBarButtonItemStyleBordered 
-					target:self action:@selector(clearButton:)];
-	[b autorelease];
-	[[self navigationItem] setRightBarButtonItem:b];
+	[[self navigationItem] setRightBarButtonItem:[self clearButtonItem]];
 	[self.navigationItem setTitle:@"Unreads"];
-	[super setupPostButton];
+//	[super setupPostButton];
 }
 
-- (void)viewDidLoad {	
-	always_read_tweets = TRUE;
-	[super viewDidLoad];
-}
-
-- (void) getTimeline {
-}
 
 - (void)viewWillAppear:(BOOL)animated {
 	[timeline release];
-	timeline = [[friendsViewController unreadStatuses] retain];
-	
-	[timeline addObjectsFromArray:[replysViewController unreadStatuses]];
+	timeline = [[NTLNTimeline alloc] initWithDelegate:self 
+								  withArchiveFilename:nil];
+	timeline.readTracker = YES;
+
+	[timeline appendStatuses:[friendsViewController.timeline unreadStatuses]];
+	[timeline appendStatuses:[replysViewController.timeline unreadStatuses]];
+	[timeline appendStatuses:[directMessageViewController.timeline unreadStatuses]];
 	
 	[super viewWillAppear:animated]; //with reload
 }
@@ -44,33 +39,25 @@
 	timeline = nil;
 }
 
-- (void)checkCellRead {
-	// ignore
+- (BOOL)doReadTrack {
+	return FALSE;
 }
 
+/*
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[self.navigationItem setTitle:@"Unreads"];
 	[super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
+*/
 
 - (void)clearButton:(id)sender {
-	[friendsViewController allRead];
-	[replysViewController allRead];
+	[friendsViewController.timeline markAllAsRead];
+	[replysViewController.timeline markAllAsRead];
+	[directMessageViewController.timeline markAllAsRead];
 	[timeline release];
 	timeline = nil;
 	[super.tableView reloadData];
 }
 
-- (void)attachOrDetachAutopagerizeView {
-	// do nothing
-}
-
-- (void)showMoreButton:(id)sender {
-	// do nothing
-}
-
-- (void)getTimelineWithPage:(int)page autoload:(BOOL)autoload {
-	// do nothing
-}
 
 @end

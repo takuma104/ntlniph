@@ -3,6 +3,8 @@
 #import "NTLNIconRepository.h"
 #import "NTLNAccount.h"
 
+#import "GTMNSString+HTML.h"
+
 @implementation NTLNTwitterXMLReader
 
 @synthesize messages;
@@ -18,6 +20,18 @@
     [s replaceOccurrencesOfString:@"<3" withString:@"♥" options:0 range:NSMakeRange(0, [s length])];
 	[s autorelease];
     return s;
+}
+
++ (NSString*)decodeSource:(NSString*)str {
+	NSRange rgt = [str rangeOfString:@"\">"];
+	NSRange rlt = [str rangeOfString:@"</" options:NSBackwardsSearch];
+	if (rgt.location != NSNotFound && rlt.location != NSNotFound) {
+		int pos = rgt.location + rgt.length;
+		NSRange r = NSMakeRange(pos, rlt.location - pos);
+		str = [str substringWithRange:r];
+	}
+	//LOG(@"source: %@", str);
+	return str;
 }
 
 - (void)parseXMLData:(NSData *)data {
@@ -72,9 +86,12 @@
 				[elementName isEqualToString:@"created_at"] ||
 				[elementName isEqualToString:@"favorited"] ||
 				[elementName isEqualToString:@"name"] ||
+				[elementName isEqualToString:@"source"] ||
 				[elementName isEqualToString:@"screen_name"] ||
 				[elementName isEqualToString:@"in_reply_to_user_id"] ||
-			   [elementName isEqualToString:@"profile_image_url"]) {
+				[elementName isEqualToString:@"in_reply_to_status_id"] ||
+			    [elementName isEqualToString:@"in_reply_to_screen_name"] ||
+				[elementName isEqualToString:@"profile_image_url"]) {
 		readText = YES;
 		currentStringValue = [[NSMutableString alloc] initWithCapacity:50];
 	}
@@ -107,10 +124,12 @@
 			if ([elementName isEqualToString:@"id"]) {
 				[currentMessage setStatusId:currentStringValue];
 			} else if ([elementName isEqualToString:@"text"]) {
-				[currentMessage setText:[NTLNTwitterXMLReader decodeHeart:
-										 [NTLNXMLHTTPEncoder decodeXML:currentStringValue]]];
-//			} else if ([elementName isEqualToString:@"source"]) {
-//				[currentMessage setSource:currentStringValue];
+				NSString *s = [NTLNXMLHTTPEncoder decodeXML:currentStringValue];
+				s = [s gtm_stringByUnescapingFromHTML];
+				s = [NTLNTwitterXMLReader decodeHeart:s];
+				[currentMessage setText:s];
+			} else if ([elementName isEqualToString:@"source"]) {
+				[currentMessage setSource:[NTLNTwitterXMLReader decodeSource:currentStringValue]];
 			} else if ([elementName isEqualToString:@"created_at"]) {
 				struct tm time;
 				strptime([currentStringValue UTF8String], "%a %b %d %H:%M:%S %z %Y", &time);
@@ -119,8 +138,12 @@
 				if ([currentStringValue isEqualToString:@"true"]) {
 					currentMessage.favorited = TRUE;
 				}
+			} else if ([elementName isEqualToString:@"in_reply_to_status_id"]) {
+				currentMessage.in_reply_to_status_id = currentStringValue;
 			} else if ([elementName isEqualToString:@"in_reply_to_user_id"]) {
 				currentInReplyToUserId = [currentStringValue copy];
+			} else if ([elementName isEqualToString:@"in_reply_to_screen_name"]) {
+				currentMessage.in_reply_to_screen_name = currentStringValue;
 			}
 		}
 
@@ -136,8 +159,6 @@
 			}
 		}
 	}
-
-//	NSLog(@"<%@> : %@", elementName, currentStringValue);
     
 	[currentStringValue release];
     currentStringValue = nil;

@@ -56,7 +56,10 @@
 	if (imageRef) {
 		CGImageRelease(imageRef);
 	}
-	imageRef = CGImageRetain([image CGImage]);
+	imageRef = NULL;
+	if ([image isKindOfClass:[UIImage class]]) {
+		imageRef = CGImageRetain([image CGImage]);
+	}
 	[self setNeedsDisplay];
 }
 

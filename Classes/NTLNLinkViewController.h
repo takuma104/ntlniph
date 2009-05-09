@@ -1,5 +1,5 @@
 #import <UIKit/UIKit.h>
-#import "ntlniphAppDelegate.h"
+#import "NTLNAppDelegate.h"
 #import "NTLNTwitterClient.h"
 
 @class NTLNMessage;
@@ -10,61 +10,29 @@
 
 @interface NTLNURLPair : NSObject
 {
-	NSString *url;
 	NSString *text;
+	NSString *url;
 	NSString *screenName;
+	BOOL conversation;
 }
 
 @property(readwrite, retain) NSString *url, *text, *screenName;
+@property(readwrite) BOOL conversation;
 
 @end
-
 
 
 @interface NTLNLinkViewController : UITableViewController 
 										<UITableViewDelegate, 
 										UITableViewDataSource, 
-										NTLNTwitterClientDelegate> {
-
-	NTLNAppDelegate *appDelegate;
-	NTLNTweetPostViewController *tweetPostViewController;
-											
+										NTLNTwitterClientDelegate> {											
 	NTLNMessage *message;
-	NSMutableArray *urls;
-	NTLNURLPair *messageOwnerUrl;
-	
+	NSMutableArray *links;	
 	UIButton *favButton;
+	UIActivityIndicatorView *favAI;
 }
-
-- (CGFloat)getTextboxHeight:(NSString *)str;
-- (UITableViewCell *)screenNameCell;
-- (UITableViewCell *)urlCell:(NTLNURLPair*)pair isEven:(BOOL)isEven;
-- (void)parseToken;
-
-@property(readwrite, assign) NTLNAppDelegate *appDelegate;
-@property(readwrite, assign) NTLNTweetPostViewController *tweetPostViewController;
 
 @property(readwrite, retain) NTLNMessage *message;
-
-@end
-
-@interface NTLNLinkCell : UITableViewCell
-{
-	NTLNURLPair *pair;
-	BOOL isEven;
-}
-
-- (void)createCell:(NTLNURLPair*)pair isEven:(BOOL)isEven;
-
-@end
-
-@interface NTLNSelectedLinkCellBackground : UIView
-{
-	NTLNURLPair *pair;
-	BOOL isEven;
-}
-
-@property (readwrite, retain) NTLNURLPair *pair;
 
 @end
 

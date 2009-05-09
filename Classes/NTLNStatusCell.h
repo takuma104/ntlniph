@@ -10,6 +10,7 @@
 	UIImageView *unreadView, *starView;
 	NTLNStatus *status;
 	BOOL isEven;
+	BOOL disableColorize;
 }
 
 @property (readonly) NTLNStatus *status;
@@ -23,7 +24,7 @@
 - (void)updateCell:(NTLNStatus*)status isEven:(BOOL)isEven;
 - (void)updateIcon;
 - (void)updateBackgroundColor;
-
+- (void)setDisableColorize;
 
 @end
 

@@ -14,7 +14,7 @@
 }
 
 + (NSString*)createIconCacheDirectory;
-+ (NSString*)createXMLCacheDirectory;
++ (NSString*)createArchiverCacheDirectory;
 + (NSString*)createTextCacheDirectory;
 
 + (void)saveWithFilename:(NSString*)filename data:(NSData*)data;

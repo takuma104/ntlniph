@@ -1,73 +1,70 @@
 #import "NTLNTimelineViewController.h"
 
-static BOOL is_badge_unread_message(NTLNMessage *message) {
-	return message.replyType == NTLN_MESSAGE_REPLY_TYPE_REPLY ||
-	message.replyType == NTLN_MESSAGE_REPLY_TYPE_REPLY_PROBABLE ||
-	message.replyType == NTLN_MESSAGE_REPLY_TYPE_DIRECT;
-}
-
 @implementation NTLNTimelineViewController(Read)
 
 #pragma mark Private
 
-- (void)checkCellRead {
-	if (!enable_read) return;
-	
-	CGFloat h = 0.0;
+- (BOOL)doReadTrack {
+	if (!enable_read) return NO;
 	CGFloat viewTop = self.tableView.contentOffset.y;
 	CGFloat viewBottom = viewTop + self.tableView.frame.size.height;
-	@synchronized(timeline) {
-		for (NTLNStatus *s in timeline) {
-			if (s.message.status == NTLN_MESSAGE_STATUS_NORMAL) {
-				CGFloat top = h + 3.0;
-				CGFloat bottom = h + s.cellHeight - 3.0;
-				
-				if (viewTop <= top && bottom <= viewBottom) {
-					[s didAppearWithScrollPos];
-				} else {
-					[s didDisapper];
+	
+	BOOL updated = NO;
+	NSArray *a = [self.tableView visibleCells];
+	for (NTLNStatusCell *cell in a) {
+		CGFloat t = cell.frame.origin.y + 3.0;
+		CGFloat b = cell.frame.origin.y + cell.frame.size.height - 3.0;
+		if (viewTop <= t && b <= viewBottom) {
+			int c = [cell.status updateReadTrackCounter:readTrackContinueCounter];
+			if (c > 5) {
+				if ([cell.status markAsRead]) {
+					[cell updateBackgroundColor];
+					updated = YES;
 				}
 			}
-			h += s.cellHeight;// + 1.0;
 		}
 	}
+	
+	if (updated) {
+		[self updateBadge];
+	}
+	
+	readTrackContinueCounter++;
+	return updated;
 }
 
-#pragma mark NTLNStatusReadProtocol
-
-- (void)incrementReadStatus:(NTLNStatus*)status {
-	
-	if (badge_enable && is_badge_unread_message(status.message)) {
-		unread_count++;
-		if (unread_count > 0) {
-			super.tabBarItem.badgeValue = [[[NSString alloc] initWithFormat:@"%d", unread_count] autorelease];
+- (void)updateBadge {
+	if (badge_enable) {
+		int cnt = [timeline badgeCount];
+		if (cnt > 0) {
+			super.tabBarItem.badgeValue = [NSString stringWithFormat:@"%d", cnt];
 		} else {
 			super.tabBarItem.badgeValue = nil;
 		}
 	}
 }
 
-- (void)decrementReadStatus:(NTLNStatus*)status {
-	
-	if (badge_enable && is_badge_unread_message(status.message)) {
-		unread_count--;
-		if (unread_count > 0) {
-			super.tabBarItem.badgeValue = [[[NSString alloc] initWithFormat:@"%d", unread_count] autorelease];
-		} else {
-			super.tabBarItem.badgeValue = nil;
-		}
-	}
-	
-	NSArray *vc = [self.tableView visibleCells];
-	for (NTLNStatusCell *cell in vc) {
-		if (cell.status == status) {
-			[cell updateBackgroundColor];
-		}
-	}
+- (void)stopReadTrackTimer {
+//	LOG(@"stopReadTrackTimer");
+	[readTrackTimer invalidate];
+	[readTrackTimer release];
+	readTrackTimer = nil;
 }
 
-- (BOOL)scrollMoved {
-	return scrollMoved;
+- (void)startReadTrackTimer {
+//	LOG(@"startReadTrackTimer");
+	[self stopReadTrackTimer];
+	
+	readTrackTimer = [[NSTimer scheduledTimerWithTimeInterval:1.0/5.0
+													   target:self
+													 selector:@selector(doReadTrack)
+													 userInfo:nil
+													  repeats:YES] retain];
 }
+
+- (BOOL)readTrackTimerActivated {
+	return readTrackTimer != nil;
+}
+
 
 @end

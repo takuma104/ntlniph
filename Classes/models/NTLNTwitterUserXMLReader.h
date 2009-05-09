@@ -6,11 +6,12 @@
 	BOOL userTagChild;
 	BOOL readText;
 
+	NSMutableArray *users;
 	NTLNUser *user;
 }
 
 - (void)parseXMLData:(NSData *)data;
 
-@property (readonly) NTLNUser *user;
+@property (readonly) NSMutableArray *users;
 
 @end

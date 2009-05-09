@@ -1,20 +1,17 @@
 #import "NTLNTwitterUserClient.h"
 #import "NTLNTwitterUserXMLReader.h"
+#import "NTLNAccount.h"
+#import "NTLNHttpClientPool.h"
 
 @implementation NTLNTwitterUserClient
 
-@synthesize user;
+@synthesize delegate;
+@synthesize users;
 
-- (id)init {
-	return [self initWithDelegate:nil];
-}
-
-- (id)initWithDelegate:(NSObject<NTLNTwitterUserClientDelegate>*)aDelegate {
-	if ((self = [super init])) {
-		delegate = aDelegate;
-		[delegate retain];
-	}
-	return self;
+- (void)dealloc {
+	[users release];
+	[delegate release];
+	[super dealloc];
 }
 
 - (void)getUserInfo:(NSString*)q {
@@ -30,23 +27,45 @@
 	[self getUserInfo:user_id];
 }
 
+- (void)getFollowingsWithScreenName:(NSString*)screen_name page:(int)page {
+	NSString *url = [NSString stringWithFormat:@"http://twitter.com/statuses/friends/%@.xml", screen_name];
+	if (page > 1) {
+		url = [NSString stringWithFormat:@"%@?page=%d", url, page];
+	}
+
+	NSString *username = [[NTLNAccount instance] username];
+	NSString *password = [[NTLNAccount instance] password];
+	[super requestGET:url username:username password:password];
+}
+
+- (void)getFollowersWithScreenName:(NSString*)screen_name page:(int)page {
+	NSString *url = [NSString stringWithFormat:@"http://twitter.com/statuses/followers/%@.xml", screen_name];
+	if (page > 1) {
+		url = [NSString stringWithFormat:@"%@?page=%d", url, page];
+	}
+	
+	NSString *username = [[NTLNAccount instance] username];
+	NSString *password = [[NTLNAccount instance] password];
+	[super requestGET:url username:username password:password];
+}
+
 - (void)requestSucceeded {
 	if (statusCode == 200) {
 		if (contentTypeIsXml) {
 			NTLNTwitterUserXMLReader *xr = [[NTLNTwitterUserXMLReader alloc] init];
 			[xr parseXMLData:recievedData];
-			user = [xr.user retain];
+			users = [xr.users retain];
 			[xr release];
 		}
 	}
 	
 	[delegate twitterUserClientSucceeded:self];
-	[self autorelease];
+	[[NTLNHttpClientPool sharedInstance] releaseClient:self];
 }
 
 - (void)requestFailed:(NSError*)error {
 	[delegate twitterUserClientFailed:self];
-	[self autorelease];
+	[[NTLNHttpClientPool sharedInstance] releaseClient:self];
 }
 
 @end

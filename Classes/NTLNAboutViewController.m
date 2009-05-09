@@ -1,17 +1,23 @@
 #import "NTLNAboutViewController.h"
 #import	"version.h"
 
-#define CREDIT_TEXT @"© 2008, 2009 natsulion.org all rights reserved.\n\nProgramming by @takuma104\nBased on NatsuLion for Mac OSX by @akr\nIcon design by YUKI, @epytwen\nMany thanks to beta tester users and the twitter community."
+#define CREDIT_TEXT @"© Copyright 2008,2009 Natsulion.org\n" \
+		"All rights reserved. Licensed under the New BSD License.\n\n" \
+		"Programming by @takuma104\n" \
+		"Based on NatsuLion for Mac OSX by @akr\n" \
+		"Icon design by YUKI, @epytwen\n" \
+		"Many thanks to beta tester users and the twitter community.\n\n" \
+		"Google Toolbox for Mac © Copyright 2006-2008 Google Inc. " \
+		"Licensed under the Apache License, Version 2.0"
 
 @implementation NTLNAboutViewController
 
-
 - (id)initWithStyle:(UITableViewStyle)style {
 	if (self = [super initWithStyle:style]) {
+		[self.navigationItem setTitle:@"About"];
 	}
 	return self;
 }
-
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
@@ -40,7 +46,7 @@
 			}
 			break;
 		case 1:
-			return 140;
+			return 240;
 	}
 	
 	return 44;
@@ -55,7 +61,7 @@
 }
 
 + (UIView*)creditTextView {
-	UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 10, 260, 120)] autorelease];
+	UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 10, 260, 200)] autorelease];
 	label.font = [UIFont boldSystemFontOfSize:12];
 	label.textColor = [UIColor blackColor];
 	label.lineBreakMode = UILineBreakModeWordWrap;
@@ -85,7 +91,9 @@
 					cell.selectionStyle = UITableViewCellSelectionStyleNone;
 					break;
 				case 1:
-					cell.text = [NSString stringWithFormat:@"Version 1.07 (%@)", ntlniph_version];
+					cell.text = [NSString stringWithFormat:@"Version %@ (%@)", 
+								 [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], 
+								 ntlniph_version];
 					cell.selectionStyle = UITableViewCellSelectionStyleNone;
 					break;
 				case 2:

@@ -12,13 +12,16 @@
 @interface NTLNTwitterUserClient : NTLNHttpClient {
 	@private
 	NSObject<NTLNTwitterUserClientDelegate> *delegate;
-	NTLNUser *user;
+	NSMutableArray *users;
 }
 
-- (id)initWithDelegate:(NSObject<NTLNTwitterUserClientDelegate>*)delegate;
+@property (readwrite, retain) NSObject<NTLNTwitterUserClientDelegate> *delegate;
+
 - (void)getUserInfoForScreenName:(NSString*)screen_name;
 - (void)getUserInfoForUserId:(NSString*)user_id;
+- (void)getFollowingsWithScreenName:(NSString*)screen_name page:(int)page;
+- (void)getFollowersWithScreenName:(NSString*)screen_name page:(int)page;
 
-@property (readonly) NTLNUser *user;
+@property (readonly) NSMutableArray *users;
 
 @end

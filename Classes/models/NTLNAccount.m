@@ -1,8 +1,6 @@
 #import "NTLNAccount.h"
-
-#define NTLN_PREFERENCE_USERID				@"userId"
-#define NTLN_PREFERENCE_PASSWORD			@"password"
-#define NTLN_PREFERENCE_TWITTER_USERID		@"twitter_user_id"
+#import "NTLNConfigurationKeys.h"
+#import "NTLNHttpClientPool.h"
 
 static NTLNAccount *_instance;
 
@@ -56,6 +54,10 @@ static NTLNAccount *_instance;
 	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_TWITTER_USERID];
 }
 
+- (NSString*)footer {
+	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_FOOTER];
+}
+
 - (BOOL) valid {
 	NSString *pwd = self.password;
 	NSString *usn = self.username;
@@ -64,12 +66,17 @@ static NTLNAccount *_instance;
 }
 
 - (void)getUserId {
-	NTLNTwitterUserClient *c = [[NTLNTwitterUserClient alloc] initWithDelegate:self];
+	
+	NTLNTwitterUserClient *c = [[NTLNHttpClientPool sharedInstance] idleClientWithType:NTLNHttpClientPoolClientType_TwitterUserClient];
+	c.delegate = self;
 	[c getUserInfoForScreenName:[self username]];
 }
 
 - (void)twitterUserClientSucceeded:(NTLNTwitterUserClient*)sender {
-	[self setUserId:sender.user.user_id];
+	if ([sender.users count] > 0) {
+		NTLNUser *user = [sender.users objectAtIndex:0];
+		[self setUserId:user.user_id];
+	}	
 }
 
 - (void)twitterUserClientFailed:(NTLNTwitterUserClient*)sender {
