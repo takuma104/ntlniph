@@ -156,8 +156,12 @@
 /// public interfaces
 
 - (void)getFriendsTimelineWithPage:(int)page since_id:(NSString*)since_id {
-	int count = [[NTLNConfiguration instance] fetchCount];
-	if (since_id && page < 2) count = 200;
+	int count = 20;
+	if (since_id == nil && page < 2) {
+		count = [[NTLNConfiguration instance] fetchCount]; 
+	} else if (since_id && page < 2) {
+		count = 200;
+	}
 	[self getTimeline:@"statuses/friends_timeline" 
 				 page:page 
 				count:count
