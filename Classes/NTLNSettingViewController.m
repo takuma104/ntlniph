@@ -137,8 +137,7 @@
 
 	// for "About NatsuLion for iPhone" cell
 	if ([indexPath section] == 4 && [indexPath row] == 0) {
-		UITableViewController *vc = [[[NTLNAboutViewController alloc] 
-									  initWithStyle:UITableViewStyleGrouped] autorelease];
+		UIViewController *vc = [[[NTLNAboutViewController alloc] init] autorelease];
 		[self.navigationController pushViewController:vc animated:YES];
 	}
 	

@@ -1,7 +1,7 @@
 #!/bin/sh
-svn_revision=`svn info 2> /dev/null | grep Revision | cut -d' ' -f2`
+git_commit_id=`git show | head -n 1 | cut -d' ' -f2`
 HEADER_CODE="
-const NSString *ntlniph_version = @\"r$svn_revision\";
+const NSString *ntlniph_version = @\"$git_commit_id\";
 "
 echo $HEADER_CODE > Classes/version.h
 

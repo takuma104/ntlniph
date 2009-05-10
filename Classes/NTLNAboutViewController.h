@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 
-@interface NTLNAboutViewController : UITableViewController {
-
+@interface NTLNAboutViewController : UIViewController<UIWebViewDelegate> {
+	UIWebView *webView;
 }
 
 @end
