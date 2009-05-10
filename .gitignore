@@ -1,0 +1,10 @@
+build
+.DS_Store
+*.o
+*.ob
+*.tmproj
+*.mode1*
+*.build
+*~.nib
+*.xcodeproj/*.perspectivev3
+*.xcodeproj/*.pbxuser
