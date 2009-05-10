@@ -71,6 +71,12 @@ SHARD_INSTANCE_IMPL
 	}	
 }
 
+- (void)backupText {
+	[NTLNCache saveWithFilename:backupFilename 
+						   data:[text dataUsingEncoding:NSUTF8StringEncoding]];
+//	NSLog(@"saved.");
+}
+
 - (void)updateText:(NSString*)aText {
 	[text release];
 	text = [aText retain];
@@ -84,9 +90,9 @@ SHARD_INSTANCE_IMPL
 			replyMessage = nil;
 		}
 	}
-	
-	[NTLNCache saveWithFilename:backupFilename 
-						   data:[text dataUsingEncoding:NSUTF8StringEncoding]];
+
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(backupText) object:nil];
+	[self performSelector:@selector(backupText) withObject:nil afterDelay:1.5];
 }
 
 - (NSString*)text {

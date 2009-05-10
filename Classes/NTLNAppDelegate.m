@@ -223,6 +223,8 @@
 	[sentsViewController.timeline disactivate];
 	[favoriteViewController.timeline disactivate];
 	
+	[[NTLNTwitterPost shardInstance] backupText];
+	
 	[[NTLNCacheCleaner sharedCacheCleaner] shutdown];
 }
 

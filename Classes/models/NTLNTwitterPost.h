@@ -22,4 +22,7 @@
 
 - (BOOL)isDirectMessage;
 
+- (void)backupText;
+
+
 @end
