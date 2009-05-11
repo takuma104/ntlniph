@@ -141,6 +141,11 @@
 	[[challenge sender] cancelAuthenticationChallenge:challenge]; 
 }    
 */
+
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse {
+	return nil;
+}
+
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 //    NSLog(@"didReceiveResponse");
 	
