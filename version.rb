@@ -22,7 +22,7 @@ if $0 == __FILE__
 
   v = version('./Info.plist')
   gc = gitcommit
-  url = 'http://github.com/takuma104/ntlniph/commits/' + gc
+  url = 'http://github.com/takuma104/ntlniph/commit/' + gc
 
   open(template) do |r|
     open(output,'w') do |w|
