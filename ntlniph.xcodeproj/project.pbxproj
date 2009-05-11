@@ -142,7 +142,7 @@
 		F1216BC00E04C37F0073A653 /* NTLNURLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F1216BB30E04C37F0073A653 /* NTLNURLUtils.m */; };
 		F1216BC10E04C37F0073A653 /* NTLNXMLHTTPEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = F1216BB50E04C37F0073A653 /* NTLNXMLHTTPEncoder.m */; };
 		F13420C40E11595B00F2AF64 /* NTLNUnreadsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F13420C30E11595B00F2AF64 /* NTLNUnreadsViewController.m */; };
-		F13E29D00FB744B30086B0E7 /* about.html in Resources */ = {isa = PBXBuildFile; fileRef = F13E29CF0FB744B30086B0E7 /* about.html */; };
+		F13E2ACA0FB7F66C0086B0E7 /* readme.html in Resources */ = {isa = PBXBuildFile; fileRef = F13E2AC90FB7F66C0086B0E7 /* readme.html */; };
 		F145D5E10E0EC22500DAE9EF /* NTLNReplysViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F145D5E00E0EC22500DAE9EF /* NTLNReplysViewController.m */; };
 		F145D5E50E0EC24900DAE9EF /* NTLNSentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F145D5E40E0EC24900DAE9EF /* NTLNSentsViewController.m */; };
 		F17419070E2A2E6A008BA863 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419030E2A2E6A008BA863 /* UIKit.framework */; };
@@ -369,7 +369,7 @@
 		F1216BB50E04C37F0073A653 /* NTLNXMLHTTPEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNXMLHTTPEncoder.m; sourceTree = "<group>"; };
 		F13420C20E11595B00F2AF64 /* NTLNUnreadsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNUnreadsViewController.h; sourceTree = "<group>"; };
 		F13420C30E11595B00F2AF64 /* NTLNUnreadsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNUnreadsViewController.m; sourceTree = "<group>"; };
-		F13E29CF0FB744B30086B0E7 /* about.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = about.html; path = resources/about.html; sourceTree = "<group>"; };
+		F13E2AC90FB7F66C0086B0E7 /* readme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = readme.html; path = resources/readme.html; sourceTree = "<group>"; };
 		F145D5DF0E0EC22500DAE9EF /* NTLNReplysViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNReplysViewController.h; sourceTree = "<group>"; };
 		F145D5E00E0EC22500DAE9EF /* NTLNReplysViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNReplysViewController.m; sourceTree = "<group>"; };
 		F145D5E30E0EC24900DAE9EF /* NTLNSentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNSentsViewController.h; sourceTree = "<group>"; };
@@ -456,7 +456,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F13E29CF0FB744B30086B0E7 /* about.html */,
+				F13E2AC90FB7F66C0086B0E7 /* readme.html */,
 				8DBA55C20E96B75800109F5D /* images */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
@@ -805,6 +805,7 @@
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "ntlniph" */;
 			buildPhases = (
 				1D60588D0D05DD3D006BFB54 /* Resources */,
+				F13E2ABE0FB7EBDB0086B0E7 /* ShellScript */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
 			);
@@ -897,11 +898,28 @@
 				8DD636D80FA9F3DC00C49838 /* pushed_black_01.png in Resources */,
 				8DD636D90FA9F3DC00C49838 /* pushed_black_02.png in Resources */,
 				8DD636DA0FA9F3DC00C49838 /* pushed_black_04.png in Resources */,
-				F13E29D00FB744B30086B0E7 /* about.html in Resources */,
+				F13E2ACA0FB7F66C0086B0E7 /* readme.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F13E2ABE0FB7EBDB0086B0E7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $PROJECT_DIR\nruby version.rb\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {

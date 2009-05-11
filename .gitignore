@@ -8,3 +8,4 @@ build
 *~.nib
 *.xcodeproj/*.perspectivev3
 *.xcodeproj/*.pbxuser
+resources/readme.html

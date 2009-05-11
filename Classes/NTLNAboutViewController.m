@@ -1,5 +1,4 @@
 #import "NTLNAboutViewController.h"
-#import	"version.h"
 
 @implementation NTLNAboutViewController
 
@@ -31,26 +30,13 @@
 	[self createWebView];
 	webView.delegate = self;
 
-	NSString *path = [[NSBundle mainBundle] pathForResource:@"about" ofType:@"html"];
+	NSString *path = [[NSBundle mainBundle] pathForResource:@"readme" ofType:@"html"];
 	NSURL *url = [[NSURL alloc] initFileURLWithPath:path isDirectory:NO];
 	[webView loadRequest:[NSURLRequest requestWithURL:url]];
 	[url release];
 }
 
 #pragma mark UIWebView delegate methods
-
-- (void)webViewDidFinishLoad:(UIWebView *)wv {
-	NSString *js = [NSString stringWithFormat:@"document.getElementById(\"version\").innerHTML="
-					"'Version %@<br/><small>%@</small>';",
-					[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"],
-					ntlniph_version];
-	[wv stringByEvaluatingJavaScriptFromString:js];
-	
-	js = [NSString stringWithFormat:@"document.getElementById(\"source_code\").href="
-		  "'http://github.com/takuma104/ntlniph/commit/%@';",
-		  ntlniph_version];
-	[wv stringByEvaluatingJavaScriptFromString:js];
-}
 
 - (BOOL)webView:(UIWebView *)aWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	if ([request.URL.scheme isEqualToString:@"http"]) {
