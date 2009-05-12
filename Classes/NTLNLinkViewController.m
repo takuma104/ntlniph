@@ -196,10 +196,13 @@
 	if ([[NTLNConfiguration instance] useSafari]) {
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 	} else {
-		NTLNAppDelegate *appDelegate = (NTLNAppDelegate*)[UIApplication sharedApplication].delegate;
-		NTLNBrowserViewController *browser = appDelegate.browserViewController;
+		NTLNBrowserViewController *browser = [[[NTLNBrowserViewController alloc] init] autorelease];
 		browser.url = url;
-		[[self navigationController] pushViewController:browser animated:YES];
+//		[[self navigationController] pushViewController:browser animated:YES];
+		
+//		[self tabBarController].modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+		browser.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+		[[self tabBarController] presentModalViewController:browser animated:YES]; 
 	}
 }
 

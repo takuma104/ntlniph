@@ -1,171 +1,144 @@
 #import "NTLNBrowserViewController.h"
 #import "NTLNAlert.h"
 #import "NTLNAccelerometerSensor.h"
-
-@interface NTLNBrowserViewController(Private)
-- (void)setReloadButton:(BOOL)reloadBtn;
-- (void)stopProgressIndicator;
-- (void)reloadButton:(id)sender;
-
-- (void)fullScreenBrowser;
-- (void)normalScreenBrowser;
-- (void)toggleFullScreenTimeline;
-@end
+#import "NTLNWebView.h"
+#import "NTLNTwitterPost.h"
+#import "NTLNTweetPostViewController.h"
 
 @implementation NTLNBrowserViewController
 
 @synthesize url;
 
-- (void)dealloc
-{
+- (void)dealloc {
 	LOG(@"NTLNBrowserViewController#dealloc");
-	[myWebView release];
-	[reloadButton release];
-	[urlLabel release];
+
+	[url release];
+	[toobarTop release];
+	[toobarBottom release];
+	[self.view release];
 	[super dealloc];
 }
 
-- (void)setReloadButton:(BOOL)reloadBtn {
-	
-	UIBarButtonSystemItem item = reloadBtn ? 
-				UIBarButtonSystemItemRefresh : UIBarButtonSystemItemStop;
-	
-	[reloadButton release];
-	reloadButton = [[UIBarButtonItem alloc] 
-					initWithBarButtonSystemItem:item 
-					target:self action:@selector(reloadButton:)];
-	
-	[[self navigationItem] setRightBarButtonItem:reloadButton];
+- (void)reloadButtonPushed:(id)sender {
+	[webView reload];
 }
 
-- (void)loadView
-{	
-	myWebView = [[UIWebView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
-	myWebView.backgroundColor = [UIColor whiteColor];
-	myWebView.scalesPageToFit = YES;
-	myWebView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-	myWebView.delegate = self;
-	myWebView.autoresizesSubviews = YES;
-	self.view = myWebView;
+- (void)doneButtonPushed:(id)sender {
+	[webView stopLoading];
+	[webView loadHTMLString:@"" baseURL:nil];
+	[self dismissModalViewControllerAnimated:YES];
+}
+
+- (void)prevButtonPushed:(id)sender {
+	[webView goBack];
+}
+
+- (void)nextButtonPushed:(id)sender {
+	[webView goForward];
+}
+
+- (void)safariButtonPushed:(id)sender {
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+}
+
+- (void)tweetURLButtonPushed:(id)sender {
+	[[NTLNTwitterPost shardInstance] updateText:[[[webView request] URL] absoluteString]];
+	[NTLNTweetPostViewController present:self];
+}
+
+- (void)setupToolbarTop {
+	UIBarButtonItem *doneButton = [[[UIBarButtonItem alloc] initWithTitle:@"done" 
+																   style:UIBarButtonItemStyleBordered 
+																  target:self		
+																   action:@selector(doneButtonPushed:)] autorelease];
 	
-	CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width - 40, 50);
-	urlLabel = [[UILabel alloc] initWithFrame:frame];
-	urlLabel.font = [UIFont systemFontOfSize:14.f];
-	urlLabel.text = url;
-	urlLabel.textColor = [UIColor whiteColor];
-	urlLabel.backgroundColor = [UIColor clearColor];
-	urlLabel.lineBreakMode = UILineBreakModeTailTruncation;
-	urlLabel.numberOfLines = 1;
+	UIBarButtonItem *reloadButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
+																				  target:self 
+																				   action:@selector(reloadButtonPushed:)] autorelease];
+	[toobarTop setItems:[NSArray arrayWithObjects:doneButton, reloadButton, nil]];
+}
+
+- (void)setupToolbarBottom {
+	UIBarButtonItem *prevButton = [[[UIBarButtonItem alloc] initWithTitle:@"prev" 
+																	style:UIBarButtonItemStyleBordered 
+																   target:self		
+																   action:@selector(prevButtonPushed:)] autorelease];
+
+	UIBarButtonItem *nextButton = [[[UIBarButtonItem alloc] initWithTitle:@"next" 
+																	style:UIBarButtonItemStyleBordered 
+																   target:self		
+																   action:@selector(nextButtonPushed:)] autorelease];
+
+	UIBarButtonItem *safariButton = [[[UIBarButtonItem alloc] initWithTitle:@"safari" 
+																	style:UIBarButtonItemStyleBordered 
+																   target:self		
+																   action:@selector(safariButtonPushed:)] autorelease];
+
+	UIBarButtonItem *tweetURLButton = [[[UIBarButtonItem alloc] initWithTitle:@"TwURL" 
+																	  style:UIBarButtonItemStyleBordered 
+																	 target:self		
+																	 action:@selector(tweetURLButtonPushed:)] autorelease];
+
+	[toobarBottom setItems:[NSArray arrayWithObjects:prevButton, nextButton, tweetURLButton, safariButton, nil]];
+}
+
+- (void)loadView {  
+	self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+
+	toobarTop = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
+	toobarTop.barStyle = UIBarStyleBlack;
+	[self setupToolbarTop];
+	[self.view addSubview:toobarTop];
 	
-	[[self navigationItem] setTitleView:urlLabel];
+
+	webView = [NTLNWebView sharedInstance];
+	webView.frame = CGRectMake(0, 44, 320, 480-44-44);
+	[self.view addSubview:webView];
+
+	toobarBottom = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 480-44-20, 320, 44)];
+	toobarBottom.barStyle = UIBarStyleBlack;
+	[self setupToolbarBottom];
+	[self.view addSubview:toobarBottom];
 	
-	[self setReloadButton:YES];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	// we support rotation in this view controller
-	return YES;
-}
-
-// this helps dismiss the keyboard when the "Done" button is clicked
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-	[textField resignFirstResponder];
-	[myWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[textField text]]]];
-	
-	return YES;
-}
-
-
-#pragma mark UIWebView delegate methods
-
-- (void)stopProgressIndicator
-{
-    loading = NO;
-	[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-	[self setReloadButton:YES];
-}
-
-- (void)webViewDidStartLoad:(UIWebView *)webView
-{
-	loading = YES;
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-	[self setReloadButton:NO];
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView
-{
-	[self stopProgressIndicator];
-	urlLabel.text = [[webView.request URL] absoluteString];
-}
-
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
-{
-	[self stopProgressIndicator];
-	
-	if (shown && error.code != -999) {
-		[[NTLNAlert instance] alert:@"Browser error" withMessage:error.localizedDescription];
-	}
+- (void)viewDidDisappear:(BOOL)animated {
+///	self.view = nil;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-	[NTLNAccelerometerSensor sharedInstance].delegate = nil;
-	shown = NO;
-	myWebView.delegate = nil;
+	webView.delegate = nil;
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-	shown = YES;
-	urlLabel.text = url;
-	myWebView.delegate = self;
-	[myWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
-	[NTLNAccelerometerSensor sharedInstance].delegate = self;
+- (void)viewWillAppear:(BOOL)animated {
+//	[self.navigationItem setTitle:@"Copyright Notice"];
+	
+	webView.delegate = self;
+	[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
 }
 
-- (void)reloadButton:(id)sender {
-	if (loading) {
-		[myWebView stopLoading];
+#pragma mark UIWebView delegate methods
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+//	if (shown && error.code != -999) {
+//		[[NTLNAlert instance] alert:@"Browser error" withMessage:error.localizedDescription];
+//	}
+}
+
+- (BOOL)webView:(UIWebView *)aWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+	NSString *scheme = request.URL.scheme;
+	if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
+		return YES;
 	} else {
-		[myWebView reload];
+		[[UIApplication sharedApplication] openURL:request.URL];
 	}
-}
-
-- (void)fullScreenBrowser {
-	if (browserViewSuperView == nil) {
-		browserViewSuperView = myWebView.superview;
-		[myWebView removeFromSuperview];
-		[[self tabBarController].view addSubview:myWebView];
-		CGSize s = [self tabBarController].view.frame.size;
-		browserViewOriginalFrame = myWebView.frame;
-		myWebView.frame = CGRectMake(0, 0, s.width, s.height);
-	}
-}
-
-- (void)normalScreenBrowser {
-	if (browserViewSuperView) {
-		[myWebView removeFromSuperview];
-		myWebView.frame = browserViewOriginalFrame;
-		[browserViewSuperView addSubview:myWebView];
-		browserViewSuperView = nil;
-	}
-}
-
-- (void)toggleFullScreenTimeline {
-	if (browserViewSuperView) {
-		[self normalScreenBrowser];
-	} else {
-		[self fullScreenBrowser];
-	}
-}
-
-- (void)accelerometerSensorDetected {
-	[self toggleFullScreenTimeline];
-}
-
-- (void)didReceiveMemoryWarning {
-	[myWebView stopLoading];
-	[super didReceiveMemoryWarning];
+	return NO;
 }
 
 @end

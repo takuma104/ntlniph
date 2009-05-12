@@ -1,20 +1,12 @@
 #import <UIKit/UIKit.h>
 #import "NTLNAccelerometerSensor.h"
+#import "NTLNWebView.h"
 
-@interface NTLNBrowserViewController : UIViewController 
-			<UITextFieldDelegate, UIWebViewDelegate, NTLNAccelerometerSensorDelegate> {
-
-	UIWebView	*myWebView;
-	UIBarButtonItem	*reloadButton;
-	UILabel *urlLabel;
-
+@interface NTLNBrowserViewController : UIViewController<UIWebViewDelegate> {
 	NSString *url;
-	
-	BOOL shown;
-	BOOL loading;
-	
-	UIView *browserViewSuperView;
-	CGRect browserViewOriginalFrame;
+	NTLNWebView *webView;
+	UIToolbar *toobarTop;
+	UIToolbar *toobarBottom;
 }
 
 @property (readwrite, retain) NSString *url;

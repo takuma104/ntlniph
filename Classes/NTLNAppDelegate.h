@@ -20,7 +20,6 @@
 	NTLNSentsViewController *sentsViewController;
 	NTLNUnreadsViewController *unreadsViewController;
 	NTLNSettingViewController *settingViewController;
-	NTLNBrowserViewController *browserViewController;
 	
 	NTLNFavoriteViewController *favoriteViewController;
 	

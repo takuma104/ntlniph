@@ -1,38 +1,30 @@
 #import "NTLNAboutViewController.h"
+#import "NTLNWebView.h"
 
 @implementation NTLNAboutViewController
 
 - (void)dealloc {
-	LOG(@"NTLNBrowserViewController#dealloc");
-	[webView release];
+	LOG(@"NTLNAboutViewController#dealloc");
 	[super dealloc];
 }
 
-- (void)createWebView {
-	if (webView == nil) {
-		webView = [[UIWebView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
-		webView.backgroundColor = [UIColor whiteColor];
-		webView.scalesPageToFit = YES;
-		webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-		webView.autoresizesSubviews = YES;
-		self.view = webView;
-	}
+- (void)viewDidDisappear:(BOOL)animated {
+	self.view = nil;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-	webView.delegate = nil;
-	self.view = nil;
+	[(NTLNWebView*)self.view setDelegate:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 	[self.navigationItem setTitle:@"Copyright Notice"];
 
-	[self createWebView];
-	webView.delegate = self;
+	self.view = [NTLNWebView sharedInstance];
+	[(NTLNWebView*)self.view setDelegate:self];
 
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"readme" ofType:@"html"];
 	NSURL *url = [[NSURL alloc] initFileURLWithPath:path isDirectory:NO];
-	[webView loadRequest:[NSURLRequest requestWithURL:url]];
+	[(NTLNWebView*)self.view loadRequest:[NSURLRequest requestWithURL:url]];
 	[url release];
 }
 

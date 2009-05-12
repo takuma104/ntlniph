@@ -7,7 +7,6 @@
 #import "NTLNUnreadsViewController.h"
 #import "NTLNSettingViewController.h"
 #import "NTLNCacheCleaner.h"
-#import "NTLNBrowserViewController.h"
 #import "NTLNTwitterAccountViewController.h"
 #import "NTLNFavoriteViewController.h"
 #import "NTLNDirectMessageViewController.h"
@@ -178,20 +177,12 @@
 	[sentsViewController release];
 	[unreadsViewController release];
 	[settingViewController release];
-	[browserViewController release];
 	[favoriteViewController release];
 	[directMessageViewController release];
 	
 	[tabBarController release];
 	[window release];
 	[super dealloc];
-}
-
-- (NTLNBrowserViewController*)browserViewController {
-	if (browserViewController == nil) {
-		browserViewController = [[NTLNBrowserViewController alloc] init];
-	}
-	return browserViewController;
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController 

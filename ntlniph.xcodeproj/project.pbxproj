@@ -143,6 +143,7 @@
 		F1216BC10E04C37F0073A653 /* NTLNXMLHTTPEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = F1216BB50E04C37F0073A653 /* NTLNXMLHTTPEncoder.m */; };
 		F13420C40E11595B00F2AF64 /* NTLNUnreadsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F13420C30E11595B00F2AF64 /* NTLNUnreadsViewController.m */; };
 		F13E2B380FB806C50086B0E7 /* readme.html in Resources */ = {isa = PBXBuildFile; fileRef = F13E2B370FB806C50086B0E7 /* readme.html */; };
+		F13E2CBF0FB959A20086B0E7 /* NTLNWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = F13E2CBE0FB959A20086B0E7 /* NTLNWebView.m */; };
 		F145D5E10E0EC22500DAE9EF /* NTLNReplysViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F145D5E00E0EC22500DAE9EF /* NTLNReplysViewController.m */; };
 		F145D5E50E0EC24900DAE9EF /* NTLNSentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F145D5E40E0EC24900DAE9EF /* NTLNSentsViewController.m */; };
 		F17419070E2A2E6A008BA863 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419030E2A2E6A008BA863 /* UIKit.framework */; };
@@ -370,6 +371,8 @@
 		F13420C20E11595B00F2AF64 /* NTLNUnreadsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNUnreadsViewController.h; sourceTree = "<group>"; };
 		F13420C30E11595B00F2AF64 /* NTLNUnreadsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNUnreadsViewController.m; sourceTree = "<group>"; };
 		F13E2B370FB806C50086B0E7 /* readme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = readme.html; path = resources/readme.html; sourceTree = "<group>"; };
+		F13E2CBD0FB959A20086B0E7 /* NTLNWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNWebView.h; sourceTree = "<group>"; };
+		F13E2CBE0FB959A20086B0E7 /* NTLNWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNWebView.m; sourceTree = "<group>"; };
 		F145D5DF0E0EC22500DAE9EF /* NTLNReplysViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNReplysViewController.h; sourceTree = "<group>"; };
 		F145D5E00E0EC22500DAE9EF /* NTLNReplysViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNReplysViewController.m; sourceTree = "<group>"; };
 		F145D5E30E0EC24900DAE9EF /* NTLNSentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNSentsViewController.h; sourceTree = "<group>"; };
@@ -575,6 +578,8 @@
 				8DF5E3F40F911F930096B849 /* NTLNRateLimitView.m */,
 				8DD633B60FA8785B00C49838 /* NTLNTweetTextView.h */,
 				8DD633B70FA8785B00C49838 /* NTLNTweetTextView.m */,
+				F13E2CBD0FB959A20086B0E7 /* NTLNWebView.h */,
+				F13E2CBE0FB959A20086B0E7 /* NTLNWebView.m */,
 			);
 			name = otherViews;
 			sourceTree = "<group>";
@@ -1007,6 +1012,7 @@
 				8D1EF2B70FA58EB600BD452F /* NTLNTwitterXMLParser.m in Sources */,
 				8D4408F80FA6E6400087F6ED /* NTLNHttpClientPool.m in Sources */,
 				8DD633B80FA8785B00C49838 /* NTLNTweetTextView.m in Sources */,
+				F13E2CBF0FB959A20086B0E7 /* NTLNWebView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
