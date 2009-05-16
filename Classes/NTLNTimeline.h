@@ -42,6 +42,7 @@
 - (void)disactivate;
 - (void)clear;
 - (void)prefetch;
+- (void)clearAndRemoveCache;
 
 - (void)getTimelineWithPage:(int)page autoload:(BOOL)autoload;
 

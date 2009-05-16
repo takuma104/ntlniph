@@ -27,7 +27,7 @@
 
 	[screenNameInternal release];
 	if (screenName == nil) {
-		screenNameInternal = [[[NTLNAccount instance] username] retain];
+		screenNameInternal = [[[NTLNAccount sharedInstance] screenName] retain];
 		[self.navigationItem setTitle:@"Favorites"];
 	} else {
 		screenNameInternal = [screenName retain];

@@ -43,7 +43,7 @@
 
 - (void)didParseMessage:(NTLNMessage*)message iconURL:(NSString*)iconURL {
 	[message setIconForURL:iconURL];
-	if ([currentInReplyToUserId isEqualToString:[[NTLNAccount instance] userId]]) {
+	if ([currentInReplyToUserId isEqualToString:[[NTLNAccount sharedInstance] userId]]) {
 		message.replyType = NTLN_MESSAGE_REPLY_TYPE_REPLY;
 	} else {
 		[message finishedToSetProperties:currentMsgDirectMessage];

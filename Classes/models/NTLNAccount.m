@@ -1,35 +1,64 @@
 #import "NTLNAccount.h"
 #import "NTLNConfigurationKeys.h"
 #import "NTLNHttpClientPool.h"
-
-static NTLNAccount *_instance;
+#import "GTMObjectSingleton.h"
 
 @implementation NTLNAccount
 
-+ (id) instance {
-    if (!_instance) {
-        return [NTLNAccount newInstance];
-    }
-    return _instance;
-}
+GTMOBJECT_SINGLETON_BOILERPLATE(NTLNAccount, sharedInstance)
 
-+ (id) newInstance {
-    if (_instance) {
-        [_instance release];
-        _instance = nil;
-    }
-    
-    _instance = [[NTLNAccount alloc] init];
-    return _instance;
+- (id)init {
+	if (self = [super init]) {
+		userToken = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:NTLN_OAUTH_PROVIDER 
+																		   prefix:NTLN_OAUTH_PREFIX];
+		screenName = [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_USERID];
+	}
+	return self;
 }
 
 - (void) dealloc {
+	[userToken release];
     [super dealloc];
 }
 
-- (void)setUsername:(NSString*)username {
-    [[NSUserDefaults standardUserDefaults] setObject:username forKey:NTLN_PREFERENCE_USERID];
+- (void)setScreenName:(NSString*)sn {
+	[screenName release];
+	screenName = [sn retain];
+    [[NSUserDefaults standardUserDefaults] setObject:screenName forKey:NTLN_PREFERENCE_USERID];
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (NSString*)screenName {
+	return screenName;
+}
+
+- (NSString*)footer {
+	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_FOOTER];
+}
+
+- (BOOL)valid {
+	return screenName.length > 0 &&
+	userToken && 
+	userToken.key.length > 0 &&
+	userToken.secret.length > 0;
+}
+
+- (OAToken*)userToken {
+	return userToken;
+}
+
+- (void)setUserToken:(OAToken*)token {
+	[userToken release];
+	userToken = [token retain];
+	[userToken storeInUserDefaultsWithServiceProviderName:NTLN_OAUTH_PROVIDER 
+												   prefix:NTLN_OAUTH_PREFIX];
+}
+
+
+#pragma mark ----
+
+- (NSString*)userId {
+	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_TWITTER_USERID];
 }
 
 - (void)setUserId:(NSString*)user_id {
@@ -37,26 +66,10 @@ static NTLNAccount *_instance;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (NSString*) username {
-	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_USERID];
-}
-
-- (NSString*) userId {
-	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_TWITTER_USERID];
-}
-
-- (NSString*)footer {
-	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_FOOTER];
-}
-
-- (BOOL) valid {
-	return self.username.length > 0;
-}
-
 - (void)getUserId {
 	NTLNTwitterUserClient *c = [[NTLNHttpClientPool sharedInstance] idleClientWithType:NTLNHttpClientPoolClientType_TwitterUserClient];
 	c.delegate = self;
-	[c getUserInfoForScreenName:[self username]];
+	[c getUserInfoForScreenName:screenName];
 }
 
 - (void)twitterUserClientSucceeded:(NTLNTwitterUserClient*)sender {
@@ -68,6 +81,5 @@ static NTLNAccount *_instance;
 
 - (void)twitterUserClientFailed:(NTLNTwitterUserClient*)sender {
 }
-
 
 @end

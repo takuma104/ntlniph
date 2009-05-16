@@ -1,21 +1,26 @@
 #import <UIKit/UIKit.h>
 #import "NTLNTwitterUserClient.h"
+#import "OAToken.h"
 
 @interface NTLNAccount : NSObject<NTLNTwitterUserClientDelegate> {
+	OAToken *userToken;
+	NSString *screenName;
 }
 
-+ (id) instance;
-+ (id) newInstance;
++ (NTLNAccount*)sharedInstance;
 
-- (NSString*)username;
-- (NSString*)userId;
-- (NSString*)footer;
-
-- (void)setUsername:(NSString*)username;
-	
 - (BOOL)valid;
 
+- (void)setScreenName:(NSString*)screenName;
+- (NSString*)screenName;
+
+- (OAToken*)userToken;
+- (void)setUserToken:(OAToken*)token;
+
+- (NSString*)footer;
+
 - (void)getUserId;
+- (NSString*)userId;
 
 @end
 

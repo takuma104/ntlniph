@@ -114,6 +114,14 @@ static int compareStatus(NTLNStatus *a, NTLNStatus *b, void *ptr);
 	}
 }
 
+- (void)clearAndRemoveCache {
+	[self clear];
+	if (archiverCachePath) {
+		NSMutableArray *statuses = [NSMutableArray array];
+		[NSKeyedArchiver archiveRootObject:statuses toFile:archiverCachePath];
+	}
+}
+
 #pragma mark Archive(Private)
 
 - (void)loadArchive {
@@ -283,7 +291,7 @@ static int compareStatus(NTLNStatus *a, NTLNStatus *b, void *ptr)
 #pragma mark Private
 
 - (void)getTimelineWithPage:(int)page autoload:(BOOL)autoload {
-	if (activeTwitterClient == nil && [[NTLNAccount instance] valid]) {
+	if (activeTwitterClient == nil && [[NTLNAccount sharedInstance] valid]) {
 		[self stopTimer];
 		NSDate *now = [NSDate date];
 		BOOL got = NO;

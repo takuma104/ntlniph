@@ -10,7 +10,6 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		8D02D5130FA4582200005428 /* NTLNTweetPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D02D5120FA4582200005428 /* NTLNTweetPostView.m */; };
 		8D02D5B90FA45FF500005428 /* NTLNTweetQuoteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D02D5B80FA45FF500005428 /* NTLNTweetQuoteView.m */; };
-		8D1248DA0ED74A180021BB00 /* NTLNTwitterAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1248D90ED74A180021BB00 /* NTLNTwitterAccountViewController.m */; };
 		8D1B908D0E3A009500916B34 /* NTLNRoundedIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1B908C0E3A009500916B34 /* NTLNRoundedIconView.m */; };
 		8D1B91930E3A0FCF00916B34 /* NTLNColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1B91920E3A0FCF00916B34 /* NTLNColors.m */; };
 		8D1EF2B70FA58EB600BD452F /* NTLNTwitterXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1EF2B50FA58EB600BD452F /* NTLNTwitterXMLParser.m */; };
@@ -184,8 +183,6 @@
 		8D02D5B70FA45FF500005428 /* NTLNTweetQuoteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTweetQuoteView.h; sourceTree = "<group>"; };
 		8D02D5B80FA45FF500005428 /* NTLNTweetQuoteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTweetQuoteView.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8D1248D80ED74A180021BB00 /* NTLNTwitterAccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTwitterAccountViewController.h; sourceTree = "<group>"; };
-		8D1248D90ED74A180021BB00 /* NTLNTwitterAccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTwitterAccountViewController.m; sourceTree = "<group>"; };
 		8D1B908B0E3A009500916B34 /* NTLNRoundedIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNRoundedIconView.h; sourceTree = "<group>"; };
 		8D1B908C0E3A009500916B34 /* NTLNRoundedIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNRoundedIconView.m; sourceTree = "<group>"; };
 		8D1B91910E3A0FCF00916B34 /* NTLNColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNColors.h; sourceTree = "<group>"; };
@@ -782,8 +779,6 @@
 				8DDB08D80ED42E1F007602E6 /* NTLNSettingViewController.m */,
 				8D6786D70E4E187400F06BE3 /* NTLNAboutViewController.h */,
 				8D6786D80E4E187400F06BE3 /* NTLNAboutViewController.m */,
-				8D1248D80ED74A180021BB00 /* NTLNTwitterAccountViewController.h */,
-				8D1248D90ED74A180021BB00 /* NTLNTwitterAccountViewController.m */,
 				8DF436A80ED8172C005D284D /* NTLNFooterSettingViewController.h */,
 				8DF436A90ED8172C005D284D /* NTLNFooterSettingViewController.m */,
 			);
@@ -1098,7 +1093,6 @@
 				8DDB08AE0ED42D5E007602E6 /* UICPrototypeTableCell.m in Sources */,
 				8DDB08AF0ED42D5E007602E6 /* UICPrototypeTableCellTextInput.m in Sources */,
 				8DDB08D90ED42E1F007602E6 /* NTLNSettingViewController.m in Sources */,
-				8D1248DA0ED74A180021BB00 /* NTLNTwitterAccountViewController.m in Sources */,
 				8DF4362D0ED80A4F005D284D /* NTLNTwitterPost.m in Sources */,
 				8DF436AA0ED8172C005D284D /* NTLNFooterSettingViewController.m in Sources */,
 				8D3EC54C0F88CAD40090DCB1 /* NTLNUserViewController.m in Sources */,

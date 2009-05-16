@@ -2,12 +2,12 @@
 #import "OAMutableURLRequest.h"
 #import "NTLNConfigurationKeys.h"
 #import "NTLNOAuthConsumer.h"
+#import "NTLNAccount.h"
 
 @implementation NTLNOAuthHttpClient
 
 - (void)deallc {
 	[signatureProvider release];
-	[token release];
 	[consumer release];
 	[super dealloc];
 }
@@ -17,15 +17,12 @@
 	if (signatureProvider == nil) {
 		signatureProvider = [[OAHMAC_SHA1SignatureProvider alloc] init];
 	}
-
-	if (token == nil) {
-		token = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:NTLN_OAUTH_PROVIDER
-																	   prefix:NTLN_OAUTH_PREFIX];
-	}
 	
 	if (consumer == nil) {
 		consumer = [[[NTLNOAuthConsumer sharedInstance] consumer] retain];
 	}
+	
+	OAToken *token = [[NTLNAccount sharedInstance] userToken];
 	
 	OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]
                                                                    consumer:consumer

@@ -7,7 +7,6 @@
 #import "NTLNUnreadsViewController.h"
 #import "NTLNSettingViewController.h"
 #import "NTLNCacheCleaner.h"
-#import "NTLNTwitterAccountViewController.h"
 #import "NTLNFavoriteViewController.h"
 #import "NTLNDirectMessageViewController.h"
 #import "NTLNRateLimit.h"
@@ -130,9 +129,9 @@
 - (void)startup {
 	[self createViews];
 	
-	NSString *user_id = [[NTLNAccount instance] userId];
+	NSString *user_id = [[NTLNAccount sharedInstance] userId];
 	if (user_id == nil || [user_id length] == 0) {
-		[[NTLNAccount instance] getUserId];
+		[[NTLNAccount sharedInstance] getUserId];
 	}
 	
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -222,15 +221,6 @@
 	[[NTLNCacheCleaner sharedCacheCleaner] shutdown];
 }
 
-- (void)presentTwitterAccountSettingView {
-	UITableViewController *vc = [[[NTLNTwitterAccountViewController alloc] 
-								  initWithStyle:UITableViewStyleGrouped] autorelease];
-	UINavigationController *nc = [[[UINavigationController alloc] 
-								   initWithRootViewController:vc] autorelease];
-	[nc.navigationBar setBarStyle:UIBarStyleBlackOpaque];
-	[tabBarController presentModalViewController:nc animated:YES];
-}
-
 - (BOOL)isInMoreTab:(UIViewController*)vc {
 	int cnt = 0;
 	for (UINavigationController *v in tabBarController.viewControllers) {
@@ -244,6 +234,14 @@
 		cnt++;
 	}
 	return YES;
+}
+
+- (void)resetAllTimelinesAndCache {
+	[replysViewController.timeline clearAndRemoveCache];
+	[directMessageViewController.timeline clearAndRemoveCache];
+	[friendsViewController.timeline clearAndRemoveCache];
+	[sentsViewController.timeline clearAndRemoveCache];
+	[favoriteViewController.timeline clearAndRemoveCache];
 }
 
 @end

@@ -5,9 +5,9 @@
 #import "NTLNConfiguration.h"
 #import "NTLNColors.h"
 #import "NTLNAccelerometerSensor.h"
-#import "NTLNTwitterAccountViewController.h"
 #import "NTLNAppDelegate.h"
 #import "NTLNFooterSettingViewController.h"
+#import "NTLNOAuthConsumer.h"
 
 @interface NTLNSettingViewController(Private)
 - (void)setupPrototypes;
@@ -122,7 +122,8 @@
 
 	// for "Twitter account" cell
 	if ([indexPath section] == 0 && [indexPath row] == 0) {
-		[(NTLNAppDelegate*)[UIApplication sharedApplication].delegate presentTwitterAccountSettingView];
+
+		[[NTLNOAuthConsumer sharedInstance] requestToken:self.tabBarController];
 	}
 	
 	// for "Footer" cell

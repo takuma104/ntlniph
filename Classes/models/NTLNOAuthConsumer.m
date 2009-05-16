@@ -12,6 +12,8 @@
 #import "NTLNConfigurationKeys.h"
 #import "NTLNAccount.h"
 
+#import "NTLNAppDelegate.h"
+
 @implementation NTLNOAuthConsumer
 
 GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
@@ -105,8 +107,6 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 		[rootViewController presentModalViewController:bvc animated:YES];
 		[rootViewController release];
 		rootViewController = nil;
-		
-		//		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 	}
 }
 
@@ -127,18 +127,19 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 	return nil;
 }
 
-
 - (void)accessTokenTicket:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data {
 	if (ticket.didSucceed) {
 		NSString *responseBody = [[NSString alloc] initWithData:data
 													   encoding:NSUTF8StringEncoding];
 		OAToken *token = [[OAToken alloc] initWithHTTPResponseBody:responseBody];
-		[token storeInUserDefaultsWithServiceProviderName:NTLN_OAUTH_PROVIDER 
-												   prefix:NTLN_OAUTH_PREFIX];
+		[[NTLNAccount sharedInstance] setUserToken:token];
 		[token release];
 
-		[[NTLNAccount instance] setUsername:[self screenNameFromHTTPResponseBody:responseBody]];
+		NSString *screenName = [self screenNameFromHTTPResponseBody:responseBody];
+		[[NTLNAccount sharedInstance] setScreenName:screenName];
 		[responseBody release];
+		
+		[(NTLNAppDelegate*)[UIApplication sharedApplication].delegate resetAllTimelinesAndCache];
 	}
 }
 
