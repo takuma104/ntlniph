@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
 
+#define TIMEOUT_SEC		20.0
+
 @interface NTLNHttpClient : NSObject {
     NSURLConnection *connection;
     NSMutableData *recievedData;
@@ -12,9 +14,7 @@
 }
 
 - (void)requestGET:(NSString*)url;
-- (void)requestGET:(NSString*)url username:(NSString*)username password:(NSString*)password;
-//- (void)requestPOST:(NSString*)url body:(NSString*)body;
-- (void)requestPOST:(NSString*)url body:(NSString*)body username:(NSString*)username password:(NSString*)password;
+- (void)requestPOST:(NSString*)url body:(NSString*)body;
 - (void)cancel;
 
 - (void)requestSucceeded;

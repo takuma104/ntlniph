@@ -14,6 +14,8 @@
 #import "GTMRegex.h"
 #import "NTLNTwitterPost.h"
 #import "NTLNOAuthConsumer.h"
+#import "OAToken.h"
+#import "NTLNConfigurationKeys.h"
 
 @implementation NTLNAppDelegate
 
@@ -138,13 +140,10 @@
 	[window makeKeyAndVisible];
 	
 
-//	if (![[NTLNAccount instance] valid]) {		
-//		[self presentTwitterAccountSettingView];
-		
-//	}
-
-	[[NTLNOAuthConsumer sharedInstance] requestToken:tabBarController];
-	
+	OAToken *token = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:NTLN_OAUTH_PROVIDER prefix:NTLN_OAUTH_PREFIX];
+	if (token.secret.length == 0 || token.key.length == 0) {		
+		[[NTLNOAuthConsumer sharedInstance] requestToken:tabBarController];
+	}
 	applicationActive = TRUE;
 }
 

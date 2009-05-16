@@ -32,7 +32,6 @@
 @property (nonatomic, retain) UITabBarController *tabBarController;
 @property (readonly) BOOL applicationActive;
 
-- (NTLNBrowserViewController*)browserViewController;
 - (void)presentTwitterAccountSettingView;
 - (BOOL)isInMoreTab:(UIViewController*)vc;
 

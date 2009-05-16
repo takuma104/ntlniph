@@ -1,5 +1,5 @@
 #import <UIKit/UIKit.h>
-#import "NTLNHttpClient.h"
+#import "NTLNOAuthHttpClient.h"
 #import "NTLNTwitterXMLParser.h"
 
 @class NTLNTwitterClient;
@@ -11,7 +11,7 @@
 - (void)twitterClientFailed:(NTLNTwitterClient*)sender;
 @end
 
-@interface NTLNTwitterClient : NTLNHttpClient {
+@interface NTLNTwitterClient : NTLNOAuthHttpClient {
 	int requestPage;
 	NSString *screenNameForUserTimeline;
 	BOOL parseResultXML;

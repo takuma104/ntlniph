@@ -8,14 +8,12 @@
 + (id) newInstance;
 
 - (NSString*)username;
-- (NSString*)password;
 - (NSString*)userId;
 - (NSString*)footer;
 
 - (void)setUsername:(NSString*)username;
-- (void)setPassword:(NSString*)password;
 	
-- (BOOL) valid;
+- (BOOL)valid;
 
 - (void)getUserId;
 

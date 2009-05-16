@@ -36,11 +36,7 @@
 	parseResultXML = YES;
 	requestForTimeline = YES;
 	
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-
-	[super requestGET:url username:username password:password];
-//		[super requestGET:@"http://www.livedoor.com/"];
+	[super requestGET:url];
 	
 	[delegate twitterClientBegin:self];
 }
@@ -234,29 +230,19 @@
 					  reply_id]; 
 	}
 	
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-
-	[self requestPOST:url body:postString username:username password:password];
+	[self requestPOST:url body:postString];
 }
 
 - (void)createFavoriteWithID:(NSString*)messageId {
 	NSString* url = [NSString stringWithFormat:@"%@favorites/create/%@.xml", 
 					 [NTLNTwitterClient URLForTwitterWithAccount], messageId];
-	
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-
-	[self requestPOST:url body:nil username:username password:password];
+	[self requestPOST:url body:nil];
 }
 
 - (void)destroyFavoriteWithID:(NSString*)messageId {
 	NSString* url = [NSString stringWithFormat:@"%@favorites/destroy/%@.xml", 
 					 [NTLNTwitterClient URLForTwitterWithAccount], messageId];
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-
-	[self requestPOST:url body:nil username:username password:password];
+	[self requestPOST:url body:nil];
 }
 
 - (void)getFavoriteWithScreenName:(NSString*)screenName page:(int)page since_id:(NSString*)since_id{

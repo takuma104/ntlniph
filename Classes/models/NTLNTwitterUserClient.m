@@ -32,10 +32,7 @@
 	if (page > 1) {
 		url = [NSString stringWithFormat:@"%@?page=%d", url, page];
 	}
-
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-	[super requestGET:url username:username password:password];
+	[super requestGET:url];
 }
 
 - (void)getFollowersWithScreenName:(NSString*)screen_name page:(int)page {
@@ -43,10 +40,7 @@
 	if (page > 1) {
 		url = [NSString stringWithFormat:@"%@?page=%d", url, page];
 	}
-	
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-	[super requestGET:url username:username password:password];
+	[super requestGET:url];
 }
 
 - (void)requestSucceeded {

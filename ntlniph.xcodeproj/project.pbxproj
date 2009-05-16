@@ -172,6 +172,7 @@
 		F1E17DDD0FBE9DFF0023636F /* OAToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17DB80FBE9DFF0023636F /* OAToken.m */; };
 		F1E17E460FBEA7D70023636F /* NTLNOAuthConsumer.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17E450FBEA7D70023636F /* NTLNOAuthConsumer.m */; };
 		F1E17E810FBEAD340023636F /* NTLNOAuthBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17E800FBEAD340023636F /* NTLNOAuthBrowserViewController.m */; };
+		F1E17F6A0FBEBEC80023636F /* NTLNOAuthHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17F690FBEBEC80023636F /* NTLNOAuthHttpClient.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -443,6 +444,8 @@
 		F1E17E450FBEA7D70023636F /* NTLNOAuthConsumer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNOAuthConsumer.m; sourceTree = "<group>"; };
 		F1E17E7F0FBEAD340023636F /* NTLNOAuthBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNOAuthBrowserViewController.h; sourceTree = "<group>"; };
 		F1E17E800FBEAD340023636F /* NTLNOAuthBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNOAuthBrowserViewController.m; sourceTree = "<group>"; };
+		F1E17F680FBEBEC80023636F /* NTLNOAuthHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNOAuthHttpClient.h; sourceTree = "<group>"; };
+		F1E17F690FBEBEC80023636F /* NTLNOAuthHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNOAuthHttpClient.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -739,6 +742,8 @@
 				8D76CFE00F9EEB7E006D1050 /* NTLNTwitterClientOperation.m */,
 				8D76CFE20F9EEBFC006D1050 /* NTLNTwitterClientOperationQueue.h */,
 				8D76CFE30F9EEBFC006D1050 /* NTLNTwitterClientOperationQueue.m */,
+				F1E17F680FBEBEC80023636F /* NTLNOAuthHttpClient.h */,
+				F1E17F690FBEBEC80023636F /* NTLNOAuthHttpClient.m */,
 			);
 			name = network;
 			sourceTree = "<group>";
@@ -1137,6 +1142,7 @@
 				F1E17DDD0FBE9DFF0023636F /* OAToken.m in Sources */,
 				F1E17E460FBEA7D70023636F /* NTLNOAuthConsumer.m in Sources */,
 				F1E17E810FBEAD340023636F /* NTLNOAuthBrowserViewController.m in Sources */,
+				F1E17F6A0FBEBEC80023636F /* NTLNOAuthHttpClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,6 +9,8 @@
 
 #import "NTLNOAuthBrowserViewController.h"
 #import "GTMRegex.h"
+#import "NTLNConfigurationKeys.h"
+#import "NTLNAccount.h"
 
 @implementation NTLNOAuthConsumer
 
@@ -16,24 +18,27 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 
 #pragma mark Public
 
+- (OAConsumer *)consumer {
+	return [[[OAConsumer alloc] initWithKey:TWITTER_OAUTH_CONSUMER_KEY
+									 secret:TWITTER_OAUTH_CONSUMER_SECRET] autorelease];
+}
+
 - (void)requestToken:(UIViewController*)viewController {
 	[rootViewController release];
 	rootViewController = [viewController retain];
 	
-	OAConsumer *consumer = [[OAConsumer alloc] initWithKey:TWITTER_OAUTH_CONSUMER_KEY
-                                                    secret:TWITTER_OAUTH_CONSUMER_SECRET];
-	
     NSURL *url = [NSURL URLWithString:@"http://twitter.com/oauth/request_token"];
 	
-    OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:url
-                                                                   consumer:consumer
-                                                                      token:nil   // we don't have a Token yet
-                                                                      realm:nil   // our service provider doesn't specify a realm
-                                                          signatureProvider:nil]; // use the default method, HMAC-SHA1
+    OAMutableURLRequest *request = [[[OAMutableURLRequest alloc] initWithURL:url
+																	consumer:[self consumer]
+																	   token:nil   // we don't have a Token yet
+																	   realm:nil   // our service provider doesn't specify a realm
+														   signatureProvider:nil]  // use the default method, HMAC-SHA1
+																		autorelease]; 
 	
     [request setHTTPMethod:@"POST"];
 	
-    OADataFetcher *fetcher = [[OADataFetcher alloc] init];
+    OADataFetcher *fetcher = [[[OADataFetcher alloc] init] autorelease];
 	
     [fetcher fetchDataWithRequest:request
                          delegate:self
@@ -41,6 +46,45 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
                   didFailSelector:@selector(requestTokenTicket:didFailWithError:)];
 	
 }
+
+- (BOOL)isCallbackURL:(NSURL*)url {
+	NSString *u = [url description];
+	return [u gtm_matchesPattern:
+			@"^http:\\/\\/iphone.natsulion.org\\/oauth_callback\\?oauth_token=.*$"];
+}
+
+- (void)accessToken:(NSURL*)callbackUrl {
+	NSString *u = [callbackUrl description];
+	NSArray *a = [u gtm_subPatternsOfPattern: 
+				  @"^http:\\/\\/iphone.natsulion.org\\/oauth_callback\\?(oauth_token=.*)$"];
+	if (a && a.count != 2) {
+		//error?
+		return;
+	}
+	
+	NSString *response = [a objectAtIndex:1];
+	NSLog(@"response: %@", response);
+	
+	OAToken *token = [[[OAToken alloc] initWithHTTPResponseBody:response] autorelease];
+		
+	NSURL *url = [NSURL URLWithString:@"http://twitter.com/oauth/access_token"];
+	
+	OAMutableURLRequest *request = [[[OAMutableURLRequest alloc] initWithURL:url
+																   consumer:[self consumer]
+																	  token:token
+																	  realm:nil   // our service provider doesn't specify a realm
+														  signatureProvider:nil] autorelease]; // use the default method, HMAC-SHA1
+	
+	[request setHTTPMethod:@"POST"];
+	
+	OADataFetcher *fetcher = [[[OADataFetcher alloc] init] autorelease];
+	
+	[fetcher fetchDataWithRequest:request
+						 delegate:self
+				didFinishSelector:@selector(accessTokenTicket:didFinishWithData:)
+				  didFailSelector:@selector(accessTokenTicket:didFailWithError:)];
+}
+
 
 #pragma mark Private
 
@@ -53,10 +97,9 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 	if (ticket.didSucceed) {
 		NSString *responseBody = [[NSString alloc] initWithData:data
 													   encoding:NSUTF8StringEncoding];
-		///		requestToken = [[OAToken alloc] initWithHTTPResponseBody:responseBody];
-		//		NSLog(@"responseBody: %@", responseBody);
 		NSString *url = [NSString stringWithFormat:@"https://twitter.com/oauth/authorize?%@", responseBody];
-
+		[responseBody release];
+		
 		NTLNOAuthBrowserViewController *bvc = [[[NTLNOAuthBrowserViewController alloc] init] autorelease];
 		bvc.url = url;
 		[rootViewController presentModalViewController:bvc animated:YES];
@@ -73,23 +116,34 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 	rootViewController = nil;
 }
 
-
-- (BOOL)isCallbackURL:(NSURL*)url {
-	NSString *u = [url description];
-	return [u gtm_matchesPattern:
-			@"^http:\\/\\/iphone.natsulion.org\\/oauth_callback\\?oauth_token=.*$"];
-}
-
-- (void)accessToken:(NSURL*)callbackUrl {
-	NSString *u = [callbackUrl description];
-	NSArray *a = [u gtm_subPatternsOfPattern: 
-				  @"^http:\\/\\/iphone.natsulion.org\\/oauth_callback\\?(oauth_token=.*)$"];
-	if (a && a.count == 2) {
-		NSString *param = [a objectAtIndex:1];
-		NSLog(@"param: %@", param);
+- (NSString*)screenNameFromHTTPResponseBody:(NSString*)body {
+	NSArray *pairs = [body componentsSeparatedByString:@"&"];
+	for (NSString *pair in pairs) {
+		NSArray *elements = [pair componentsSeparatedByString:@"="];
+		if ([[elements objectAtIndex:0] isEqualToString:@"screen_name"]) {
+			return [elements objectAtIndex:1];
+		}
 	}
-	
+	return nil;
 }
 
+
+- (void)accessTokenTicket:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data {
+	if (ticket.didSucceed) {
+		NSString *responseBody = [[NSString alloc] initWithData:data
+													   encoding:NSUTF8StringEncoding];
+		OAToken *token = [[OAToken alloc] initWithHTTPResponseBody:responseBody];
+		[token storeInUserDefaultsWithServiceProviderName:NTLN_OAUTH_PROVIDER 
+												   prefix:NTLN_OAUTH_PREFIX];
+		[token release];
+
+		[[NTLNAccount instance] setUsername:[self screenNameFromHTTPResponseBody:responseBody]];
+		[responseBody release];
+	}
+}
+
+- (void)accessTokenTicket:(OAServiceTicket *)ticket didFailWithError:(NSError *)error {
+	NSLog(@"Error: %@", error);
+}
 
 @end

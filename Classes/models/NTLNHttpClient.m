@@ -1,8 +1,5 @@
 #import "NTLNHttpClient.h"
 
-
-#define TIMEOUT_SEC		20.0
-
 @implementation NTLNHttpClient
 
 @synthesize recievedData, statusCode;
@@ -79,13 +76,6 @@
 	return request;
 }
 
-- (NSMutableURLRequest*)makeRequest:(NSString*)url username:(NSString*)username password:(NSString*)password {
-	NSMutableURLRequest *request = [self makeRequest:url];
-	[request setValue:[NTLNHttpClient stringOfAuthorizationHeaderWithUsername:username password:password]
-		forHTTPHeaderField:@"Authorization"];
-	return request;
-}
-
 - (void)reset {
 	[recievedData release];
 	recievedData = [[NSMutableData alloc] init];
@@ -101,25 +91,25 @@
 	rate_limit_remaining = 0;
 }
 
+- (void)prepareWithRequest:(NSMutableURLRequest*)request {
+	// do nothing (for OAuthHttpClient)
+}
+
 - (void)requestGET:(NSString*)url {
 	[self reset];
 	NSMutableURLRequest *request = [self makeRequest:url];
+	[self prepareWithRequest:request];
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
 
-- (void)requestGET:(NSString*)url username:(NSString*)username password:(NSString*)password {
+- (void)requestPOST:(NSString*)url body:(NSString*)body {
 	[self reset];
-	NSMutableURLRequest *request = [self makeRequest:url username:username password:password];
-	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-}
-
-- (void)requestPOST:(NSString*)url body:(NSString*)body username:(NSString*)username password:(NSString*)password {
-	[self reset];
-	NSMutableURLRequest *request = [self makeRequest:url username:username password:password];
+	NSMutableURLRequest *request = [self makeRequest:url];
     [request setHTTPMethod:@"POST"];
 	if (body) {
 		[request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
 	}
+	[self prepareWithRequest:request];
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 }
 

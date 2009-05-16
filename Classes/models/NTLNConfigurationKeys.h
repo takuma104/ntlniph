@@ -13,3 +13,6 @@
 #define NTLN_PREFERENCE_FOOTER					@"footer"
 
 #define NTLN_PREFERENCE_LEFTHAND				@"lefthand"
+
+#define NTLN_OAUTH_PROVIDER						@"twitter.com"
+#define NTLN_OAUTH_PREFIX						@"NatsuLion"
