@@ -54,4 +54,13 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNAccount, sharedInstance)
 												   prefix:NTLN_OAUTH_PREFIX];
 }
 
+- (BOOL)waitForOAuthCallback {
+	return [[NSUserDefaults standardUserDefaults] boolForKey:NTLN_OAUTH_WAIT_FOR_CALLBACK];
+}
+
+- (void)setWaitForOAuthCallback:(BOOL)wait {
+	[[NSUserDefaults standardUserDefaults] setBool:wait forKey:NTLN_OAUTH_WAIT_FOR_CALLBACK];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 @end

@@ -16,6 +16,9 @@
 - (OAToken*)userToken;
 - (void)setUserToken:(OAToken*)token;
 
+- (BOOL)waitForOAuthCallback;
+- (void)setWaitForOAuthCallback:(BOOL)wait;
+
 - (NSString*)footer;
 
 @end

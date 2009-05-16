@@ -133,12 +133,11 @@
 	[window addSubview:tabBarController.view];
 	[window makeKeyAndVisible];
 	
-
-	OAToken *token = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:NTLN_OAUTH_PROVIDER prefix:NTLN_OAUTH_PREFIX];
-	if (token.secret.length == 0 || token.key.length == 0) {		
+	if (! [[NTLNAccount sharedInstance] waitForOAuthCallback] && 
+		! [[NTLNAccount sharedInstance] valid]) {
 		[[NTLNOAuthConsumer sharedInstance] requestToken:tabBarController];
 	}
-	applicationActive = TRUE;
+	applicationActive = YES;
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
@@ -159,10 +158,12 @@
 																				 CFSTR(""),
 																				 kCFStringEncodingUTF8);
 		[[NTLNTwitterPost shardInstance] updateText:text];
+	} else if ([[NTLNOAuthConsumer sharedInstance] isCallbackURL:url]) {
+		[[NTLNOAuthConsumer sharedInstance] accessToken:url];
+		[[NTLNAccount sharedInstance] setWaitForOAuthCallback:NO];
 	}
 	return YES;
 }
-
 
 - (void)cacheCleanerAlertClosed {
 	[self startup];

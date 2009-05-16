@@ -16,3 +16,5 @@
 
 #define NTLN_OAUTH_PROVIDER						@"twitter.com"
 #define NTLN_OAUTH_PREFIX						@"NatsuLion"
+
+#define NTLN_OAUTH_WAIT_FOR_CALLBACK			@"oAuthWaitForCallback"

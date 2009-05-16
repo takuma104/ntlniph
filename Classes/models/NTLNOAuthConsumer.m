@@ -7,7 +7,6 @@
 #import "OADataFetcher.h"
 #import "OAServiceTicket.h"
 
-#import "NTLNOAuthBrowserViewController.h"
 #import "GTMRegex.h"
 #import "NTLNConfigurationKeys.h"
 #import "NTLNAccount.h"
@@ -52,13 +51,13 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 - (BOOL)isCallbackURL:(NSURL*)url {
 	NSString *u = [url description];
 	return [u gtm_matchesPattern:
-			@"^http:\\/\\/iphone.natsulion.org\\/oauth_callback\\?oauth_token=.*$"];
+			@"^.*oauth_callback\\?oauth_token=.*$"];
 }
 
 - (void)accessToken:(NSURL*)callbackUrl {
 	NSString *u = [callbackUrl description];
 	NSArray *a = [u gtm_subPatternsOfPattern: 
-				  @"^http:\\/\\/iphone.natsulion.org\\/oauth_callback\\?(oauth_token=.*)$"];
+				  @"^.*oauth_callback\\?(oauth_token=.*)$"];
 	if (a && a.count != 2) {
 		//error?
 		return;
@@ -101,12 +100,9 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 													   encoding:NSUTF8StringEncoding];
 		NSString *url = [NSString stringWithFormat:@"https://twitter.com/oauth/authorize?%@", responseBody];
 		[responseBody release];
-		
-		NTLNOAuthBrowserViewController *bvc = [[[NTLNOAuthBrowserViewController alloc] init] autorelease];
-		bvc.url = url;
-		[rootViewController presentModalViewController:bvc animated:YES];
-		[rootViewController release];
-		rootViewController = nil;
+
+		[[NTLNAccount sharedInstance] setWaitForOAuthCallback:YES];
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 	}
 }
 
