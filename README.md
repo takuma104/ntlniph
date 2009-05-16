@@ -11,7 +11,7 @@ Potions of this product utilize some open sourced materials, see readme.html in 
 
 You need twitter OAuth API Keys. Obtain from the following form,
 
-<a href="http://twitter.com/oauth_clients/new>http://twitter.com/oauth_clients/new</a>
+<a href="http://twitter.com/oauth_clients/new">http://twitter.com/oauth_clients/new</a>
 
 and store the "Consumer key" and "Consumer secret" in twitter_apikeys.h.
 
