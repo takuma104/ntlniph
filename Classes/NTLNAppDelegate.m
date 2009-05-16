@@ -128,12 +128,7 @@
 
 - (void)startup {
 	[self createViews];
-	
-	NSString *user_id = [[NTLNAccount sharedInstance] userId];
-	if (user_id == nil || [user_id length] == 0) {
-		[[NTLNAccount sharedInstance] getUserId];
-	}
-	
+		
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	[window addSubview:tabBarController.view];
 	[window makeKeyAndVisible];

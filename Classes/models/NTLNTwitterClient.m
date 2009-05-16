@@ -2,7 +2,6 @@
 #import "NTLNAccount.h"
 #import "NTLNXMLHTTPEncoder.h"
 #import "NTLNConfiguration.h"
-#import "NTLNTwitterXMLReader.h"
 #import "NTLNAlert.h"
 #import "NTLNRateLimit.h"
 #import "NSDateExtended.h"

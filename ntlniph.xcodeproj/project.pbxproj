@@ -149,7 +149,6 @@
 		F17419080E2A2E6A008BA863 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419040E2A2E6A008BA863 /* SystemConfiguration.framework */; };
 		F17419090E2A2E6A008BA863 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419050E2A2E6A008BA863 /* Security.framework */; };
 		F174190A0E2A2E6A008BA863 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419060E2A2E6A008BA863 /* Foundation.framework */; };
-		F17419750E2A3A46008BA863 /* NTLNTwitterXMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = F17419740E2A3A46008BA863 /* NTLNTwitterXMLReader.m */; };
 		F17419A90E2A45AF008BA863 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419A80E2A45AF008BA863 /* CoreGraphics.framework */; };
 		F1816C120E0BEB2400C55465 /* NTLNBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1816C110E0BEB2400C55465 /* NTLNBrowserViewController.m */; };
 		F1D470190E04483900E9CB1D /* NTLNLinkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D470180E04483900E9CB1D /* NTLNLinkViewController.m */; };
@@ -396,8 +395,6 @@
 		F17419040E2A2E6A008BA863 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		F17419050E2A2E6A008BA863 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		F17419060E2A2E6A008BA863 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		F17419730E2A3A46008BA863 /* NTLNTwitterXMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTwitterXMLReader.h; sourceTree = "<group>"; };
-		F17419740E2A3A46008BA863 /* NTLNTwitterXMLReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTwitterXMLReader.m; sourceTree = "<group>"; };
 		F17419A80E2A45AF008BA863 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F1816C100E0BEB2400C55465 /* NTLNBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNBrowserViewController.h; sourceTree = "<group>"; };
 		F1816C110E0BEB2400C55465 /* NTLNBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNBrowserViewController.m; sourceTree = "<group>"; };
@@ -828,8 +825,6 @@
 				F1216BAC0E04C37F0073A653 /* NTLNUser.m */,
 				8D1EF2B60FA58EB600BD452F /* NTLNTwitterXMLParser.h */,
 				8D1EF2B50FA58EB600BD452F /* NTLNTwitterXMLParser.m */,
-				F17419730E2A3A46008BA863 /* NTLNTwitterXMLReader.h */,
-				F17419740E2A3A46008BA863 /* NTLNTwitterXMLReader.m */,
 				8D988F5A0E84174B00AA6845 /* NTLNTwitterUserXMLReader.h */,
 				8D988F5B0E84174B00AA6845 /* NTLNTwitterUserXMLReader.m */,
 				8DBBB31D0E4343AE00638CB3 /* NTLNCache.h */,
@@ -1052,7 +1047,6 @@
 				F145D5E10E0EC22500DAE9EF /* NTLNReplysViewController.m in Sources */,
 				F145D5E50E0EC24900DAE9EF /* NTLNSentsViewController.m in Sources */,
 				F13420C40E11595B00F2AF64 /* NTLNUnreadsViewController.m in Sources */,
-				F17419750E2A3A46008BA863 /* NTLNTwitterXMLReader.m in Sources */,
 				8D908F370E364E99002E7502 /* NTLNTweetPostViewController.m in Sources */,
 				8D1B908D0E3A009500916B34 /* NTLNRoundedIconView.m in Sources */,
 				8D1B91930E3A0FCF00916B34 /* NTLNColors.m in Sources */,
