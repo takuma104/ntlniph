@@ -10,13 +10,14 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNAccount, sharedInstance)
 	if (self = [super init]) {
 		userToken = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:NTLN_OAUTH_PROVIDER 
 																		   prefix:NTLN_OAUTH_PREFIX];
-		screenName = [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_USERID];
+		screenName = [[[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_USERID] retain];
 	}
 	return self;
 }
 
 - (void) dealloc {
 	[userToken release];
+	[screenName release];
     [super dealloc];
 }
 
