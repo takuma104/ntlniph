@@ -63,7 +63,7 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 	}
 	
 	NSString *response = [a objectAtIndex:1];
-	NSLog(@"response: %@", response);
+	LOG(@"response: %@", response);
 	
 	OAToken *token = [[[OAToken alloc] initWithHTTPResponseBody:response] autorelease];
 		
@@ -111,7 +111,7 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 }
 
 - (void)requestTokenTicket:(OAServiceTicket *)ticket didFailWithError:(NSError *)error {
-	NSLog(@"Error: %@", error);
+	LOG(@"Error: %@", error);
 	[rootViewController release];
 	rootViewController = nil;
 }
@@ -143,7 +143,7 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 }
 
 - (void)accessTokenTicket:(OAServiceTicket *)ticket didFailWithError:(NSError *)error {
-	NSLog(@"Error: %@", error);
+	LOG(@"Error: %@", error);
 }
 
 @end
