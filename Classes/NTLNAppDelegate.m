@@ -13,6 +13,7 @@
 #import "NTLNRateLimit.h"
 #import "GTMRegex.h"
 #import "NTLNTwitterPost.h"
+#import "NTLNOAuthConsumer.h"
 
 @implementation NTLNAppDelegate
 
@@ -137,9 +138,12 @@
 	[window makeKeyAndVisible];
 	
 
-	if (![[NTLNAccount instance] valid]) {		
-		[self presentTwitterAccountSettingView];
-	}
+//	if (![[NTLNAccount instance] valid]) {		
+//		[self presentTwitterAccountSettingView];
+		
+//	}
+
+	[[NTLNOAuthConsumer sharedInstance] requestToken:tabBarController];
 	
 	applicationActive = TRUE;
 }

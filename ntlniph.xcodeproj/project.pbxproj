@@ -170,6 +170,8 @@
 		F1E17DD90FBE9DFF0023636F /* OARequestParameter.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17DB00FBE9DFF0023636F /* OARequestParameter.m */; };
 		F1E17DDB0FBE9DFF0023636F /* OAServiceTicket.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17DB40FBE9DFF0023636F /* OAServiceTicket.m */; };
 		F1E17DDD0FBE9DFF0023636F /* OAToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17DB80FBE9DFF0023636F /* OAToken.m */; };
+		F1E17E460FBEA7D70023636F /* NTLNOAuthConsumer.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17E450FBEA7D70023636F /* NTLNOAuthConsumer.m */; };
+		F1E17E810FBEAD340023636F /* NTLNOAuthBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1E17E800FBEAD340023636F /* NTLNOAuthBrowserViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -436,6 +438,11 @@
 		F1E17DB70FBE9DFF0023636F /* OAToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAToken.h; sourceTree = "<group>"; };
 		F1E17DB80FBE9DFF0023636F /* OAToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAToken.m; sourceTree = "<group>"; };
 		F1E17DBD0FBE9DFF0023636F /* OAuthConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthConsumer.h; sourceTree = "<group>"; };
+		F1E17E280FBEA3B20023636F /* twitter_apikeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twitter_apikeys.h; sourceTree = SOURCE_ROOT; };
+		F1E17E440FBEA7D70023636F /* NTLNOAuthConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNOAuthConsumer.h; sourceTree = "<group>"; };
+		F1E17E450FBEA7D70023636F /* NTLNOAuthConsumer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNOAuthConsumer.m; sourceTree = "<group>"; };
+		F1E17E7F0FBEAD340023636F /* NTLNOAuthBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNOAuthBrowserViewController.h; sourceTree = "<group>"; };
+		F1E17E800FBEAD340023636F /* NTLNOAuthBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNOAuthBrowserViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -467,6 +474,7 @@
 				8D62786A0E7C4C6700CF345E /* viewUtils */,
 				8D81BEF80E9FED5C000D30E7 /* NTLNAppDelegate.h */,
 				8D81BEF70E9FED5C000D30E7 /* NTLNAppDelegate.m */,
+				F1E17E280FBEA3B20023636F /* twitter_apikeys.h */,
 				8DBCE2540E56D08D00E4A1C2 /* version.h */,
 			);
 			path = Classes;
@@ -628,6 +636,8 @@
 				8DD633B70FA8785B00C49838 /* NTLNTweetTextView.m */,
 				F13E2CBD0FB959A20086B0E7 /* NTLNWebView.h */,
 				F13E2CBE0FB959A20086B0E7 /* NTLNWebView.m */,
+				F1E17E7F0FBEAD340023636F /* NTLNOAuthBrowserViewController.h */,
+				F1E17E800FBEAD340023636F /* NTLNOAuthBrowserViewController.m */,
 			);
 			name = otherViews;
 			sourceTree = "<group>";
@@ -835,6 +845,8 @@
 				8DF5E09D0F90C9CD0096B849 /* NSDateExtended.m */,
 				8D6E22ED0F9129DD00B622D2 /* NTLNRateLimit.h */,
 				8D6E22EE0F9129DD00B622D2 /* NTLNRateLimit.m */,
+				F1E17E440FBEA7D70023636F /* NTLNOAuthConsumer.h */,
+				F1E17E450FBEA7D70023636F /* NTLNOAuthConsumer.m */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -1123,6 +1135,8 @@
 				F1E17DD90FBE9DFF0023636F /* OARequestParameter.m in Sources */,
 				F1E17DDB0FBE9DFF0023636F /* OAServiceTicket.m in Sources */,
 				F1E17DDD0FBE9DFF0023636F /* OAToken.m in Sources */,
+				F1E17E460FBEA7D70023636F /* NTLNOAuthConsumer.m in Sources */,
+				F1E17E810FBEAD340023636F /* NTLNOAuthBrowserViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
