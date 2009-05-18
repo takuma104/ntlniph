@@ -28,7 +28,7 @@
 	self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
 	toobarTop = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
-	toobarTop.barStyle = UIBarStyleBlack;
+	toobarTop.barStyle = UIBarStyleBlackOpaque;
 	[self setupToolbarTop];
 	[self.view addSubview:toobarTop];
 	
@@ -38,7 +38,7 @@
 	[self.view addSubview:webView];
 	
 	toobarBottom = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 480-44-20, 320, 44)];
-	toobarBottom.barStyle = UIBarStyleBlack;
+	toobarBottom.barStyle = UIBarStyleBlackOpaque;
 	[self setupToolbarBottom];
 	[self.view addSubview:toobarBottom];
 }
