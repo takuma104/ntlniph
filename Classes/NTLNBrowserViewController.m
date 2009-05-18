@@ -90,9 +90,9 @@
 }
 
 - (void)webView:(UIWebView *)aWebView didFailLoadWithError:(NSError *)error {
-	//	if (shown && error.code != -999) {
-	//		[[NTLNAlert instance] alert:@"Browser error" withMessage:error.localizedDescription];
-	//	}
+	if (error.code != -999) {
+		[[NTLNAlert instance] alert:@"Browser error" withMessage:error.localizedDescription];
+	}
 }
 
 - (BOOL)webView:(UIWebView *)aWebView shouldStartLoadWithRequest:(NSURLRequest *)request 
@@ -110,7 +110,7 @@
 #pragma mark Private
 
 - (void)setupToolbarTop {
-	UIBarButtonItem *doneButton = [[[UIBarButtonItem alloc] initWithTitle:@"done" 
+	UIBarButtonItem *doneButton = [[[UIBarButtonItem alloc] initWithTitle:@"close" 
 																	style:UIBarButtonItemStyleBordered 
 																   target:self		
 																   action:@selector(doneButtonPushed:)] autorelease];
@@ -131,20 +131,22 @@
 }
 
 - (void)setupToolbarBottom {
-	prevButton = [[UIBarButtonItem alloc] initWithTitle:@"prev" 
-												  style:UIBarButtonItemStyleBordered 
+
+	
+	prevButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"browser_icons_01.png"]
+												  style:UIBarButtonItemStylePlain 
 												 target:self		
 												 action:@selector(prevButtonPushed:)];
 	prevButton.enabled = NO;
 	
-	nextButton = [[UIBarButtonItem alloc] initWithTitle:@"next" 
-												  style:UIBarButtonItemStyleBordered 
+	nextButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"browser_icons_03.png"] 
+												  style:UIBarButtonItemStylePlain 
 												 target:self		
 												 action:@selector(nextButtonPushed:)];
 	nextButton.enabled = NO;
 	
-	UIBarButtonItem *safariButton = [[[UIBarButtonItem alloc] initWithTitle:@"safari" 
-																	  style:UIBarButtonItemStyleBordered 
+	UIBarButtonItem *safariButton = [[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"browser_icons_05.png"]
+																	  style:UIBarButtonItemStylePlain 
 																	 target:self		
 																	 action:@selector(safariButtonPushed:)] autorelease];
 	

@@ -151,6 +151,9 @@
 		F174190A0E2A2E6A008BA863 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419060E2A2E6A008BA863 /* Foundation.framework */; };
 		F17419A90E2A45AF008BA863 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419A80E2A45AF008BA863 /* CoreGraphics.framework */; };
 		F1816C120E0BEB2400C55465 /* NTLNBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1816C110E0BEB2400C55465 /* NTLNBrowserViewController.m */; };
+		F19C451D0FC158E200FF2279 /* browser_icons_01.png in Resources */ = {isa = PBXBuildFile; fileRef = F19C451A0FC158E200FF2279 /* browser_icons_01.png */; };
+		F19C451E0FC158E200FF2279 /* browser_icons_05.png in Resources */ = {isa = PBXBuildFile; fileRef = F19C451B0FC158E200FF2279 /* browser_icons_05.png */; };
+		F19C451F0FC158E200FF2279 /* browser_icons_03.png in Resources */ = {isa = PBXBuildFile; fileRef = F19C451C0FC158E200FF2279 /* browser_icons_03.png */; };
 		F1D470190E04483900E9CB1D /* NTLNLinkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D470180E04483900E9CB1D /* NTLNLinkViewController.m */; };
 		F1D471030E04A1B500E9CB1D /* NTLNFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D471020E04A1B500E9CB1D /* NTLNFriendsViewController.m */; };
 		F1E17DC30FBE9DFF0023636F /* Base64Transcoder.c in Sources */ = {isa = PBXBuildFile; fileRef = F1E17D840FBE9DFF0023636F /* Base64Transcoder.c */; };
@@ -397,6 +400,9 @@
 		F17419A80E2A45AF008BA863 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F1816C100E0BEB2400C55465 /* NTLNBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNBrowserViewController.h; sourceTree = "<group>"; };
 		F1816C110E0BEB2400C55465 /* NTLNBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNBrowserViewController.m; sourceTree = "<group>"; };
+		F19C451A0FC158E200FF2279 /* browser_icons_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = browser_icons_01.png; sourceTree = "<group>"; };
+		F19C451B0FC158E200FF2279 /* browser_icons_05.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = browser_icons_05.png; sourceTree = "<group>"; };
+		F19C451C0FC158E200FF2279 /* browser_icons_03.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = browser_icons_03.png; sourceTree = "<group>"; };
 		F1D470170E04483900E9CB1D /* NTLNLinkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNLinkViewController.h; sourceTree = "<group>"; };
 		F1D470180E04483900E9CB1D /* NTLNLinkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNLinkViewController.m; sourceTree = "<group>"; };
 		F1D471020E04A1B500E9CB1D /* NTLNFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNFriendsViewController.m; sourceTree = "<group>"; };
@@ -659,6 +665,9 @@
 		8DBB73020F87E83500B54378 /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				F19C451A0FC158E200FF2279 /* browser_icons_01.png */,
+				F19C451B0FC158E200FF2279 /* browser_icons_05.png */,
+				F19C451C0FC158E200FF2279 /* browser_icons_03.png */,
 				8DD55EC40FA435E5005E143B /* checkmark.png */,
 				8DF5E3740F910D340096B849 /* dm.png */,
 				8DF5E3750F910D340096B849 /* favorites.png */,
@@ -1001,6 +1010,9 @@
 				8DD636D90FA9F3DC00C49838 /* pushed_black_02.png in Resources */,
 				8DD636DA0FA9F3DC00C49838 /* pushed_black_04.png in Resources */,
 				F13E2B380FB806C50086B0E7 /* readme.html in Resources */,
+				F19C451D0FC158E200FF2279 /* browser_icons_01.png in Resources */,
+				F19C451E0FC158E200FF2279 /* browser_icons_05.png in Resources */,
+				F19C451F0FC158E200FF2279 /* browser_icons_03.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
