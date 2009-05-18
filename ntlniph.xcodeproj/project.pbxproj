@@ -138,7 +138,6 @@
 		F1216BBB0E04C37F0073A653 /* NTLNIconRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = F1216BA70E04C37F0073A653 /* NTLNIconRepository.m */; };
 		F1216BBC0E04C37F0073A653 /* NTLNMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = F1216BA90E04C37F0073A653 /* NTLNMessage.m */; };
 		F1216BBD0E04C37F0073A653 /* NTLNUser.m in Sources */ = {isa = PBXBuildFile; fileRef = F1216BAC0E04C37F0073A653 /* NTLNUser.m */; };
-		F1216BC00E04C37F0073A653 /* NTLNURLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F1216BB30E04C37F0073A653 /* NTLNURLUtils.m */; };
 		F1216BC10E04C37F0073A653 /* NTLNXMLHTTPEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = F1216BB50E04C37F0073A653 /* NTLNXMLHTTPEncoder.m */; };
 		F13420C40E11595B00F2AF64 /* NTLNUnreadsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F13420C30E11595B00F2AF64 /* NTLNUnreadsViewController.m */; };
 		F13E2B380FB806C50086B0E7 /* readme.html in Resources */ = {isa = PBXBuildFile; fileRef = F13E2B370FB806C50086B0E7 /* readme.html */; };
@@ -380,8 +379,6 @@
 		F1216BAA0E04C37F0073A653 /* NTLNNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNNotification.h; sourceTree = "<group>"; };
 		F1216BAB0E04C37F0073A653 /* NTLNUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNUser.h; sourceTree = "<group>"; };
 		F1216BAC0E04C37F0073A653 /* NTLNUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNUser.m; sourceTree = "<group>"; };
-		F1216BB20E04C37F0073A653 /* NTLNURLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNURLUtils.h; sourceTree = "<group>"; };
-		F1216BB30E04C37F0073A653 /* NTLNURLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNURLUtils.m; sourceTree = "<group>"; };
 		F1216BB40E04C37F0073A653 /* NTLNXMLHTTPEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNXMLHTTPEncoder.h; sourceTree = "<group>"; };
 		F1216BB50E04C37F0073A653 /* NTLNXMLHTTPEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNXMLHTTPEncoder.m; sourceTree = "<group>"; };
 		F13420C20E11595B00F2AF64 /* NTLNUnreadsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNUnreadsViewController.h; sourceTree = "<group>"; };
@@ -853,8 +850,6 @@
 		F1216BAF0E04C37F0073A653 /* util */ = {
 			isa = PBXGroup;
 			children = (
-				F1216BB20E04C37F0073A653 /* NTLNURLUtils.h */,
-				F1216BB30E04C37F0073A653 /* NTLNURLUtils.m */,
 				F1216BB40E04C37F0073A653 /* NTLNXMLHTTPEncoder.h */,
 				F1216BB50E04C37F0073A653 /* NTLNXMLHTTPEncoder.m */,
 			);
@@ -1048,7 +1043,6 @@
 				F1216BBB0E04C37F0073A653 /* NTLNIconRepository.m in Sources */,
 				F1216BBC0E04C37F0073A653 /* NTLNMessage.m in Sources */,
 				F1216BBD0E04C37F0073A653 /* NTLNUser.m in Sources */,
-				F1216BC00E04C37F0073A653 /* NTLNURLUtils.m in Sources */,
 				F1216BC10E04C37F0073A653 /* NTLNXMLHTTPEncoder.m in Sources */,
 				F1816C120E0BEB2400C55465 /* NTLNBrowserViewController.m in Sources */,
 				F145D5E10E0EC22500DAE9EF /* NTLNReplysViewController.m in Sources */,

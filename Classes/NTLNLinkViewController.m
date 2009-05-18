@@ -1,6 +1,5 @@
 #import "NTLNLinkViewController.h"
 #import "NTLNMessage.h"
-#import "NTLNURLUtils.h"
 #import "NTLNBrowserViewController.h"
 #import "NTLNFriendsViewController.h"
 #import "NTLNTweetPostViewController.h"
@@ -20,6 +19,7 @@
 #import "NTLNConversationViewController.h"
 #import "NTLNImages.h"
 #import "NTLNHttpClientPool.h"
+#import "GTMRegex.h"
 
 #define TEXT_FONT_SIZE	16.0
 
@@ -404,26 +404,41 @@
 }
 
 - (void)parseToken {
-	NTLNURLUtils *utils = [NTLNURLUtils utils];
-    NSArray *tokens = [utils tokenizeByAll:message.text];
-	int i;
-    for (i = 0; i < [tokens count]; i++) {
-        NSString *token = [tokens objectAtIndex:i];
-        if ([utils isURLToken:token]) {
-			NTLNURLPair *pair = [[NTLNURLPair alloc] init];
-			pair.text = token;
-			pair.url = token;
-			[links addObject:pair];
-			[pair release];
-		} else if ([utils isIDToken:token] && 
-				   ! [message.screenName isEqualToString:[token substringFromIndex:1]]) {
-			NTLNURLPair *pair = [[NTLNURLPair alloc] init];
-			pair.text = [NSString stringWithFormat:@"%@ + %@", message.screenName, [token substringFromIndex:1]];
-			pair.screenName = [token substringFromIndex:1];
-			[links addObject:pair];
-			[pair release];
-        }
-    }
+	NSString *text = message.text;
+	NSArray *a;
+
+	a = [text gtm_allSubstringsMatchedByPattern:@"@[[:alnum:]_]+"];
+	for (NSString *s in a) {
+		NTLNURLPair *pair = [[NTLNURLPair alloc] init];
+		pair.text = [NSString stringWithFormat:@"%@ + %@", message.screenName, [s substringFromIndex:1]];
+		pair.screenName = [s substringFromIndex:1];
+		[links addObject:pair];
+		[pair release];
+	}
+
+	a = [text gtm_allSubstringsMatchedByPattern:@"http:\\/\\/[^[:space:]]+"];
+	for (NSString *s in a) {
+		NTLNURLPair *pair = [[NTLNURLPair alloc] init];
+		pair.text = s;
+		pair.url = s;
+		[links addObject:pair];
+		[pair release];
+	}
+
+	a = [text gtm_allSubstringsMatchedByPattern:@"https:\\/\\/[^[:space:]]+"];
+	for (NSString *s in a) {
+		NTLNURLPair *pair = [[NTLNURLPair alloc] init];
+		pair.text = s;
+		pair.url = s;
+		[links addObject:pair];
+		[pair release];
+	}
+/*
+	a = [text gtm_allSubstringsMatchedByPattern:@"#[^[:space:]]+"];
+	for (NSString *s in a) {
+		NSLog(@"hashtags: %@", s);
+	}
+*/	
 }
 
 - (void)twitterClientSucceeded:(NTLNTwitterClient*)sender messages:(NSArray*)messages {
