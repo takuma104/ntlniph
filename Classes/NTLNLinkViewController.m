@@ -201,7 +201,7 @@
 //		[[self navigationController] pushViewController:browser animated:YES];
 		
 //		[self tabBarController].modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-		browser.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+//		browser.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 		[[self tabBarController] presentModalViewController:browser animated:YES]; 
 	}
 }
