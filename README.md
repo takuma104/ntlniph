@@ -25,4 +25,5 @@ The form must be selected or filled the following values:
 <h2>Github committers:</h2>
 <ul>
 <li><a href="http://github.com/takuma104">takuma104 (http://github.com/takuma104)</a></li>
+<li><a href="http://github.com/mootoh">mootoh (http://github.com/mootoh)</a></li>
 </ul>
