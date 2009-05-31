@@ -1,3 +1,4 @@
+#ifdef ENABLE_OAUTH
 #import "NTLNOAuthHttpClient.h"
 #import "OAMutableURLRequest.h"
 #import "NTLNConfigurationKeys.h"
@@ -39,3 +40,5 @@
 }
 
 @end
+
+#endif

@@ -122,8 +122,11 @@
 
 	// for "Twitter account" cell
 	if ([indexPath section] == 0 && [indexPath row] == 0) {
-
+#ifdef ENABLE_OAUTH
 		[[NTLNOAuthConsumer sharedInstance] requestToken:self.tabBarController];
+#else
+		[(NTLNAppDelegate*)[UIApplication sharedApplication].delegate presentTwitterAccountSettingView];
+#endif
 	}
 	
 	// for "Footer" cell

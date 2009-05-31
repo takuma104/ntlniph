@@ -1,3 +1,4 @@
+#ifdef ENABLE_OAUTH
 #import "NTLNHttpClient.h"
 #import "OAHMAC_SHA1SignatureProvider.h"
 #import "OAConsumer.h"
@@ -8,3 +9,5 @@
 }
 
 @end
+
+#endif

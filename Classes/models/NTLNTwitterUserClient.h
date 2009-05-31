@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import "NTLNUser.h"
+#import "NTLNHttpClient.h"
 #import "NTLNOAuthHttpClient.h"
 
 @class NTLNTwitterUserClient;
@@ -9,8 +10,12 @@
 - (void)twitterUserClientFailed:(NTLNTwitterUserClient*)sender;
 @end
 
+#ifdef ENABLE_OAUTH
 @interface NTLNTwitterUserClient : NTLNOAuthHttpClient {
-	@private
+#else
+@interface NTLNTwitterUserClient : NTLNHttpClient {
+#endif
+@private
 	NSObject<NTLNTwitterUserClientDelegate> *delegate;
 	NSMutableArray *users;
 }

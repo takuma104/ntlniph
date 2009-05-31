@@ -1,3 +1,4 @@
+#ifdef ENABLE_OAUTH
 #import <Foundation/Foundation.h>
 #import "OAConsumer.h"
 
@@ -15,3 +16,5 @@
 - (void)accessToken:(NSURL*)callbackUrl;
 
 @end
+
+#endif

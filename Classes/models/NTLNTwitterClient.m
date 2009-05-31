@@ -35,8 +35,15 @@
 	parseResultXML = YES;
 	requestForTimeline = YES;
 	
+#ifdef ENABLE_OAUTH
 	[super requestGET:url];
+#else	
+	NSString *username = [[NTLNAccount sharedInstance] screenName];
+	NSString *password = [[NTLNAccount sharedInstance] password];
 	
+	[super requestGET:url username:username password:password];
+#endif	
+
 	[delegate twitterClientBegin:self];
 }
 

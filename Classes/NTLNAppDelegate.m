@@ -15,6 +15,7 @@
 #import "NTLNOAuthConsumer.h"
 #import "OAToken.h"
 #import "NTLNConfigurationKeys.h"
+#import "NTLNTwitterAccountViewController.h"
 
 @implementation NTLNAppDelegate
 
@@ -132,11 +133,18 @@
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	[window addSubview:tabBarController.view];
 	[window makeKeyAndVisible];
-	
+
+#ifdef ENABLE_OAUTH	
 	if (! [[NTLNAccount sharedInstance] waitForOAuthCallback] && 
 		! [[NTLNAccount sharedInstance] valid]) {
 		[[NTLNOAuthConsumer sharedInstance] requestToken:tabBarController];
 	}
+#else
+	if (![[NTLNAccount sharedInstance] valid]) {		
+		[self presentTwitterAccountSettingView];
+	}	
+#endif
+	
 	applicationActive = YES;
 }
 
@@ -158,10 +166,13 @@
 																				 CFSTR(""),
 																				 kCFStringEncodingUTF8);
 		[[NTLNTwitterPost shardInstance] updateText:text];
-	} else if ([[NTLNOAuthConsumer sharedInstance] isCallbackURL:url]) {
+	} 
+#ifdef ENABLE_OAUTH
+	else if ([[NTLNOAuthConsumer sharedInstance] isCallbackURL:url]) {
 		[[NTLNOAuthConsumer sharedInstance] accessToken:url];
 		[[NTLNAccount sharedInstance] setWaitForOAuthCallback:NO];
 	}
+#endif
 	return YES;
 }
 
@@ -215,6 +226,15 @@
 	[[NTLNTwitterPost shardInstance] backupText];
 	
 	[[NTLNCacheCleaner sharedCacheCleaner] shutdown];
+}
+
+- (void)presentTwitterAccountSettingView {
+	UITableViewController *vc = [[[NTLNTwitterAccountViewController alloc] 
+								  initWithStyle:UITableViewStyleGrouped] autorelease];
+	UINavigationController *nc = [[[UINavigationController alloc] 
+								   initWithRootViewController:vc] autorelease];
+	[nc.navigationBar setBarStyle:UIBarStyleBlackOpaque];
+	[tabBarController presentModalViewController:nc animated:YES];
 }
 
 - (BOOL)isInMoreTab:(UIViewController*)vc {

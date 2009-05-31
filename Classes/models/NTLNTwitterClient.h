@@ -11,7 +11,11 @@
 - (void)twitterClientFailed:(NTLNTwitterClient*)sender;
 @end
 
+#ifdef ENABLE_OAUTH
 @interface NTLNTwitterClient : NTLNOAuthHttpClient {
+#else
+@interface NTLNTwitterClient : NTLNHttpClient {
+#endif
 	int requestPage;
 	NSString *screenNameForUserTimeline;
 	BOOL parseResultXML;

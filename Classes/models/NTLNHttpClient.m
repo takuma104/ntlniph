@@ -76,6 +76,13 @@
 	return request;
 }
 
+- (NSMutableURLRequest*)makeRequest:(NSString*)url username:(NSString*)username password:(NSString*)password {
+	NSMutableURLRequest *request = [self makeRequest:url];
+	[request setValue:[NTLNHttpClient stringOfAuthorizationHeaderWithUsername:username password:password]
+   forHTTPHeaderField:@"Authorization"];
+	return request;
+}
+
 - (void)reset {
 	[recievedData release];
 	recievedData = [[NSMutableData alloc] init];
@@ -110,6 +117,22 @@
 		[request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
 	}
 	[self prepareWithRequest:request];
+	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+}
+
+- (void)requestGET:(NSString*)url username:(NSString*)username password:(NSString*)password {
+	[self reset];
+	NSMutableURLRequest *request = [self makeRequest:url username:username password:password];
+	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+}
+
+- (void)requestPOST:(NSString*)url body:(NSString*)body username:(NSString*)username password:(NSString*)password {
+	[self reset];
+	NSMutableURLRequest *request = [self makeRequest:url username:username password:password];
+    [request setHTTPMethod:@"POST"];
+	if (body) {
+		[request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
+	}
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 }
 

@@ -144,6 +144,7 @@
 		F13E2CBF0FB959A20086B0E7 /* NTLNWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = F13E2CBE0FB959A20086B0E7 /* NTLNWebView.m */; };
 		F145D5E10E0EC22500DAE9EF /* NTLNReplysViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F145D5E00E0EC22500DAE9EF /* NTLNReplysViewController.m */; };
 		F145D5E50E0EC24900DAE9EF /* NTLNSentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F145D5E40E0EC24900DAE9EF /* NTLNSentsViewController.m */; };
+		F1474DF40FD2834B007D9F4C /* NTLNTwitterAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474DF20FD2834B007D9F4C /* NTLNTwitterAccountViewController.m */; };
 		F17419070E2A2E6A008BA863 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419030E2A2E6A008BA863 /* UIKit.framework */; };
 		F17419080E2A2E6A008BA863 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419040E2A2E6A008BA863 /* SystemConfiguration.framework */; };
 		F17419090E2A2E6A008BA863 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419050E2A2E6A008BA863 /* Security.framework */; };
@@ -390,6 +391,8 @@
 		F145D5E00E0EC22500DAE9EF /* NTLNReplysViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNReplysViewController.m; sourceTree = "<group>"; };
 		F145D5E30E0EC24900DAE9EF /* NTLNSentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNSentsViewController.h; sourceTree = "<group>"; };
 		F145D5E40E0EC24900DAE9EF /* NTLNSentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNSentsViewController.m; sourceTree = "<group>"; };
+		F1474DF20FD2834B007D9F4C /* NTLNTwitterAccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTwitterAccountViewController.m; sourceTree = "<group>"; };
+		F1474DF30FD2834B007D9F4C /* NTLNTwitterAccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTwitterAccountViewController.h; sourceTree = "<group>"; };
 		F17419030E2A2E6A008BA863 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F17419040E2A2E6A008BA863 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		F17419050E2A2E6A008BA863 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -435,7 +438,6 @@
 		F1E17DB70FBE9DFF0023636F /* OAToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAToken.h; sourceTree = "<group>"; };
 		F1E17DB80FBE9DFF0023636F /* OAToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAToken.m; sourceTree = "<group>"; };
 		F1E17DBD0FBE9DFF0023636F /* OAuthConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthConsumer.h; sourceTree = "<group>"; };
-		F1E17E280FBEA3B20023636F /* twitter_apikeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twitter_apikeys.h; sourceTree = SOURCE_ROOT; };
 		F1E17E440FBEA7D70023636F /* NTLNOAuthConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNOAuthConsumer.h; sourceTree = "<group>"; };
 		F1E17E450FBEA7D70023636F /* NTLNOAuthConsumer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNOAuthConsumer.m; sourceTree = "<group>"; };
 		F1E17F680FBEBEC80023636F /* NTLNOAuthHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNOAuthHttpClient.h; sourceTree = "<group>"; };
@@ -471,7 +473,6 @@
 				8D62786A0E7C4C6700CF345E /* viewUtils */,
 				8D81BEF80E9FED5C000D30E7 /* NTLNAppDelegate.h */,
 				8D81BEF70E9FED5C000D30E7 /* NTLNAppDelegate.m */,
-				F1E17E280FBEA3B20023636F /* twitter_apikeys.h */,
 				8DBCE2540E56D08D00E4A1C2 /* version.h */,
 			);
 			path = Classes;
@@ -779,6 +780,8 @@
 				8D6786D80E4E187400F06BE3 /* NTLNAboutViewController.m */,
 				8DF436A80ED8172C005D284D /* NTLNFooterSettingViewController.h */,
 				8DF436A90ED8172C005D284D /* NTLNFooterSettingViewController.m */,
+				F1474DF30FD2834B007D9F4C /* NTLNTwitterAccountViewController.h */,
+				F1474DF20FD2834B007D9F4C /* NTLNTwitterAccountViewController.m */,
 			);
 			name = configViews;
 			sourceTree = "<group>";
@@ -1131,6 +1134,7 @@
 				F1E17DDD0FBE9DFF0023636F /* OAToken.m in Sources */,
 				F1E17E460FBEA7D70023636F /* NTLNOAuthConsumer.m in Sources */,
 				F1E17F6A0FBEBEC80023636F /* NTLNOAuthHttpClient.m in Sources */,
+				F1474DF40FD2834B007D9F4C /* NTLNTwitterAccountViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

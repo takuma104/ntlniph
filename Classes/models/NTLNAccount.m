@@ -10,9 +10,17 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNAccount, sharedInstance)
 	if (self = [super init]) {
 		userToken = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:NTLN_OAUTH_PROVIDER 
 																		   prefix:NTLN_OAUTH_PREFIX];
-		screenName = [[[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_USERID] retain];
+		[self update];
 	}
 	return self;
+}
+
+- (void)update {
+	[screenName release];
+	[password release];
+
+	screenName = [[[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_USERID] retain];
+	password = [[[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_PASSWORD] retain];
 }
 
 - (void) dealloc {
@@ -32,15 +40,30 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNAccount, sharedInstance)
 	return screenName;
 }
 
+- (void)setPassword:(NSString*)pw {
+	[password release];
+	password = [pw retain];
+    [[NSUserDefaults standardUserDefaults] setObject:password forKey:NTLN_PREFERENCE_PASSWORD];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (NSString*)password {
+	return password;
+}
+
 - (NSString*)footer {
 	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_FOOTER];
 }
 
 - (BOOL)valid {
+#ifdef ENABLE_OAUTH
 	return screenName.length > 0 &&
 	userToken && 
 	userToken.key.length > 0 &&
 	userToken.secret.length > 0;
+#else
+	return screenName.length > 0 && password.length > 0;
+#endif
 }
 
 - (OAToken*)userToken {

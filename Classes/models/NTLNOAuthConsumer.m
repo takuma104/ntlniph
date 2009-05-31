@@ -1,3 +1,4 @@
+#ifdef ENABLE_OAUTH
 #import "NTLNOAuthConsumer.h"
 #import "GTMObjectSingleton.h"
 
@@ -144,3 +145,5 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNOAuthConsumer, sharedInstance)
 }
 
 @end
+
+#endif

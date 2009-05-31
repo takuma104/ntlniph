@@ -33,7 +33,7 @@
 @property (readonly) BOOL applicationActive;
 
 - (BOOL)isInMoreTab:(UIViewController*)vc;
-
+- (void)presentTwitterAccountSettingView;
 - (void)resetAllTimelinesAndCache;
 
 @end
