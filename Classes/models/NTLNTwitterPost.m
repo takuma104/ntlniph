@@ -62,7 +62,7 @@ SHARD_INSTANCE_IMPL
 							 idleClientWithType:NTLNHttpClientPoolClientType_TwitterClient];
 	tc.delegate = self;
 	if (text.length > 0) {
-		NSString *footer = [[NTLNAccount instance] footer];
+		NSString *footer = [[NTLNAccount sharedInstance] footer];
 		if (footer && footer.length > 0 && ! [self isDirectMessage]) {
 			[tc post:[NSString stringWithFormat:@"%@ %@", text, footer] reply_id:replyMessage.statusId];
 		} else {

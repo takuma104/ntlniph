@@ -7,12 +7,14 @@
 #import "NTLNUnreadsViewController.h"
 #import "NTLNSettingViewController.h"
 #import "NTLNCacheCleaner.h"
-#import "NTLNTwitterAccountViewController.h"
 #import "NTLNFavoriteViewController.h"
 #import "NTLNDirectMessageViewController.h"
 #import "NTLNRateLimit.h"
 #import "GTMRegex.h"
 #import "NTLNTwitterPost.h"
+#import "NTLNOAuthConsumer.h"
+#import "OAToken.h"
+#import "NTLNConfigurationKeys.h"
 
 @implementation NTLNAppDelegate
 
@@ -126,22 +128,16 @@
 
 - (void)startup {
 	[self createViews];
-	
-	NSString *user_id = [[NTLNAccount instance] userId];
-	if (user_id == nil || [user_id length] == 0) {
-		[[NTLNAccount instance] getUserId];
-	}
-	
+		
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	[window addSubview:tabBarController.view];
 	[window makeKeyAndVisible];
 	
-
-	if (![[NTLNAccount instance] valid]) {		
-		[self presentTwitterAccountSettingView];
+	if (! [[NTLNAccount sharedInstance] waitForOAuthCallback] && 
+		! [[NTLNAccount sharedInstance] valid]) {
+		[[NTLNOAuthConsumer sharedInstance] requestToken:tabBarController];
 	}
-	
-	applicationActive = TRUE;
+	applicationActive = YES;
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
@@ -162,10 +158,12 @@
 																				 CFSTR(""),
 																				 kCFStringEncodingUTF8);
 		[[NTLNTwitterPost shardInstance] updateText:text];
+	} else if ([[NTLNOAuthConsumer sharedInstance] isCallbackURL:url]) {
+		[[NTLNOAuthConsumer sharedInstance] accessToken:url];
+		[[NTLNAccount sharedInstance] setWaitForOAuthCallback:NO];
 	}
 	return YES;
 }
-
 
 - (void)cacheCleanerAlertClosed {
 	[self startup];
@@ -219,15 +217,6 @@
 	[[NTLNCacheCleaner sharedCacheCleaner] shutdown];
 }
 
-- (void)presentTwitterAccountSettingView {
-	UITableViewController *vc = [[[NTLNTwitterAccountViewController alloc] 
-								  initWithStyle:UITableViewStyleGrouped] autorelease];
-	UINavigationController *nc = [[[UINavigationController alloc] 
-								   initWithRootViewController:vc] autorelease];
-	[nc.navigationBar setBarStyle:UIBarStyleBlackOpaque];
-	[tabBarController presentModalViewController:nc animated:YES];
-}
-
 - (BOOL)isInMoreTab:(UIViewController*)vc {
 	int cnt = 0;
 	for (UINavigationController *v in tabBarController.viewControllers) {
@@ -241,6 +230,14 @@
 		cnt++;
 	}
 	return YES;
+}
+
+- (void)resetAllTimelinesAndCache {
+	[replysViewController.timeline clearAndRemoveCache];
+	[directMessageViewController.timeline clearAndRemoveCache];
+	[friendsViewController.timeline clearAndRemoveCache];
+	[sentsViewController.timeline clearAndRemoveCache];
+	[favoriteViewController.timeline clearAndRemoveCache];
 }
 
 @end

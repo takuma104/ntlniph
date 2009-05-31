@@ -121,7 +121,7 @@ static NTLNTweetPostViewController *_tweetViewController;
 
 - (void)setMaxTextLength {
 	maxTextLength = 140;
-	NSString *footer = [[NTLNAccount instance] footer];
+	NSString *footer = [[NTLNAccount sharedInstance] footer];
 	if (footer && [footer length] > 0 && 
 		! [[NTLNTwitterPost shardInstance] isDirectMessage]) {
 		maxTextLength -= [footer length] + 1;

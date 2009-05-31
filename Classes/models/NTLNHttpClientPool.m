@@ -65,6 +65,10 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNHttpClientPool, sharedInstance)
 	return ret;
 }
 
+- (void)hideNetworkActivityIndicator {
+	[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 - (void)releaseClient:(id)client {
 	@synchronized (self) {
 		[clientsIdle addObject:client];
@@ -73,7 +77,12 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNHttpClientPool, sharedInstance)
 			  [[client class] description], clientsIdle.count, clientsActive.count);
 
 		if (clientsActive.count == 0) {
-			[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+			[NSObject cancelPreviousPerformRequestsWithTarget:self 
+													 selector:@selector(hideNetworkActivityIndicator) 
+													   object:nil];
+			[self performSelector:@selector(hideNetworkActivityIndicator) 
+					   withObject:nil 
+					   afterDelay:0.3];
 		}
 		
 		NSNotification *notification = [NSNotification notificationWithName:IDLE_CLIENT_NOTIFICATION

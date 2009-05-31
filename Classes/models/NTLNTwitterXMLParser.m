@@ -74,11 +74,7 @@ static void startElementSAX(void *ctx,
 
 static void didParseMessage(ParserContext *p) {
 	[p->currentMessage setIconForURL:p->currentIconURL];
-	if ([p->currentInReplyToUserId isEqualToString:[[NTLNAccount instance] userId]]) {
-		p->currentMessage.replyType = NTLN_MESSAGE_REPLY_TYPE_REPLY;
-	} else {
-		[p->currentMessage finishedToSetProperties:p->currentMsgDirectMessage];
-	}
+	[p->currentMessage finishedToSetProperties:p->currentMsgDirectMessage];
 
 	[p->messages addObject:p->currentMessage];
 

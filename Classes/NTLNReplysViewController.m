@@ -2,7 +2,6 @@
 #import "NTLNAccount.h"
 #import "NTLNConfiguration.h"
 #import "NTLNCache.h"
-#import "NTLNTwitterXMLReader.h"
 #import "NTLNTwitterClient.h"
 #import "NTLNFriendsViewController.h"
 #import "NTLNHttpClientPool.h"
