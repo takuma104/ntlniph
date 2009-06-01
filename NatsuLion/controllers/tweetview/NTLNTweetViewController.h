@@ -22,7 +22,7 @@
 @end
 
 
-@interface NTLNLinkViewController : UITableViewController 
+@interface NTLNTweetViewController : UITableViewController 
 										<UITableViewDelegate, 
 										UITableViewDataSource, 
 										NTLNTwitterClientDelegate> {											

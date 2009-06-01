@@ -1,4 +1,4 @@
-#import "NTLNLinkViewController.h"
+#import "NTLNTweetViewController.h"
 #import "NTLNMessage.h"
 #import "NTLNBrowserViewController.h"
 #import "NTLNFriendsViewController.h"
@@ -35,7 +35,7 @@
 @end
 
 
-@interface NTLNLinkViewController(Private)
+@interface NTLNTweetViewController(Private)
 - (CGFloat)getTextboxHeight:(NSString *)str;
 - (UITableViewCell *)screenNameCell;
 - (UITableViewCell *)urlCell:(NTLNURLPair*)pair isEven:(BOOL)isEven;
@@ -46,7 +46,7 @@
 @end
 
 
-@implementation NTLNLinkViewController
+@implementation NTLNTweetViewController
 
 @synthesize message;
 
@@ -122,11 +122,11 @@
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
 	// Release anything that's not essential, such as cached data
-	LOG(@"NTLNLinkViewController#didReceiveMemoryWarning");
+	LOG(@"NTLNTweetViewController#didReceiveMemoryWarning");
 }
 
 - (void)dealloc {
-	LOG(@"NTLNLinkViewController#dealloc");
+	LOG(@"NTLNTweetViewController#dealloc");
 	[links release];
 	[message release];
 	[favAI release];
@@ -451,11 +451,11 @@
 }
 
 - (void)twitterClientBegin:(NTLNTwitterClient*)sender {
-	LOG(@"LinkView#twitterClientBegin");
+	LOG(@"TweetView#twitterClientBegin");
 }
 
 - (void)twitterClientEnd:(NTLNTwitterClient*)sender {
-	LOG(@"LinkView#twitterClientEnd");
+	LOG(@"TweetView#twitterClientEnd");
 }
 
 @end

@@ -2,7 +2,7 @@
 
 #import "NTLNTimelineViewController.h"
 
-@class NTLNLinkViewController;
+@class NTLNTweetViewController;
 @class NTLNMentionsViewController;
 
 @interface NTLNFriendsViewController : NTLNTimelineViewController <UIActionSheetDelegate>

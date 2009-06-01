@@ -95,7 +95,7 @@
 		F1474F9F0FD3F457007D9F4C /* NTLNTimelineViewControllerView.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F170FD3F457007D9F4C /* NTLNTimelineViewControllerView.m */; };
 		F1474FA00FD3F457007D9F4C /* NTLNBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F1A0FD3F457007D9F4C /* NTLNBrowserViewController.m */; };
 		F1474FA10FD3F457007D9F4C /* NTLNConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F1C0FD3F457007D9F4C /* NTLNConversationViewController.m */; };
-		F1474FA20FD3F457007D9F4C /* NTLNLinkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F1E0FD3F457007D9F4C /* NTLNLinkViewController.m */; };
+		F1474FA20FD3F457007D9F4C /* NTLNTweetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F1E0FD3F457007D9F4C /* NTLNTweetViewController.m */; };
 		F1474FA30FD3F457007D9F4C /* NTLNUserListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F210FD3F457007D9F4C /* NTLNUserListViewController.m */; };
 		F1474FA40FD3F457007D9F4C /* NTLNUserTimelineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F230FD3F457007D9F4C /* NTLNUserTimelineViewController.m */; };
 		F1474FA50FD3F457007D9F4C /* NTLNUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F250FD3F457007D9F4C /* NTLNUserViewController.m */; };
@@ -288,8 +288,8 @@
 		F1474F1A0FD3F457007D9F4C /* NTLNBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNBrowserViewController.m; sourceTree = "<group>"; };
 		F1474F1B0FD3F457007D9F4C /* NTLNConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNConversationViewController.h; sourceTree = "<group>"; };
 		F1474F1C0FD3F457007D9F4C /* NTLNConversationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNConversationViewController.m; sourceTree = "<group>"; };
-		F1474F1D0FD3F457007D9F4C /* NTLNLinkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNLinkViewController.h; sourceTree = "<group>"; };
-		F1474F1E0FD3F457007D9F4C /* NTLNLinkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNLinkViewController.m; sourceTree = "<group>"; };
+		F1474F1D0FD3F457007D9F4C /* NTLNTweetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTweetViewController.h; sourceTree = "<group>"; };
+		F1474F1E0FD3F457007D9F4C /* NTLNTweetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTweetViewController.m; sourceTree = "<group>"; };
 		F1474F200FD3F457007D9F4C /* NTLNUserListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNUserListViewController.h; sourceTree = "<group>"; };
 		F1474F210FD3F457007D9F4C /* NTLNUserListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNUserListViewController.m; sourceTree = "<group>"; };
 		F1474F220FD3F457007D9F4C /* NTLNUserTimelineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNUserTimelineViewController.h; sourceTree = "<group>"; };
@@ -724,12 +724,12 @@
 		F1474F180FD3F457007D9F4C /* tweetview */ = {
 			isa = PBXGroup;
 			children = (
-				F1474F190FD3F457007D9F4C /* NTLNBrowserViewController.h */,
-				F1474F1A0FD3F457007D9F4C /* NTLNBrowserViewController.m */,
+				F1474F1D0FD3F457007D9F4C /* NTLNTweetViewController.h */,
+				F1474F1E0FD3F457007D9F4C /* NTLNTweetViewController.m */,
 				F1474F1B0FD3F457007D9F4C /* NTLNConversationViewController.h */,
 				F1474F1C0FD3F457007D9F4C /* NTLNConversationViewController.m */,
-				F1474F1D0FD3F457007D9F4C /* NTLNLinkViewController.h */,
-				F1474F1E0FD3F457007D9F4C /* NTLNLinkViewController.m */,
+				F1474F190FD3F457007D9F4C /* NTLNBrowserViewController.h */,
+				F1474F1A0FD3F457007D9F4C /* NTLNBrowserViewController.m */,
 			);
 			path = tweetview;
 			sourceTree = "<group>";
@@ -1206,7 +1206,7 @@
 				F1474F9F0FD3F457007D9F4C /* NTLNTimelineViewControllerView.m in Sources */,
 				F1474FA00FD3F457007D9F4C /* NTLNBrowserViewController.m in Sources */,
 				F1474FA10FD3F457007D9F4C /* NTLNConversationViewController.m in Sources */,
-				F1474FA20FD3F457007D9F4C /* NTLNLinkViewController.m in Sources */,
+				F1474FA20FD3F457007D9F4C /* NTLNTweetViewController.m in Sources */,
 				F1474FA30FD3F457007D9F4C /* NTLNUserListViewController.m in Sources */,
 				F1474FA40FD3F457007D9F4C /* NTLNUserTimelineViewController.m in Sources */,
 				F1474FA50FD3F457007D9F4C /* NTLNUserViewController.m in Sources */,

@@ -8,7 +8,7 @@
 #import "NTLNTimeline.h"
 
 @class NTLNAppDelegate;
-@class NTLNLinkViewController;
+@class NTLNTweetViewController;
 @class NTLNStatus;
 @class NTLNRoundedIconView;
 @class NTLNTweetPostViewController;

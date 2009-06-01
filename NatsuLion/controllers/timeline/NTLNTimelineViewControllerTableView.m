@@ -1,5 +1,5 @@
 #import "NTLNTimelineViewController.h"
-#import "NTLNLinkViewController.h"
+#import "NTLNTweetViewController.h"
 
 @implementation NTLNTimelineViewController(TableView)
 
@@ -58,7 +58,7 @@
 		s = [timeline statusAtIndex:[indexPath row]];
 	}
 	
-	NTLNLinkViewController *lvc = [[[NTLNLinkViewController alloc] 
+	NTLNTweetViewController *lvc = [[[NTLNTweetViewController alloc] 
 									init] autorelease];
 	lvc.message = s.message;
 	[[self navigationController] pushViewController:lvc animated:YES];

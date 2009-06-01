@@ -1,5 +1,5 @@
 #import "NTLNFriendsViewController.h"
-#import "NTLNLinkViewController.h"
+#import "NTLNTweetViewController.h"
 #import "NTLNAccount.h"
 #import "NTLNConfiguration.h"
 #import "NTLNAppDelegate.h"
