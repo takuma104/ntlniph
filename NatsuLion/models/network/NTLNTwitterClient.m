@@ -5,8 +5,6 @@
 #import "NTLNAlert.h"
 #import "NTLNRateLimit.h"
 #import "NSDateExtended.h"
-#import "NTLNTwitterClientOperation.h"
-#import "NTLNTwitterClientOperationQueue.h"
 #import "NTLNTwitterXMLParser.h"
 #import "NTLNHttpClientPool.h"
 

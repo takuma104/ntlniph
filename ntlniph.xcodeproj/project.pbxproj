@@ -107,8 +107,6 @@
 		F1474FAB0FD3F457007D9F4C /* NTLNOAuthConsumer.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F360FD3F457007D9F4C /* NTLNOAuthConsumer.m */; };
 		F1474FAC0FD3F457007D9F4C /* NTLNOAuthHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F380FD3F457007D9F4C /* NTLNOAuthHttpClient.m */; };
 		F1474FAD0FD3F457007D9F4C /* NTLNTwitterClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F3A0FD3F457007D9F4C /* NTLNTwitterClient.m */; };
-		F1474FAE0FD3F457007D9F4C /* NTLNTwitterClientOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F3C0FD3F457007D9F4C /* NTLNTwitterClientOperation.m */; };
-		F1474FAF0FD3F457007D9F4C /* NTLNTwitterClientOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F3E0FD3F457007D9F4C /* NTLNTwitterClientOperationQueue.m */; };
 		F1474FB00FD3F457007D9F4C /* NTLNTwitterUserClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F400FD3F457007D9F4C /* NTLNTwitterUserClient.m */; };
 		F1474FB10FD3F457007D9F4C /* NTLNTwitterUserXMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F430FD3F457007D9F4C /* NTLNTwitterUserXMLReader.m */; };
 		F1474FB20FD3F457007D9F4C /* NTLNTwitterXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F450FD3F457007D9F4C /* NTLNTwitterXMLParser.m */; };
@@ -313,10 +311,6 @@
 		F1474F380FD3F457007D9F4C /* NTLNOAuthHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNOAuthHttpClient.m; sourceTree = "<group>"; };
 		F1474F390FD3F457007D9F4C /* NTLNTwitterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTwitterClient.h; sourceTree = "<group>"; };
 		F1474F3A0FD3F457007D9F4C /* NTLNTwitterClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTwitterClient.m; sourceTree = "<group>"; };
-		F1474F3B0FD3F457007D9F4C /* NTLNTwitterClientOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTwitterClientOperation.h; sourceTree = "<group>"; };
-		F1474F3C0FD3F457007D9F4C /* NTLNTwitterClientOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTwitterClientOperation.m; sourceTree = "<group>"; };
-		F1474F3D0FD3F457007D9F4C /* NTLNTwitterClientOperationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTwitterClientOperationQueue.h; sourceTree = "<group>"; };
-		F1474F3E0FD3F457007D9F4C /* NTLNTwitterClientOperationQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTwitterClientOperationQueue.m; sourceTree = "<group>"; };
 		F1474F3F0FD3F457007D9F4C /* NTLNTwitterUserClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTwitterUserClient.h; sourceTree = "<group>"; };
 		F1474F400FD3F457007D9F4C /* NTLNTwitterUserClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNTwitterUserClient.m; sourceTree = "<group>"; };
 		F1474F420FD3F457007D9F4C /* NTLNTwitterUserXMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNTwitterUserXMLReader.h; sourceTree = "<group>"; };
@@ -796,10 +790,6 @@
 				F1474F380FD3F457007D9F4C /* NTLNOAuthHttpClient.m */,
 				F1474F390FD3F457007D9F4C /* NTLNTwitterClient.h */,
 				F1474F3A0FD3F457007D9F4C /* NTLNTwitterClient.m */,
-				F1474F3B0FD3F457007D9F4C /* NTLNTwitterClientOperation.h */,
-				F1474F3C0FD3F457007D9F4C /* NTLNTwitterClientOperation.m */,
-				F1474F3D0FD3F457007D9F4C /* NTLNTwitterClientOperationQueue.h */,
-				F1474F3E0FD3F457007D9F4C /* NTLNTwitterClientOperationQueue.m */,
 				F1474F3F0FD3F457007D9F4C /* NTLNTwitterUserClient.h */,
 				F1474F400FD3F457007D9F4C /* NTLNTwitterUserClient.m */,
 			);
@@ -1218,8 +1208,6 @@
 				F1474FAB0FD3F457007D9F4C /* NTLNOAuthConsumer.m in Sources */,
 				F1474FAC0FD3F457007D9F4C /* NTLNOAuthHttpClient.m in Sources */,
 				F1474FAD0FD3F457007D9F4C /* NTLNTwitterClient.m in Sources */,
-				F1474FAE0FD3F457007D9F4C /* NTLNTwitterClientOperation.m in Sources */,
-				F1474FAF0FD3F457007D9F4C /* NTLNTwitterClientOperationQueue.m in Sources */,
 				F1474FB00FD3F457007D9F4C /* NTLNTwitterUserClient.m in Sources */,
 				F1474FB10FD3F457007D9F4C /* NTLNTwitterUserXMLReader.m in Sources */,
 				F1474FB20FD3F457007D9F4C /* NTLNTwitterXMLParser.m in Sources */,
