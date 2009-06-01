@@ -67,7 +67,7 @@
 		
 	settingViewController = [[NTLNSettingViewController alloc] initWithStyle:UITableViewStyleGrouped];
 	
-	favoriteViewController  = [[NTLNFavoriteViewController alloc] init];
+	favoriteViewController  = [[NTLNFavoriteViewController alloc] initWithScreenName:nil];
 	
 	
 	UINavigationController *nfri = [[[UINavigationController alloc] 

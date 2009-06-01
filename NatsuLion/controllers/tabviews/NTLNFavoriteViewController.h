@@ -5,6 +5,6 @@
 	NSString *screenNameInternal;
 }
 
-@property (readwrite, retain) NSString *screenName;
+- (id)initWithScreenName:(NSString*)screenName;
 
 @end

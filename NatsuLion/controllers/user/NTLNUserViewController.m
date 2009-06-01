@@ -190,8 +190,7 @@
 				break;
 			case 3:
 			{
-				NTLNFavoriteViewController *vc = [[[NTLNFavoriteViewController alloc] init] autorelease];
-				vc.screenName = userInfo.screen_name;
+				NTLNFavoriteViewController *vc = [[[NTLNFavoriteViewController alloc] initWithScreenName:userInfo.screen_name] autorelease];
 				[[self navigationController] pushViewController:vc animated:YES];
 			}
 				break;

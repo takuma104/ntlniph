@@ -5,12 +5,16 @@
 
 @implementation NTLNFavoriteViewController
 
-@synthesize screenName;
-
-- (id)init {
-	if (self = [super init]) {
-		timeline = [[NTLNTimeline alloc] initWithDelegate:self 
-									  withArchiveFilename:@"favorites.plist"];
+- (id)initWithScreenName:(NSString*)aScreenName {
+	if (self = [self init]) {
+		if (aScreenName) {
+			screenName = [aScreenName retain];
+			timeline = [[NTLNTimeline alloc] initWithDelegate:self 
+										  withArchiveFilename:nil];
+		} else {
+			timeline = [[NTLNTimeline alloc] initWithDelegate:self 
+										  withArchiveFilename:@"favorites.plist"];
+		}
 	}
 	return self;
 }

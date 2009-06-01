@@ -33,7 +33,6 @@
 }
 
 - (void)createCellWithText:(NSString*)aText footer:(NSString*)aFooter textHeight:(CGFloat)aTextHeight {
-//	self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	self.cellType = NTLNCellTypeRoundSpeech;
 	text = [aText retain];
 	footer = [aFooter retain];
@@ -84,6 +83,7 @@
 }
 
 - (void)createCellWithName:(NSString*)aName screenName:(NSString*)aScreenName {
+	self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	self.cellType = NTLNCellTypeRound;
 	name = [aName retain];
 	screenName = [aScreenName retain];

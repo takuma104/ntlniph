@@ -217,7 +217,7 @@
 - (void)tableView:(UITableView *)tView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	int row = [indexPath row];
 	if (row == 0) {
-//		[self switchToUserViewWithScreenName:message.screenName];
+		[self switchToUserViewWithScreenName:message.screenName];
 	} else if (row == 1) {
 		
 	} else {
@@ -313,7 +313,7 @@
 	[cell.contentView addSubview:iconview];	
 
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	cell.accessoryType = UITableViewCellAccessoryNone;
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	
 	return cell;
 }
