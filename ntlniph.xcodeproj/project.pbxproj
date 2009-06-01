@@ -80,7 +80,7 @@
 		F1474F900FD3F457007D9F4C /* NTLNDirectMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F000FD3F457007D9F4C /* NTLNDirectMessageViewController.m */; };
 		F1474F910FD3F457007D9F4C /* NTLNFavoriteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F020FD3F457007D9F4C /* NTLNFavoriteViewController.m */; };
 		F1474F920FD3F457007D9F4C /* NTLNFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F040FD3F457007D9F4C /* NTLNFriendsViewController.m */; };
-		F1474F930FD3F457007D9F4C /* NTLNReplysViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F060FD3F457007D9F4C /* NTLNReplysViewController.m */; };
+		F1474F930FD3F457007D9F4C /* NTLNMentionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F060FD3F457007D9F4C /* NTLNMentionsViewController.m */; };
 		F1474F940FD3F457007D9F4C /* NTLNSentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F080FD3F457007D9F4C /* NTLNSentsViewController.m */; };
 		F1474F950FD3F457007D9F4C /* NTLNSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F0A0FD3F457007D9F4C /* NTLNSettingViewController.m */; };
 		F1474F960FD3F457007D9F4C /* NTLNUnreadsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1474F0C0FD3F457007D9F4C /* NTLNUnreadsViewController.m */; };
@@ -266,8 +266,8 @@
 		F1474F020FD3F457007D9F4C /* NTLNFavoriteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNFavoriteViewController.m; sourceTree = "<group>"; };
 		F1474F030FD3F457007D9F4C /* NTLNFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNFriendsViewController.h; sourceTree = "<group>"; };
 		F1474F040FD3F457007D9F4C /* NTLNFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNFriendsViewController.m; sourceTree = "<group>"; };
-		F1474F050FD3F457007D9F4C /* NTLNReplysViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNReplysViewController.h; sourceTree = "<group>"; };
-		F1474F060FD3F457007D9F4C /* NTLNReplysViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNReplysViewController.m; sourceTree = "<group>"; };
+		F1474F050FD3F457007D9F4C /* NTLNMentionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNMentionsViewController.h; sourceTree = "<group>"; };
+		F1474F060FD3F457007D9F4C /* NTLNMentionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNMentionsViewController.m; sourceTree = "<group>"; };
 		F1474F070FD3F457007D9F4C /* NTLNSentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNSentsViewController.h; sourceTree = "<group>"; };
 		F1474F080FD3F457007D9F4C /* NTLNSentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNSentsViewController.m; sourceTree = "<group>"; };
 		F1474F090FD3F457007D9F4C /* NTLNSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNSettingViewController.h; sourceTree = "<group>"; };
@@ -688,8 +688,8 @@
 			children = (
 				F1474F040FD3F457007D9F4C /* NTLNFriendsViewController.m */,
 				F1474F030FD3F457007D9F4C /* NTLNFriendsViewController.h */,
-				F1474F060FD3F457007D9F4C /* NTLNReplysViewController.m */,
-				F1474F050FD3F457007D9F4C /* NTLNReplysViewController.h */,
+				F1474F060FD3F457007D9F4C /* NTLNMentionsViewController.m */,
+				F1474F050FD3F457007D9F4C /* NTLNMentionsViewController.h */,
 				F1474F000FD3F457007D9F4C /* NTLNDirectMessageViewController.m */,
 				F1474EFF0FD3F457007D9F4C /* NTLNDirectMessageViewController.h */,
 				F1474F020FD3F457007D9F4C /* NTLNFavoriteViewController.m */,
@@ -1191,7 +1191,7 @@
 				F1474F900FD3F457007D9F4C /* NTLNDirectMessageViewController.m in Sources */,
 				F1474F910FD3F457007D9F4C /* NTLNFavoriteViewController.m in Sources */,
 				F1474F920FD3F457007D9F4C /* NTLNFriendsViewController.m in Sources */,
-				F1474F930FD3F457007D9F4C /* NTLNReplysViewController.m in Sources */,
+				F1474F930FD3F457007D9F4C /* NTLNMentionsViewController.m in Sources */,
 				F1474F940FD3F457007D9F4C /* NTLNSentsViewController.m in Sources */,
 				F1474F950FD3F457007D9F4C /* NTLNSettingViewController.m in Sources */,
 				F1474F960FD3F457007D9F4C /* NTLNUnreadsViewController.m in Sources */,

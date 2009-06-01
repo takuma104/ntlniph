@@ -1,6 +1,6 @@
 #import "NTLNUnreadsViewController.h"
 #import "NTLNFriendsViewController.h"
-#import "NTLNReplysViewController.h"
+#import "NTLNMentionsViewController.h"
 #import "NTLNDirectMessageViewController.h"
 
 @implementation NTLNUnreadsViewController

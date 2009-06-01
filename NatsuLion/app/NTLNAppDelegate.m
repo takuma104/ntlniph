@@ -2,7 +2,7 @@
 #import "NTLNAccount.h"
 #import "NTLNTweetPostViewController.h"
 #import "NTLNFriendsViewController.h"
-#import "NTLNReplysViewController.h"
+#import "NTLNMentionsViewController.h"
 #import "NTLNSentsViewController.h"
 #import "NTLNUnreadsViewController.h"
 #import "NTLNSettingViewController.h"
@@ -53,8 +53,8 @@
 	tabBarController = [[UITabBarController alloc] init];
 		
 	friendsViewController = [[NTLNFriendsViewController alloc] init];
-	replysViewController = [[NTLNReplysViewController alloc] init];
-	friendsViewController.replysViewController = replysViewController;
+	replysViewController = [[NTLNMentionsViewController alloc] init];
+	friendsViewController.mentionsViewController = replysViewController;
 	replysViewController.friendsViewController = friendsViewController;
 	
 	directMessageViewController	= [[NTLNDirectMessageViewController alloc] init];

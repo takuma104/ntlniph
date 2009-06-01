@@ -1,4 +1,4 @@
-#import "NTLNReplysViewController.h"
+#import "NTLNMentionsViewController.h"
 #import "NTLNAccount.h"
 #import "NTLNConfiguration.h"
 #import "NTLNCache.h"
@@ -6,7 +6,7 @@
 #import "NTLNFriendsViewController.h"
 #import "NTLNHttpClientPool.h"
 
-@implementation NTLNReplysViewController
+@implementation NTLNMentionsViewController
 
 @synthesize friendsViewController;
 

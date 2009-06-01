@@ -4,7 +4,7 @@
 
 @class NTLNBrowserViewController;
 @class NTLNFriendsViewController;
-@class NTLNReplysViewController;
+@class NTLNMentionsViewController;
 @class NTLNSentsViewController;
 @class NTLNUnreadsViewController;
 @class NTLNSettingViewController;
@@ -16,7 +16,7 @@
 	UITabBarController *tabBarController;
 	
 	NTLNFriendsViewController *friendsViewController;
-	NTLNReplysViewController *replysViewController;
+	NTLNMentionsViewController *replysViewController;
 	NTLNSentsViewController *sentsViewController;
 	NTLNUnreadsViewController *unreadsViewController;
 	NTLNSettingViewController *settingViewController;

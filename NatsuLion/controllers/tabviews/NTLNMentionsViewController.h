@@ -3,7 +3,7 @@
 
 @class NTLNFriendsViewController;
 
-@interface NTLNReplysViewController : NTLNTimelineViewController {
+@interface NTLNMentionsViewController : NTLNTimelineViewController {
 	NTLNFriendsViewController *friendsViewController;
 }
 

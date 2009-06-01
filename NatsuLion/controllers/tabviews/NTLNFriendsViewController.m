@@ -4,14 +4,14 @@
 #import "NTLNConfiguration.h"
 #import "NTLNAppDelegate.h"
 #import "NTLNTweetPostViewController.h"
-#import "NTLNReplysViewController.h"
+#import "NTLNMentionsViewController.h"
 #import "NTLNHttpClientPool.h"
 
 #define TITLE_NAME @"NatsuLion for iPhone"
 
 @implementation NTLNFriendsViewController
 
-@synthesize replysViewController;
+@synthesize mentionsViewController;
 
 - (id)init {
 	if (self = [super init]) {
@@ -66,8 +66,8 @@
 		}
 	}
 	if (replies.count > 0) {
-		[replysViewController.timeline appendStatuses:replies];
-		[replysViewController updateBadge];
+		[mentionsViewController.timeline appendStatuses:replies];
+		[mentionsViewController updateBadge];
 	}
 	[replies release];
 }
@@ -75,7 +75,7 @@
 - (BOOL)doReadTrack {
 	BOOL updated = [super doReadTrack];
 	if (updated) {
-		[replysViewController updateBadge];
+		[mentionsViewController updateBadge];
 	}
 	return updated;
 }

@@ -3,15 +3,15 @@
 #import "NTLNTimelineViewController.h"
 
 @class NTLNLinkViewController;
-@class NTLNReplysViewController;
+@class NTLNMentionsViewController;
 
 @interface NTLNFriendsViewController : NTLNTimelineViewController <UIActionSheetDelegate>
 {		
 	UITextField *tweetTextField;
-	NTLNReplysViewController *replysViewController;
+	NTLNMentionsViewController *mentionsViewController;
 }
 
-@property (readwrite, assign) NTLNReplysViewController *replysViewController;
+@property (readwrite, assign) NTLNMentionsViewController *mentionsViewController;
 
 //- (NSMutableArray*)unreadStatuses;
 //- (void)allRead;
