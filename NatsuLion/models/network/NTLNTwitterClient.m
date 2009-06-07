@@ -235,7 +235,7 @@
 	}
 	
 #ifdef ENABLE_OAUTH
-	[self requestPOST:url body:postString username:];
+	[self requestPOST:url body:postString];
 #else	
 	NSString *username = [[NTLNAccount sharedInstance] screenName];
 	NSString *password = [[NTLNAccount sharedInstance] password];
