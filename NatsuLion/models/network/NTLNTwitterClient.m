@@ -234,19 +234,37 @@
 					  reply_id]; 
 	}
 	
-	[self requestPOST:url body:postString];
+#ifdef ENABLE_OAUTH
+	[self requestPOST:url body:postString username:];
+#else	
+	NSString *username = [[NTLNAccount sharedInstance] screenName];
+	NSString *password = [[NTLNAccount sharedInstance] password];
+	[self requestPOST:url body:postString username:username password:password];
+#endif
 }
 
 - (void)createFavoriteWithID:(NSString*)messageId {
 	NSString* url = [NSString stringWithFormat:@"%@favorites/create/%@.xml", 
 					 [NTLNTwitterClient URLForTwitterWithAccount], messageId];
+#ifdef ENABLE_OAUTH
 	[self requestPOST:url body:nil];
+#else	
+	NSString *username = [[NTLNAccount sharedInstance] screenName];
+	NSString *password = [[NTLNAccount sharedInstance] password];
+	[self requestPOST:url body:nil username:username password:password];
+#endif
 }
 
 - (void)destroyFavoriteWithID:(NSString*)messageId {
 	NSString* url = [NSString stringWithFormat:@"%@favorites/destroy/%@.xml", 
 					 [NTLNTwitterClient URLForTwitterWithAccount], messageId];
+#ifdef ENABLE_OAUTH
 	[self requestPOST:url body:nil];
+#else	
+	NSString *username = [[NTLNAccount sharedInstance] screenName];
+	NSString *password = [[NTLNAccount sharedInstance] password];
+	[self requestPOST:url body:nil username:username password:password];
+#endif
 }
 
 - (void)getFavoriteWithScreenName:(NSString*)screenName page:(int)page since_id:(NSString*)since_id{
