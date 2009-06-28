@@ -21,7 +21,7 @@ if $0 == __FILE__
   output = './resources/readme.html'
 
   v = version('./Info.plist')
-  gc = gitcommit
+  begin gc = gitcommit; rescue; gc = ""; end
   url = 'http://github.com/takuma104/ntlniph/commit/' + gc
 
   open(template) do |r|
