@@ -16,7 +16,7 @@
 		[[self tabBarController].view addSubview:self.tableView];
 		CGSize s = [self tabBarController].view.frame.size;
 		tableViewOriginalFrame = self.tableView.frame;
-		self.tableView.frame = CGRectMake(0, 0, s.width, s.height);
+		self.tableView.frame = CGRectMake(0, 20, s.width, s.height-20);
 	}
 }
 
