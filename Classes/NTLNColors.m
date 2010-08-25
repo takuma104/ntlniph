@@ -125,6 +125,9 @@ CGColorRef createRGBColor(int r, int g, int b)
 	separator				= createGrayColor(208);
 	textShadowColor			= createGrayColor(255);
 	textShadowSize			= CGSizeMake(0, -1);
+	if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 3.2) {
+		textShadowSize.height *= -1.f;
+	}
 	
 	quoteTextColor			= createRGBColor(0, 35, 163);
 	quoteBackgroundColor	= createGrayColor(200);
@@ -159,7 +162,10 @@ CGColorRef createRGBColor(int r, int g, int b)
 	separator				= createGrayColor(64);
 	textShadowColor			= createGrayColor(0);
 	textShadowSize			= CGSizeMake(0, -0.5);
-
+	if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 3.2) {
+		textShadowSize.height *= -1.f;
+	}
+	
 	quoteTextColor			= createRGBColor(181, 197, 255);
 	quoteBackgroundColor	= createGrayColor(24);
 

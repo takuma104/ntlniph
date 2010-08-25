@@ -26,6 +26,8 @@
 - (void)requestSucceeded;
 - (void)requestFailed:(NSError*)error;
 
+- (void)reset;
+
 @property (readonly) NSMutableData *recievedData;
 @property (readonly) int statusCode;
 @property (readwrite, retain) OAToken *token;
