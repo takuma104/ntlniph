@@ -9,3 +9,4 @@ build
 *.xcodeproj/*.perspectivev3
 *.xcodeproj/*.pbxuser
 resources/readme.html
+APIKeys.h
