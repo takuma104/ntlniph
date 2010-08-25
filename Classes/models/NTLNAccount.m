@@ -1,6 +1,7 @@
 #import "NTLNAccount.h"
 #import "NTLNConfigurationKeys.h"
 #import "NTLNHttpClientPool.h"
+#import "TwitterToken.h"
 
 static NTLNAccount *_instance;
 
@@ -29,11 +30,7 @@ static NTLNAccount *_instance;
 
 - (void)setUsername:(NSString*)username {
     [[NSUserDefaults standardUserDefaults] setObject:username forKey:NTLN_PREFERENCE_USERID];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-- (void)setPassword:(NSString*)password {
-    [[NSUserDefaults standardUserDefaults] setObject:password forKey:NTLN_PREFERENCE_PASSWORD];
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"password"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
@@ -42,12 +39,8 @@ static NTLNAccount *_instance;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (NSString*) username {
+- (NSString*)username {
 	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_USERID];
-}
-
-- (NSString*) password {
-	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_PASSWORD];
 }
 
 - (NSString*) userId {
@@ -58,11 +51,8 @@ static NTLNAccount *_instance;
 	return [[NSUserDefaults standardUserDefaults] stringForKey:NTLN_PREFERENCE_FOOTER];
 }
 
-- (BOOL) valid {
-	NSString *pwd = self.password;
-	NSString *usn = self.username;
-	return usn != nil && usn.length > 0 &&
-			pwd != nil && pwd.length > 0;
+- (BOOL)valid {
+	return [[TwitterToken tokenWithName:@"NatsuLion"] isValid];
 }
 
 - (void)getUserId {

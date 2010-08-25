@@ -3,6 +3,7 @@
 #import "NTLNTwitterClient.h"
 #import "NTLNIconDownloader.h"
 #import "NTLNTwitterUserClient.h"
+#import "TwitterToken.h"
 
 #define IDLE_CLIENT_NOTIFICATION		@"IDLE_CLIENT_NOTIFICATION"
 
@@ -53,6 +54,9 @@ GTMOBJECT_SINGLETON_BOILERPLATE(NTLNHttpClientPool, sharedInstance)
 		
 		if (ret == nil) {
 			ret = [[klass alloc] init];
+			if ([ret isKindOfClass:[OAuthHttpClient class]]) {
+				((OAuthHttpClient*)ret).token = [TwitterToken tokenWithName:@"NatsuLion"].token;
+			}
 			[clientsActive addObject:ret];
 			LOG(@"@@ alloc:%p (%@) idle:%d active:%d", ret, [[ret class] description], 
 				  clientsIdle.count, clientsActive.count);

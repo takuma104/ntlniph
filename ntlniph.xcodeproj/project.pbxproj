@@ -158,7 +158,7 @@
 		F129F47B122543FE00FDE03D /* OAuthHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F129F467122543FE00FDE03D /* OAuthHttpClient.m */; };
 		F129F47C122543FE00FDE03D /* TwitterToken.m in Sources */ = {isa = PBXBuildFile; fileRef = F129F469122543FE00FDE03D /* TwitterToken.m */; };
 		F129F47D122543FE00FDE03D /* XAuthAccessTokenClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F129F46B122543FE00FDE03D /* XAuthAccessTokenClient.m */; };
-		F129F482122544F100FDE03D /* NetworkActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = F129F481122544F100FDE03D /* NetworkActivityIndicator.m */; };
+		F129F50312254B2600FDE03D /* NetworkActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = F129F50212254B2600FDE03D /* NetworkActivityIndicator.m */; };
 		F13420C40E11595B00F2AF64 /* NTLNUnreadsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F13420C30E11595B00F2AF64 /* NTLNUnreadsViewController.m */; };
 		F13E2B380FB806C50086B0E7 /* readme.html in Resources */ = {isa = PBXBuildFile; fileRef = F13E2B370FB806C50086B0E7 /* readme.html */; };
 		F145D5E10E0EC22500DAE9EF /* NTLNReplysViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F145D5E00E0EC22500DAE9EF /* NTLNReplysViewController.m */; };
@@ -423,10 +423,10 @@
 		F129F469122543FE00FDE03D /* TwitterToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterToken.m; sourceTree = "<group>"; };
 		F129F46A122543FE00FDE03D /* XAuthAccessTokenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XAuthAccessTokenClient.h; sourceTree = "<group>"; };
 		F129F46B122543FE00FDE03D /* XAuthAccessTokenClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XAuthAccessTokenClient.m; sourceTree = "<group>"; };
-		F129F480122544F100FDE03D /* NetworkActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkActivityIndicator.h; sourceTree = "<group>"; };
-		F129F481122544F100FDE03D /* NetworkActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkActivityIndicator.m; sourceTree = "<group>"; };
 		F129F4851225459400FDE03D /* ObjectSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSingleton.h; sourceTree = "<group>"; };
 		F129F48B1225463B00FDE03D /* APIKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIKeys.h; sourceTree = "<group>"; };
+		F129F50112254B2600FDE03D /* NetworkActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkActivityIndicator.h; sourceTree = "<group>"; };
+		F129F50212254B2600FDE03D /* NetworkActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkActivityIndicator.m; sourceTree = "<group>"; };
 		F13420C20E11595B00F2AF64 /* NTLNUnreadsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNUnreadsViewController.h; sourceTree = "<group>"; };
 		F13420C30E11595B00F2AF64 /* NTLNUnreadsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNUnreadsViewController.m; sourceTree = "<group>"; };
 		F13E2B370FB806C50086B0E7 /* readme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = readme.html; path = resources/readme.html; sourceTree = "<group>"; };
@@ -723,8 +723,8 @@
 			isa = PBXGroup;
 			children = (
 				F129F4851225459400FDE03D /* ObjectSingleton.h */,
-				F129F480122544F100FDE03D /* NetworkActivityIndicator.h */,
-				F129F481122544F100FDE03D /* NetworkActivityIndicator.m */,
+				F129F50112254B2600FDE03D /* NetworkActivityIndicator.h */,
+				F129F50212254B2600FDE03D /* NetworkActivityIndicator.m */,
 				F129F442122543FE00FDE03D /* xauth */,
 				8D4408F60FA6E6400087F6ED /* NTLNHttpClientPool.h */,
 				8D4408F70FA6E6400087F6ED /* NTLNHttpClientPool.m */,
@@ -1150,7 +1150,7 @@
 				F129F47B122543FE00FDE03D /* OAuthHttpClient.m in Sources */,
 				F129F47C122543FE00FDE03D /* TwitterToken.m in Sources */,
 				F129F47D122543FE00FDE03D /* XAuthAccessTokenClient.m in Sources */,
-				F129F482122544F100FDE03D /* NetworkActivityIndicator.m in Sources */,
+				F129F50312254B2600FDE03D /* NetworkActivityIndicator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

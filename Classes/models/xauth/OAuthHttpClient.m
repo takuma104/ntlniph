@@ -2,7 +2,6 @@
 #import "OAToken.h"
 #import "OAMutableURLRequest.h"
 #import "XAuthAccessTokenClient.h"
-#import "NetworkActivityIndicator.h"
 
 #define TIMEOUT_SEC		20.0
 
@@ -28,6 +27,21 @@
 	[super dealloc];
 }
 
+- (void)reset {
+	[recievedData release];
+	recievedData = [[NSMutableData alloc] init];
+	[connection release];
+	connection = nil;
+	[rate_limit_reset release];
+	rate_limit_reset = nil;
+	
+	statusCode = 0;	
+	contentTypeIsXml = NO;
+	
+	rate_limit = 0;
+	rate_limit_remaining = 0;
+}
+
 - (NSMutableURLRequest*)makeRequest:(NSString*)url {
 	if (signatureProvider == nil) {
 		signatureProvider = [[OAHMAC_SHA1SignatureProvider alloc] init];
@@ -47,12 +61,27 @@
 	return request;
 }
 
+- (NSMutableURLRequest*)makeRequestWithoutAuth:(NSString*)url {
+	NSString *encodedUrl = (NSString*)CFURLCreateStringByAddingPercentEscapes(
+																			  NULL, (CFStringRef)url, NULL, NULL, kCFStringEncodingUTF8);
+	NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] init] autorelease];
+	[request setURL:[NSURL URLWithString:encodedUrl]];
+	[request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+	[request setTimeoutInterval:TIMEOUT_SEC];
+	[request setHTTPShouldHandleCookies:FALSE];
+	[encodedUrl release];
+	return request;
+}
+
+- (void)requestGETWithoutAuth:(NSString*)url {
+	NSMutableURLRequest *request = [self makeRequestWithoutAuth:url];
+	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+}
 
 - (void)requestGET:(NSString*)url {
 	NSMutableURLRequest *request = [self makeRequest:url];
 	[(OAMutableURLRequest*)request prepare];
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-	[[NetworkActivityIndicator sharedNetworkActivityIndicator] beginAnimation];
 }
 
 - (void)requestPOST:(NSString*)url body:(NSString*)body {
@@ -61,13 +90,12 @@
 	[request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
 	[(OAMutableURLRequest*)request prepare];
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-	[[NetworkActivityIndicator sharedNetworkActivityIndicator] beginAnimation];
 }
 
 - (void)cancel {
 	[connection cancel];
 	[self requestFailed:nil];
-	[[NetworkActivityIndicator sharedNetworkActivityIndicator] stopAnimation];
+	[self reset];
 }
 
 - (void)requestSucceeded {
@@ -109,12 +137,12 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	[self requestSucceeded];
-	[[NetworkActivityIndicator sharedNetworkActivityIndicator] stopAnimation];
+	[self reset];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError*) error {
 	[self requestFailed:error];
-	[[NetworkActivityIndicator sharedNetworkActivityIndicator] stopAnimation];
+	[self reset];
 }
 
 @end

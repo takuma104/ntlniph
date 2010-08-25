@@ -16,7 +16,7 @@
 
 - (void)getUserInfo:(NSString*)q {
 	NSString *url = [NSString stringWithFormat:@"http://twitter.com/users/show/%@.xml", q];
-	[super requestGET:url];
+	[super requestGETWithoutAuth:url];
 }
 
 - (void)getUserInfoForScreenName:(NSString*)screen_name {
@@ -32,10 +32,7 @@
 	if (page > 1) {
 		url = [NSString stringWithFormat:@"%@?page=%d", url, page];
 	}
-
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-	[super requestGET:url username:username password:password];
+	[super requestGET:url];
 }
 
 - (void)getFollowersWithScreenName:(NSString*)screen_name page:(int)page {
@@ -43,10 +40,8 @@
 	if (page > 1) {
 		url = [NSString stringWithFormat:@"%@?page=%d", url, page];
 	}
-	
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-	[super requestGET:url username:username password:password];
+
+	[super requestGET:url];
 }
 
 - (void)requestSucceeded {

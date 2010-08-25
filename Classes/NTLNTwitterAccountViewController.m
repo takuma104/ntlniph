@@ -2,6 +2,8 @@
 #import "NTLNConfigurationKeys.h"
 #import "NTLNAccount.h"
 #import "UICTableViewCellTextInput.h"
+#import "XAuthAccessTokenClient.h"
+#import "NTLNAlert.h"
 
 @interface NTLNTwitterAccountViewController(Private)
 - (void)setupPrototypes;
@@ -24,7 +26,7 @@
 	
 	UICPrototypeTableCellTextInput *c2 = [UICPrototypeTableCell cellForTextInput:@"Passowrd" 
 																 withPlaceholder:@"required" 
-															 withUserDefaultsKey:NTLN_PREFERENCE_PASSWORD];
+															 withUserDefaultsKey:nil];
 	c2.secure = YES;
 	
 	NSArray *g1 = [NSArray arrayWithObjects:c1, c2, nil];	
@@ -35,21 +37,17 @@
 }
 
 - (void)setupNavButtons {
-	
-	UIBarButtonItem *doneButton = [[[UIBarButtonItem alloc] 
-									initWithTitle:@"Done" 
-									style:UIBarButtonItemStylePlain 
-									target:self 
-									action:@selector(doneButtonPushed:)] autorelease];
+	UIBarButtonItem *doneButton;
+	doneButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+																target:self
+																action:@selector(doneButtonPushed:)] autorelease];
 	[[self navigationItem] setRightBarButtonItem:doneButton];
-/*
-	UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] 
-									  initWithTitle:@"Cancel" 
-									  style:UIBarButtonItemStylePlain 
-									  target:self 
-									  action:@selector(cancelButtonPushed:)] autorelease];
+
+	UIBarButtonItem *cancelButton;
+	cancelButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+																  target:self
+																  action:@selector(cancelButtonPushed:)] autorelease];
 	[[self navigationItem] setLeftBarButtonItem:cancelButton];
-*/	
 }
 
 - (id)initWithStyle:(UITableViewStyle)style {
@@ -97,9 +95,26 @@
 	[cell.textField becomeFirstResponder];
 }
 
-- (void)doneButtonPushed:(id)sender {
-	[self dismissModalViewControllerAnimated:YES];
-//	self.tabBarController.selectedIndex = 0; //hmmm...
+- (NSString*)textForCell:(NSIndexPath*)indexPath {
+	UICTableViewCellTextInput *cell = (UICTableViewCellTextInput*)[self.tableView cellForRowAtIndexPath:indexPath];
+	return cell.textField.text;
+}
+
+- (void)doneButtonPushed:(UIBarButtonItem*)sender {
+	if (_client == nil) {
+		sender.enabled = NO;
+	//	[self dismissModalViewControllerAnimated:YES];
+	//	self.tabBarController.selectedIndex = 0; //hmmm...
+		
+		NSString *screenName = [self textForCell:[NSIndexPath indexPathForRow:0 inSection:0]];
+		NSString *password = [self textForCell:[NSIndexPath indexPathForRow:1 inSection:0]];
+
+		_client = [[XAuthAccessTokenClient alloc] init];
+		_client.delegate = self;
+		[_client requestTokenWithScreenName:screenName
+								   password:password];
+		
+	}
 }
 
 - (void)cancelButtonPushed:(id)sender {
@@ -109,6 +124,24 @@
 - (void)dealloc {
 	[usernameOriginal release];
 	[super dealloc];
+}
+
+- (void)XAuthAccessTokenClient:(XAuthAccessTokenClient*)client 
+		   didSuccessWithToken:(TwitterToken*)token {
+	[token saveWithName:@"NatsuLion"];
+	[[NTLNAccount instance] setUsername:token.screenName];
+	[self dismissModalViewControllerAnimated:YES];
+	
+	[_client autorelease];
+	_client = nil;
+}
+
+- (void)XAuthAccessTokenClient:(XAuthAccessTokenClient*)client 
+			  didFailWithError:(NSError*)error {
+	[[NTLNAlert instance] alert:@"Authorization Failed" 
+					withMessage:@"Wrong Username/Email and password combination."];
+	[_client autorelease];
+	_client = nil;
 }
 
 @end

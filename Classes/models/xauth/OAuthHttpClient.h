@@ -18,6 +18,7 @@
 }
 
 - (void)requestGET:(NSString*)url;
+- (void)requestGETWithoutAuth:(NSString*)url;
 - (void)requestPOST:(NSString*)url body:(NSString*)body;
 - (void)cancel;
 

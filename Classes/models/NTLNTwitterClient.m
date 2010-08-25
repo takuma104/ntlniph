@@ -19,7 +19,7 @@
 /// private methods
 
 + (NSString*)URLForTwitterWithAccount {
-	return @"http://twitter.com/";
+	return @"http://api.twitter.com/1/";
 }
 
 - (void)getTimeline:(NSString*)path page:(int)page count:(int)count since_id:(NSString*)since_id {
@@ -158,7 +158,7 @@
 	} else if (since_id && page < 2) {
 		count = 200;
 	}
-	[self getTimeline:@"statuses/friends_timeline" 
+	[self getTimeline:@"statuses/home_timeline" 
 				 page:page 
 				count:count
 			 since_id:since_id];
@@ -167,7 +167,7 @@
 - (void)getRepliesTimelineWithPage:(int)page since_id:(NSString*)since_id {
 	int count = 20;
 	if (since_id && page < 2) count = 200;
-	[self getTimeline:@"statuses/replies" 
+	[self getTimeline:@"statuses/mentions" 
 				 page:page 
 				count:count 
 			 since_id:since_id];
@@ -242,9 +242,6 @@
 - (void)destroyFavoriteWithID:(NSString*)messageId {
 	NSString* url = [NSString stringWithFormat:@"%@favorites/destroy/%@.xml", 
 					 [NTLNTwitterClient URLForTwitterWithAccount], messageId];
-	NSString *username = [[NTLNAccount instance] username];
-	NSString *password = [[NTLNAccount instance] password];
-
 	[self requestPOST:url body:nil];
 }
 

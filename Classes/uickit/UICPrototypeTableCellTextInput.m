@@ -7,8 +7,10 @@
 
 - (id)initWithTitle:(NSString*)aTitle withUserDefaultsKey:(NSString*)key {
 	if (self = [super initWithTitle:aTitle]) {
-		userDefaultsKey = [key retain];
-		value = [[[NSUserDefaults standardUserDefaults] stringForKey:userDefaultsKey] retain];
+		if (key) {
+			userDefaultsKey = [key retain];
+			value = [[[NSUserDefaults standardUserDefaults] stringForKey:userDefaultsKey] retain];
+		}
 	}
 	return self;
 }
