@@ -25,7 +25,6 @@
 		8D3576F30E65D90E00A22D11 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D3576F20E65D90E00A22D11 /* Default.png */; };
 		8D3C40150F8FC26300E69E26 /* more_button_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D3C40130F8FC26300E69E26 /* more_button_normal.png */; };
 		8D3C40160F8FC26300E69E26 /* more_button_pushed.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D3C40140F8FC26300E69E26 /* more_button_pushed.png */; };
-		8D3C77A80E4CCC2900B51A09 /* dist.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D3C77A70E4CCC2900B51A09 /* dist.plist */; };
 		8D3C77BC0E4CD6C500B51A09 /* setting.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D3C77B60E4CD6C500B51A09 /* setting.png */; };
 		8D3C77BD0E4CD6C500B51A09 /* friends.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D3C77B70E4CD6C500B51A09 /* friends.png */; };
 		8D3C77BE0E4CD6C500B51A09 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8D3C77B80E4CD6C500B51A09 /* icon.png */; };
@@ -185,7 +184,6 @@
 		8D3576F20E65D90E00A22D11 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = resources/Default.png; sourceTree = "<group>"; };
 		8D3C40130F8FC26300E69E26 /* more_button_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = more_button_normal.png; sourceTree = "<group>"; };
 		8D3C40140F8FC26300E69E26 /* more_button_pushed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = more_button_pushed.png; sourceTree = "<group>"; };
-		8D3C77A70E4CCC2900B51A09 /* dist.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = dist.plist; sourceTree = "<group>"; };
 		8D3C77B60E4CD6C500B51A09 /* setting.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = setting.png; path = resources/setting.png; sourceTree = "<group>"; };
 		8D3C77B70E4CD6C500B51A09 /* friends.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = friends.png; path = resources/friends.png; sourceTree = "<group>"; };
 		8D3C77B80E4CD6C500B51A09 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = resources/icon.png; sourceTree = "<group>"; };
@@ -439,7 +437,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				8D3C77A70E4CCC2900B51A09 /* dist.plist */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -840,7 +837,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D3C77A80E4CCC2900B51A09 /* dist.plist in Resources */,
 				8D3C77BC0E4CD6C500B51A09 /* setting.png in Resources */,
 				8D3C77BD0E4CD6C500B51A09 /* friends.png in Resources */,
 				8D3C77BE0E4CD6C500B51A09 /* icon.png in Resources */,
@@ -1056,10 +1052,11 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk/usr/include/libxml2;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = DefaultProfileUuid;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos4.0;
 			};
 			name = Distribution_adhoc;
 		};
@@ -1088,12 +1085,13 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk/usr/include/libxml2;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-I/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS3.0.sdk/usr/include/libxml2";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = DefaultProfileUuid;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos4.0;
 			};
 			name = Debug;
 		};
@@ -1106,11 +1104,12 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk/usr/include/libxml2;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PREBINDING = NO;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos2.2.1;
+				SDKROOT = iphoneos4.0;
 			};
 			name = Release;
 		};

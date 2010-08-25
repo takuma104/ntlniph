@@ -39,5 +39,7 @@
 			<string>org.natsulion.natsuliphoneprotocol</string>
 		</dict>
 	</array>
+	<key>UIApplicationExitsOnSuspend</key>
+	<true/>
 </dict>
 </plist>
