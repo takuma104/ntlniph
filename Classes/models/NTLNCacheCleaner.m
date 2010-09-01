@@ -37,6 +37,12 @@ static NTLNCacheCleaner *_instance;
 		return YES;
 	}
 	
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"ClearCache"]) {
+		[NTLNCache removeAllCachedData];
+		[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"ClearCache"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+	}
+	
 	return NO;
 }
 

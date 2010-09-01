@@ -170,6 +170,7 @@
 		F17419750E2A3A46008BA863 /* NTLNTwitterXMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = F17419740E2A3A46008BA863 /* NTLNTwitterXMLReader.m */; };
 		F17419A90E2A45AF008BA863 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17419A80E2A45AF008BA863 /* CoreGraphics.framework */; };
 		F1816C120E0BEB2400C55465 /* NTLNBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1816C110E0BEB2400C55465 /* NTLNBrowserViewController.m */; };
+		F19FD1E1122583E100E985D2 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F19FD1E0122583E100E985D2 /* Settings.bundle */; };
 		F1D470190E04483900E9CB1D /* NTLNLinkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D470180E04483900E9CB1D /* NTLNLinkViewController.m */; };
 		F1D471030E04A1B500E9CB1D /* NTLNFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D471020E04A1B500E9CB1D /* NTLNFriendsViewController.m */; };
 /* End PBXBuildFile section */
@@ -443,6 +444,7 @@
 		F17419A80E2A45AF008BA863 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F1816C100E0BEB2400C55465 /* NTLNBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNBrowserViewController.h; sourceTree = "<group>"; };
 		F1816C110E0BEB2400C55465 /* NTLNBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNBrowserViewController.m; sourceTree = "<group>"; };
+		F19FD1E0122583E100E985D2 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		F1D470170E04483900E9CB1D /* NTLNLinkViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NTLNLinkViewController.h; sourceTree = "<group>"; };
 		F1D470180E04483900E9CB1D /* NTLNLinkViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNLinkViewController.m; sourceTree = "<group>"; };
 		F1D471020E04A1B500E9CB1D /* NTLNFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NTLNFriendsViewController.m; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 				F13E2B370FB806C50086B0E7 /* readme.html */,
 				8DBA55C20E96B75800109F5D /* images */,
 				8D1107310486CEB800E47090 /* Info.plist */,
+				F19FD1E0122583E100E985D2 /* Settings.bundle */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1024,6 +1027,7 @@
 				8DD636D90FA9F3DC00C49838 /* pushed_black_02.png in Resources */,
 				8DD636DA0FA9F3DC00C49838 /* pushed_black_04.png in Resources */,
 				F13E2B380FB806C50086B0E7 /* readme.html in Resources */,
+				F19FD1E1122583E100E985D2 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1195,7 +1199,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_ENTITLEMENTS = dist.plist;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Takuma Mori";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1203,7 +1206,7 @@
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = DefaultProfileUuid;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "59B2E6B9-F6E6-4289-9FC4-D023EEEC0623";
 				SDKROOT = iphoneos4.0;
 			};
 			name = Distribution_adhoc;

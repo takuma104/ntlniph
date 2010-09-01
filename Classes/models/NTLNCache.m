@@ -11,7 +11,7 @@
 
 @implementation NTLNCache
 
-+ (NSString*)createCacheDirectoryWithName:(NSString*)name {
++ (NSString*)createDocumentDirectoryWithName:(NSString*)name {
 	NSString *path = [NSHomeDirectory() stringByAppendingString:@"/Documents"];
 	[[NSFileManager defaultManager] createDirectoryAtPath:path attributes:nil];
 	path = [NSString stringWithFormat:@"%@/%@", path, name];
@@ -19,16 +19,29 @@
 	return [path stringByAppendingString:@"/"];
 }
 
++ (NSString*)createCacheDirectoryWithName:(NSString*)name {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+	NSString *path = [paths objectAtIndex:0];
+	[[NSFileManager defaultManager] createDirectoryAtPath:path attributes:nil];
+	path = [NSString stringWithFormat:@"%@/%@", path, name];
+	[[NSFileManager defaultManager] createDirectoryAtPath:path attributes:nil];
+	return [path stringByAppendingString:@"/"];
+}
+
++ (NSString*)createIconCacheDirectoryOld {
+	return [self createDocumentDirectoryWithName:@"icon_cache"];
+}
+
 + (NSString*)createIconCacheDirectory {
 	return [self createCacheDirectoryWithName:@"icon_cache"];
 }
 
 + (NSString*)createArchiverCacheDirectory {
-	return [self createCacheDirectoryWithName:@"archiver_cache"];
+	return [self createDocumentDirectoryWithName:@"archiver_cache"];
 }
 
 + (NSString*)createTextCacheDirectory {
-	return [self createCacheDirectoryWithName:@"text_backup"];
+	return [self createDocumentDirectoryWithName:@"text_backup"];
 }
 
 + (void)saveWithFilename:(NSString*)filename data:(NSData*)data {
@@ -50,6 +63,7 @@
 }
 
 + (void)removeAllCachedData {
+	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createIconCacheDirectoryOld] error:nil];
 	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createIconCacheDirectory] error:nil];
 	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createArchiverCacheDirectory] error:nil];
 	[[NSFileManager defaultManager] removeItemAtPath:[NTLNCache createTextCacheDirectory] error:nil];
